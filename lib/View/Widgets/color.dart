@@ -5,7 +5,7 @@ class CustomColor {
   //static const background = Color(0xFF060C24);         ///////////////////////////////////////  2nd background
   //static const background = Color(0xFF171725);      ///////////////////////////////////////  first background
   //static const textfield_fill = Color(0xFF193479);
-  static const textfield_fill = Colors.white;
+  static const textfield_fill = Colors.white70;
   // static const textColor = Color(0xFFC7C9F2);
   static const textColor = Colors.white;
 

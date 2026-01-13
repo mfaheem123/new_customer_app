@@ -6,6 +6,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 class PhoneNumber_TextField extends StatelessWidget {
   final String hintText;
    PhoneNumber_TextField({super.key, required this.hintText, required this.controller   });
+
   TextEditingController controller = TextEditingController();
 
   @override
@@ -26,8 +27,12 @@ class PhoneNumber_TextField extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderSide: const BorderSide(color: CustomColor.Text_Color, width: 1), // focused
               borderRadius: BorderRadius.circular(15),
+
             ),
-          
+          errorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: CustomColor.blueGrey, width: 0.5), // unfocused
+            borderRadius: BorderRadius.circular(15),
+          ),
         prefixIconColor: CustomColor.Text_Color,
         hintText: hintText,
         prefixIcon: Icon(Icons.call, color: CustomColor.Text_Color, size: 50),

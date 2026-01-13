@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [BotToastNavigatorObserver()],
 
 
+
       getPages: AppRoutes.appRoutes(),
 
 

@@ -7,7 +7,8 @@ import 'package:get/get.dart';
 import '../../Widgets/elevat_button.dart';
 import '../Widget/openstrretmap.dart';
 import '../Widget/osm.dart';
-import '../dashboard.dart';
+
+
 
 class PickupScreen extends StatelessWidget {
  const  PickupScreen({super.key});
@@ -101,6 +102,15 @@ class PickupScreen extends StatelessWidget {
             ),
 
             SizedBox(height: 10,),
+
+            Container(
+              color: Colors.green,
+              height:MediaQuery.of(context).size.height*0.55,
+              //child: ReusablePickupMap(),
+
+
+
+            )
             // OpenStreetMapWidget(),//==== map
             //  Container(
             //                    height: MediaQuery.of(context).size.height*0.74,

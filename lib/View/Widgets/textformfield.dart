@@ -42,7 +42,7 @@ class CustomTextField extends StatelessWidget {
     ),
     // this.fillColor = const Color(0xFF324DA1),
     //this.fillColor = const Color(0xFF324DA1),
-    this.fillColor = Colors.white70,
+    this.fillColor = CustomColor.textfield_fill,
     this.borderRadius = 5,
     this.enabled = true,
     this.inputFormatters,
@@ -56,7 +56,7 @@ class CustomTextField extends StatelessWidget {
       borderRadius: BorderRadius.circular(borderRadius),
       //borderSide: BorderSide(color: Color(0xFF4F46E5)),
         //borderSide: BorderSide(color: Colors.blueGrey),
-      borderSide: BorderSide(color: Colors.blueGrey),
+      borderSide: BorderSide(color: CustomColor.blueGrey),
     );
 
     return TextFormField(
@@ -75,7 +75,7 @@ class CustomTextField extends StatelessWidget {
         label: lable,
         hintText: hintText,
         //hintStyle: TextStyle(color: Colors.white, fontSize: FontSize),
-        hintStyle: AppTextStyles.regular(color: Colors.blueGrey, size: FontSize),
+        hintStyle: AppTextStyles.regular(color: CustomColor.blueGrey, size: FontSize),
         // labelStyle:  TextStyle(color: CustomColor.Text_Color),
         filled: true,
         fillColor: fillColor,

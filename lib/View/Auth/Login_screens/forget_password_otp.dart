@@ -63,13 +63,36 @@ class ForgetPasswordOtp extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.bold),
-                      decoration: const InputDecoration(counterText: ""),
-                      onChanged: (value) {
-                        if (value.isNotEmpty && index < 3) {
-                          FocusScope.of(context).requestFocus(
-                              controller.focusNodes[index + 1]);
-                        }
-                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        fillColor: CustomColor.textfield_fill,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 14),
+
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide(color: CustomColor.blueGrey, width: 3),
+                        ),
+
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: Colors.deepPurple, width: 3),
+                        ),
+
+                        // errorBorder: OutlineInputBorder(
+                        //   borderRadius: BorderRadius.circular(14),
+                        //   borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                        // ),
+                      ),
+                        onChanged: (value) {
+                          controller.handleOtpChange(value, index, context);
+                        },
+                      // onChanged: (value) {
+                      //   if (value.isNotEmpty && index < 3) {
+                      //     FocusScope.of(context).requestFocus(
+                      //         controller.focusNodes[index + 1]);
+                      //   }
+                        //}
                     ),
                   );
                 }),
@@ -85,23 +108,53 @@ class ForgetPasswordOtp extends StatelessWidget {
               const SizedBox(height: 30),
 
               Obx(() => controller.isOtpExpired.value
-                  ? TextButton(
-                    child: Text("OTP Expired ❌",
-                    style: AppTextStyles.medium(color: Colors.red)),
-                onPressed: (){
-
-                },
-                  )
+                  ? Column(
+                children: [
+                  Text(
+                    "OTP Expired ❌",
+                    style: AppTextStyles.medium(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () {
+                      controller.resendOtp();
+                    },
+                    child: Text(
+                      "Resend OTP",
+                      style: AppTextStyles.medium(color: Colors.blue),
+                    ),
+                  ),
+                ],
+              )
                   : SizedBox(
                 width: 200,
                 height: 50,
                 child: MyElevatedButton(
                   text: "Verify",
-                  onPressed: (){
-                     controller.verifyforgetOtp();
+                  onPressed: () {
+                    controller.verifyforgetOtp();
                   },
                 ),
-              )),
+              ))
+
+              // Obx(() => controller.isOtpExpired.value
+              //     ? TextButton(
+              //       child: Text("OTP Expired ❌",
+              //       style: AppTextStyles.medium(color: Colors.red)),
+              //   onPressed: (){
+              //
+              //   },
+              //     )
+              //     : SizedBox(
+              //   width: 200,
+              //   height: 50,
+              //   child: MyElevatedButton(
+              //     text: "Verify",
+              //     onPressed: (){
+              //        controller.verifyforgetOtp();
+              //     },
+              //   ),
+              // )),
             ],
           ),
         ),

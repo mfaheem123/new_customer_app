@@ -1,11 +1,11 @@
-import 'package:customer/View/Widgets/text_button.dart';
+import 'package:customer/View/Widgets/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../Controller/Auth_Controller/otp_controller.dart';
 import '../../../Controller/Auth_Controller/sigup_controller.dart';
 import '../../Widgets/elevat_button.dart';
 import '../../textstyle/apptextstyle.dart';
-import '../../Widgets/color.dart';
+
 
 
 class SignupOtpoPassword extends StatelessWidget {
@@ -13,7 +13,7 @@ class SignupOtpoPassword extends StatelessWidget {
 
   SignupOtpoPassword({super.key});
 
-  //final OtpController controller = Get.put(OtpController());
+
   final controller = Get.isRegistered<OtpController>()
       ? Get.find<OtpController>()
       :  Get.put(OtpController ());
@@ -72,13 +72,37 @@ class SignupOtpoPassword extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.bold),
-                      decoration: const InputDecoration(counterText: ""),
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        fillColor: CustomColor.textfield_fill,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 14),
+
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide(color: CustomColor.blueGrey, width: 3),
+                        ),
+
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: Colors.deepPurple, width: 3),
+                        ),
+
+                        // errorBorder: OutlineInputBorder(
+                        //   borderRadius: BorderRadius.circular(14),
+                        //   borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                        // ),
+                      ),
                       onChanged: (value) {
-                        if (value.isNotEmpty && index < 3) {
-                          FocusScope.of(context).requestFocus(
-                              controller.focusNodes[index + 1]);
-                        }
-                      },
+                      controller.handleOtpChange(value, index, context);
+                    },
+
+                      // onChanged: (value) {
+                      //   if (value.isNotEmpty && index < 3) {
+                      //     FocusScope.of(context).requestFocus(
+                      //         controller.focusNodes[index + 1]);
+                      //   }
+                     // },
                     ),
                   );
                 }),
@@ -94,23 +118,63 @@ class SignupOtpoPassword extends StatelessWidget {
               const SizedBox(height: 30),
 
               Obx(() => controller.isOtpExpired.value
-                  ? TextButton(
-                    child: Text("OTP Expired ❌",
-                    style: AppTextStyles.medium(color: Colors.red)),
-                onPressed: () {
-
-                },
-                  )
+                  ? Column(
+                children: [
+                  Text(
+                    "OTP Expired ❌",
+                    style: AppTextStyles.medium(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () {
+                      controller.resendOtp();
+                    },
+                    child: Text(
+                      "Resend OTP",
+                      style: AppTextStyles.medium(color: Colors.blue),
+                    ),
+                  ),
+                ],
+              )
                   : SizedBox(
                 width: 200,
                 height: 50,
                 child: MyElevatedButton(
                   text: "Verify",
-                  onPressed: (){
-                     controller.verifySignUpOtp();
-                    },
+                  onPressed: () {
+                    controller.verifySignUpOtp();
+                  },
                 ),
-              )),
+              ))
+
+
+              // Obx(() => controller.isOtpExpired.value
+              //   //   ? TextButton(
+              //   //     child: Text("OTP Expired ❌",
+              //   //     style: AppTextStyles.medium(color: Colors.red)),
+              //   // onPressed: () {
+              //   //
+              //   // },
+              //   //   )
+              //   ?TextButton(
+              //   onPressed: () {
+              //     controller.resendOtp();   // 🔥 Resend API call
+              //   },
+              //   child: Text(
+              //     "Resend OTP",
+              //     style: AppTextStyles.medium(color: Colors.blue),
+              //   ),
+              // )
+              //     : SizedBox(
+              //   width: 200,
+              //   height: 50,
+              //   child: MyElevatedButton(
+              //     text: "Verify",
+              //     onPressed: (){
+              //        controller.verifySignUpOtp();
+              //       },
+              //   ),
+              // )),
 
             ],
           ),
