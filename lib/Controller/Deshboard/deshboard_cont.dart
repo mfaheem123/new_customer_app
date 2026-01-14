@@ -12,10 +12,18 @@ class DeshBoardAddHome_Controller extends GetxController {
       ? Get.find<profileModelController>()
       :  Get.put(profileModelController());
 
-
-
-
   final RxnInt editingIndex = RxnInt();
+
+  RxBool showMap = false.obs;
+
+  @override
+  void onReady() {
+    super.onReady();
+    Future.delayed(const Duration(milliseconds: 400), () {
+      showMap.value = true;     // ⏳ Delay mount
+    });
+  }
+
 
   // TextField
   final TextEditingController HomeController = TextEditingController();
@@ -79,7 +87,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
       profileController.profileData!.addhomeAddress = HomeController.text;
 
-      profileController.update();   // 🔥 THIS refreshes GetBuilder UI
+     // profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
       BotToast.showText(text: "Address Updated Successfully");
       clearfield();
@@ -114,7 +122,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
       profileController.profileData!.addhomeAddress = "";
 
-      profileController.update();   // 🔥 THIS refreshes GetBuilder UI
+      profileController.update([profileController.profileData!.addhomeAddress]);   // 🔥 THIS refreshes GetBuilder UI
 
       BotToast.showText(text: "Address Delete Successfully");
       clearWorkField();
@@ -212,7 +220,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
       profileController.profileData!.addworkAddress = WorkAdressController.text;
 
-      profileController.update();   // 🔥 THIS refreshes GetBuilder UI
+      //profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
       BotToast.showText(text: "Address Updated Successfully");
       clearWorkField();

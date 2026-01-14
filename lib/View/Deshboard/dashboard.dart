@@ -9,16 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../yourtrip/yourtrip.dart';
 import 'drawer/drawer.dart';
-
+import 'map_widget/open_street_map.dart';
 
 class DeshBoard_Screen extends StatelessWidget {
   DeshBoard_Screen({super.key});
 
- // final DeshBoardAddHome_Controller deshboard_controller = Get.find();
+
   final deshboard_controller = Get.isRegistered<DeshBoardAddHome_Controller>()
       ? Get.find<DeshBoardAddHome_Controller>()
-      :  Get.put(DeshBoardAddHome_Controller());
-
+      : Get.put(DeshBoardAddHome_Controller());
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +26,13 @@ class DeshBoard_Screen extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         key: _scaffoldkey,
         drawerEnableOpenDragGesture: false,
         drawer: appDrawer(),
         backgroundColor: CustomColor.background,
         body: Container(
-          color:  Color(0xFF5E266F),
+          color: Color(0xFF5E266F),
           // height:MediaQuery.of(context).size.height,
           // width:MediaQuery.of(context).size.width,
           //
@@ -54,13 +54,33 @@ class DeshBoard_Screen extends StatelessWidget {
                 width: double.infinity,
                 child: Stack(
                   children: [
-                    Image.asset(
-                      "assets/images/map2.png",
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                    Positioned(
+                    // Image.asset(
+                    //   "assets/images/map2.png",
+                    //   fit: BoxFit.cover,
+                    //   width: double.infinity,
+                    //   height: double.infinity,
+                    // ),
+
+                    Obx(() {
+                      if (MediaQuery.of(context).viewInsets.bottom > 0) {
+                        return const SizedBox(); // keyboard open → hide map
+                      }
+                      return deshboard_controller.showMap.value
+                          ? RepaintBoundary(child: OpenStreetMapView())
+                          : const SizedBox();
+                    }),
+
+                    // SizedBox(
+                    //   height: screenHeight * 0.6,
+                    //   width: double.infinity,
+                    //   child: RepaintBoundary(   // 🔒 isolates map from rebuild
+                    //     child: OpenStreetMapView(),
+                    //   ),
+                    // ),
+
+
+                    // /// ================================================================  Drawer Button
+                     Positioned(
                       left: 10,
                       top: 20,
                       child: Container(
@@ -71,7 +91,11 @@ class DeshBoard_Screen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: IconButton(
-                          icon: Icon(Icons.person, size: 30, color: Colors.grey),
+                          icon: Icon(
+                            Icons.person,
+                            size: 30,
+                            color: Colors.grey,
+                          ),
                           onPressed: () {
                             _scaffoldkey.currentState!.openDrawer();
                           },
@@ -94,8 +118,12 @@ class DeshBoard_Screen extends StatelessWidget {
                     // User row
                     Row(
                       children: [
-                        SizedBox(width: 8,),
-                        Icon(Icons.person_2_rounded, size: 27, color: CustomColor.textColor),
+                        SizedBox(width: 8),
+                        Icon(
+                          Icons.person_2_rounded,
+                          size: 27,
+                          color: CustomColor.textColor,
+                        ),
                         const SizedBox(width: 10),
                         Text(
                           "User Name",
@@ -121,9 +149,15 @@ class DeshBoard_Screen extends StatelessWidget {
                           children: [
                             Text(
                               "Where To",
-                              style: AppTextStyles.medium(weight: FontWeight.bold),
+                              style: AppTextStyles.medium(
+                                weight: FontWeight.bold,
+                              ),
                             ),
-                            Icon(Icons.arrow_right, size: 40, color: CustomColor.Icon_Color),
+                            Icon(
+                              Icons.arrow_right,
+                              size: 40,
+                              color: CustomColor.Icon_Color,
+                            ),
                           ],
                         ),
                       ),
@@ -165,7 +199,10 @@ class DeshBoard_Screen extends StatelessWidget {
                     CustomTextButton(
                       text: "Previous Trip",
                       onPressed: () => Get.to(Yourtrip()),
-                      icon: Icon(Icons.picture_in_picture, color: CustomColor.Icon_Color),
+                      icon: Icon(
+                        Icons.picture_in_picture,
+                        color: CustomColor.Icon_Color,
+                      ),
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),

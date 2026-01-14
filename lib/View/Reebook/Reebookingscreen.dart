@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../Controller/reebooking/reebookingcontroller.dart';
+import '../Deshboard/map_widget/open_street_map.dart';
 import '../Widgets/color.dart';
 import '../Widgets/elevat_button.dart';
 import '../Widgets/textformfield.dart';
@@ -47,12 +48,13 @@ class ReebookingScreen extends StatelessWidget {
                         children: [
                           Container(
                             height: 400,
-                            decoration:  BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage("assets/images/map_image.png"),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                           // child: OpenStreetMapView(),
+                            // decoration:  BoxDecoration(
+                            //   image: DecorationImage(
+                            //     image: AssetImage("assets/images/map_image.png"),
+                            //     fit: BoxFit.cover,
+                            //   ),
+                            //),
                           ),
 
 

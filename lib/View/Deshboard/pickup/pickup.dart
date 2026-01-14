@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../Widgets/elevat_button.dart';
 import '../Widget/openstrretmap.dart';
 import '../Widget/osm.dart';
+import '../map_widget/open_street_map.dart';
 
 
 
@@ -103,20 +104,20 @@ class PickupScreen extends StatelessWidget {
 
             SizedBox(height: 10,),
 
-            Container(
-              color: Colors.green,
-              height:MediaQuery.of(context).size.height*0.55,
-              //child: ReusablePickupMap(),
-
-
-
-            )
+            // Container(
+            //   color: Colors.green,
+            //   height:MediaQuery.of(context).size.height*0.55,
+            //   //child: ReusablePickupMap(),
+            //
+            //
+            //
+            // )
             // OpenStreetMapWidget(),//==== map
-            //  Container(
-            //                    height: MediaQuery.of(context).size.height*0.74,
-            //                    child: Image(image: AssetImage("assets/images/map2.png"),fit: BoxFit.cover,),
-            // //                  child: OpenStreetMapWidget(),
-            //                  ),
+             SizedBox(
+                               height: MediaQuery.of(context).size.height*0.55,
+                             //  child: Image(image: AssetImage("assets/images/map2.png"),fit: BoxFit.cover,),
+                            //child:OpenStreetMapView(),
+                             ),
           ],
         ),
               ),
@@ -163,3 +164,5 @@ class PickupScreen extends StatelessWidget {
     );
   }
 }
+
+
