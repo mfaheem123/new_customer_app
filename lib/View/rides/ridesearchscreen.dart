@@ -16,328 +16,217 @@ class RideSearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(
-      //backgroundColor: CustomColor.background,
-      body: Container(
-        height:MediaQuery.of(context).size.height,
-        width:MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(horizontal: 15),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 30, 1, 44),
-              Color.fromARGB(255, 227, 194, 242)
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600; // simple tablet detection
+
+    // responsive sizes
+    final topBarHeight = screenHeight * (isTablet ? 0.1 : 0.08);
+    final mapHeight = screenHeight * (isTablet ? 0.45 : 0.35);
+    final gifHeight = screenHeight * (isTablet ? 0.25 : 0.2);
+    final buttonHeight = screenHeight * (isTablet ? 0.08 : 0.07);
+    final buttonWidth = screenWidth * (isTablet ? 0.5 : 0.7);
+    final fontSizeHeading = screenWidth * (isTablet ? 0.05 : 0.06);
+    final fontSizeText = screenWidth * (isTablet ? 0.025 : 0.04);
+
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          height:double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 30, 1, 44),
+                Color.fromARGB(255, 227, 194, 242)
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-
-
-            Container(
-              height: MediaQuery.of(context).size.height * 0.1,
-              //padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-               // color: CustomColor.Container_Colors,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // ================= Top Bar
+                SizedBox(
+                  height: topBarHeight,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        icon: Icon(
+                          Icons.arrow_back,
+                          size: screenWidth * (isTablet ? 0.07 : 0.06),
+                          color: CustomColor.Icon_Color,
+                        ),
+                      ),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            CustomText.Searching,
+                            style: AppTextStyles.heading(
+                              size: fontSizeHeading,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  // Back button
-                  IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: MediaQuery.of(context).size.width * 0.06, // responsive icon size
-                      color: CustomColor.Icon_Color,
+
+                const SizedBox(height: 10),
+
+                // ================= Map Container
+                Container(
+                  height: mapHeight,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey, width: 2),
+                    image: const DecorationImage(
+                      image: AssetImage("assets/images/map_image.png"),
+                      fit: BoxFit.cover,
                     ),
                   ),
+                ),
 
-                  // Title centered
-                  Expanded(
-                    child: Center(
+                const SizedBox(height: 20),
+
+                // ================= Location Text
+                Row(
+                  children: [
+                    const SizedBox(width: 10),
+                    const Icon(Icons.location_on, size: 25, color: Colors.red),
+                    const SizedBox(width: 10),
+                    Expanded(
                       child: Text(
-                        CustomText.Searching,
-                        style: AppTextStyles.heading(
-                          size: MediaQuery.of(context).size.width * 0.06, // responsive font
-                          //weight: FontWeight.bold,
-
+                        CustomText.Seaching_Text,
+                        style: AppTextStyles.regular(
+                          weight: FontWeight.bold,
+                          size: fontSizeText,
                         ),
                       ),
                     ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                // ================= GIF / Animation
+                SizedBox(
+                  height: gifHeight,
+                  child: Image.asset(
+                    "assets/images/map_search.gif",
+                    fit: BoxFit.contain,
                   ),
-
-
-                ],
-              ),
-            ),
-
-            // Container(
-            //   height: MediaQuery.of(context).size.height*0.1,
-            //   padding: EdgeInsets.all(10),
-            //   decoration: BoxDecoration(
-            //       color: CustomColor.textColor,
-            //       borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20))
-            //   ),
-            //   child: Row(
-            //     children: [
-            //       IconButton(onPressed: (){
-            //         Get.back();
-            //       }, icon: Icon(Icons.arrow_back,size: 25,color: CustomColor.Icon_Color,)
-            //       ),
-            //       SizedBox(width: 100,),
-            //         Text(
-            //           CustomText.Seaching,
-            //           style: TextStyle(fontSize: 25,
-            //               fontWeight: FontWeight.bold,
-            //               color: CustomColor.Text_Color),
-            //         ),
-            //     ],
-            //   ),
-            // ),
-
-            Container(
-              height: 300,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                border: Border.all(
-                  color: Colors.grey, // border color
-                  width: 2,           // optional: thickness
                 ),
-                image: DecorationImage(
-                  image: AssetImage("assets/images/map_image.png"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
 
+                const SizedBox(height: 10),
 
-            SizedBox(height: 20,),
-            Row(
-              children: [
-                SizedBox(width: 25,),
-                Icon(Icons.location_on,size: 25,color: Colors.red),
-                //CustomColor.Icon_Color,),
-                SizedBox(width: 10,),
+                // ================= Waiting Text
                 Text(
-                  CustomText.Seaching_Text,
-                  style: AppTextStyles.medium(
-                            weight: FontWeight.bold,
-                        ),
+                  "Thanks For Your Patience Please Wait",
+                  style: AppTextStyles.regular(
+                      weight: FontWeight.bold, size: fontSizeText),
+                  textAlign: TextAlign.center,
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Container(
-              height: MediaQuery.of(context).size.height*0.2,
 
-              decoration: BoxDecoration(
-                  //color: Colors.yellow,
-                image:DecorationImage(image: AssetImage("assets/images/map_search.gif",), fit: BoxFit.contain)
-              ),
-            ),
-            SizedBox(height: 10,),
+                const SizedBox(height: 20),
 
-            Text(
-              "Thanks For Your Patience Please Wait",
-              style: AppTextStyles.medium(
-                  weight: FontWeight.bold,
-                  ),
-            ),
-            SizedBox(height: 20,),
-
-            SizedBox(
-              height: 55,
-              width: 250  ,
-              child: MyElevatedButton(
-                text: '',
-                onPressed: () {
-                  Get.dialog(
-                      Dialog(
-                        backgroundColor: CustomColor.Container_Colors,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                        ),
-                        child: SizedBox(
-                          height: 250,
-                          width: 200,
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              const Icon(
-                                Icons.warning_amber,
-                                color: Colors.amberAccent,
-                                size: 60,
-                              ),
-                              SizedBox(height: 15,),
-                              Center(
-                                child: Container(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  height: 80,
-                                  width: 200,
+                // ================= Cancel Button
+                SizedBox(
+                  height: buttonHeight,
+                  width: buttonWidth,
+                  child: MyElevatedButton(
+                    text: '',
+                    onPressed: () {
+                      Get.dialog(
+                        Dialog(
+                          backgroundColor: CustomColor.Container_Colors,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: SizedBox(
+                            height: screenHeight * (isTablet ? 0.35 : 0.35),
+                            width: screenWidth * (isTablet ? 0.6 : 0.8),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.warning_amber,
+                                  color: Colors.amberAccent,
+                                  size: 60,
+                                ),
+                                const SizedBox(height: 15),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
                                   child: Text(
                                     CustomText.Ride_Cancel_alert,
                                     textAlign: TextAlign.center,
                                     style: AppTextStyles.small(),
                                   ),
                                 ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomTextButton(
-                                    text: 'Yes',
-                                    onPressed: () {
-                                      Get.to(DeshBoard_Screen());
-                                    },
-                                    backgroundColor: Colors.red,
-                                    textColor: CustomColor.Button_Text_Color,
-                                    borderRadius: 8,
-                                    elevation: 2,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 10,
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CustomTextButton(
+                                      text: 'Yes',
+                                      onPressed: () {
+                                        Get.to(DeshBoard_Screen());
+                                      },
+                                      backgroundColor: Colors.red,
+                                      textColor: CustomColor.Button_Text_Color,
+                                      borderRadius: 8,
+                                      elevation: 2,
+                                      fontSize: fontSizeText,
+                                      fontWeight: FontWeight.bold,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                     ),
-                                  ),
-                                  const SizedBox(width: 20),
-
-                                  CustomTextButton(
-                                    text: "  No   ",
-                                    onPressed: () {
-                                      Get.to(  Driverdetailscreen() );
-                                    },
-                                    backgroundColor: CustomColor.Button_background_Color,
-                                    textColor: Colors.white,
-                                    borderRadius: 8,
-                                    elevation: 2,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 10,
+                                    const SizedBox(width: 20),
+                                    CustomTextButton(
+                                      text: 'No',
+                                      onPressed: () {
+                                        Get.to(Driverdetailscreen());
+                                      },
+                                      backgroundColor: CustomColor.Button_background_Color,
+                                      textColor: Colors.white,
+                                      borderRadius: 8,
+                                      elevation: 2,
+                                      fontSize: fontSizeText,
+                                      fontWeight: FontWeight.bold,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      )
-                  );
-                },
-                textWidget:
-                FittedBox(
-                    //fit: BoxFit.scaleDown,
-                    child: Text('Cancel Ride',style: AppTextStyles.medium(size: 25,weight: FontWeight.bold),
-                    )
+                      );
+                    },
+                    textWidget: FittedBox(
+                      child: Text(
+                        'Cancel Ride',
+                        style: AppTextStyles.medium(
+                          size: fontSizeHeading,
+                          weight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+
+                const SizedBox(height: 20),
+              ],
             ),
-
-            // SizedBox(
-            //   height: 50,
-            //   width: 250  ,
-            //   child: MyElevatedButton(
-            //     text: 'Cancel Ride',
-            //     onPressed: () {
-            //       Get.dialog(
-            //         Dialog(
-            //           backgroundColor: CustomColor.Container_Colors,
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.all(Radius.circular(30)),
-            //           ),
-            //           child: SizedBox(
-            //             height: 210,
-            //             width: 100,
-            //             child: Column(
-            //               children: [
-            //                 const SizedBox(height: 15),
-            //                 const Icon(
-            //                   Icons.warning_amber,
-            //                   color: Colors.amberAccent,
-            //                   size: 60,
-            //                 ),
-            //                 SizedBox(height: 10,),
-            //                 Center(
-            //                   child: Container(
-            //                     padding: const EdgeInsets.only(left: 10),
-            //                     height: 80,
-            //                     width: 200,
-            //                     child: Text(
-            //                       CustomText.Ride_Cancel_alert,
-            //                       textAlign: TextAlign.center,
-            //                       style: AppTextStyles.small(),
-            //                     ),
-            //                   ),
-            //                 ),
-            //                 Row(
-            //                   crossAxisAlignment: CrossAxisAlignment.center,
-            //                   mainAxisAlignment: MainAxisAlignment.center,
-            //                   children: [
-            //                     CustomTextButton(
-            //                       text: 'Yes',
-            //                       onPressed: () {
-            //                         Get.to(DeshBoard_Screen());
-            //                       },
-            //                       backgroundColor: Colors.red,
-            //                       textColor: CustomColor.Button_Text_Color,
-            //                       borderRadius: 8,
-            //                       elevation: 2,
-            //                       fontSize: 10,
-            //                       fontWeight: FontWeight.bold,
-            //                       padding: const EdgeInsets.symmetric(
-            //                         horizontal: 16,
-            //                         vertical: 10,
-            //                       ),
-            //                     ),
-            //                     const SizedBox(width: 20),
-            //
-            //                     CustomTextButton(
-            //                       text: " No ",
-            //                       onPressed: () {
-            //                         Get.to(  Driverdetailscreen() );
-            //                       },
-            //                       backgroundColor: CustomColor.Button_background_Color,
-            //                       textColor: Colors.white,
-            //                       borderRadius: 8,
-            //                       elevation: 2,
-            //                       fontSize: 10,
-            //                       fontWeight: FontWeight.bold,
-            //                       padding: const EdgeInsets.symmetric(
-            //                         horizontal: 16,
-            //                         vertical: 10,
-            //                       ),
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         )
-            //       );
-            //     },
-            //
-            //     fontSize: 20,
-            //   ),
-            // )
-
-
-
-          ],
+          ),
         ),
       ),
-    )
     );
   }
 }

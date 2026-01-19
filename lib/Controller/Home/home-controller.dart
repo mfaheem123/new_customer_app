@@ -1,9 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../View/Deshboard/map_widget/map_controller.dart';
 import '../../api_servies/api_servies.dart';
 import 'model/pickuplocationmodel.dart';
 
 class SwapController extends GetxController {
+
+
+
+  var viaControllers = <TextEditingController>[].obs;
+  final TextEditingController pickUp = TextEditingController(); // observable list
+  final TextEditingController dropOff = TextEditingController(); // observable list
+
+  final TextEditingController viaController1 = TextEditingController();
+  final TextEditingController viaController2 = TextEditingController();
+
+ void pickupCurrentLocation(){
+
+   pickUp.text = mapC.currentAddress.value;
+ }
+
+
+
+  // final mapWedgit =OpenStreetMapWidget();
+  final mapC = Get.isRegistered<MapLocationController>()
+      ? Get.find<MapLocationController>()
+      : Get.put(MapLocationController());
+
+
+
 
 
 
@@ -50,17 +75,6 @@ class SwapController extends GetxController {
 
 
 
-  var viaControllers = <TextEditingController>[].obs;
-  final TextEditingController pickUp = TextEditingController(); // observable list
-  final TextEditingController dropOff = TextEditingController(); // observable list
-
-
-  //
-  // void selectedContainer(int index) {
-  //   selectedItem.value = index;
-  // }
-
-
   void swapField() {
     String temp = pickUp.text;
     pickUp.text = dropOff.text;
@@ -68,8 +82,6 @@ class SwapController extends GetxController {
   }
 
 
-  TextEditingController viaController1 = TextEditingController();
-  TextEditingController viaController2 = TextEditingController();
 
   // Swap button show/hide logic
   bool get canShowSwap => !showVia1.value && !showVia2.value;

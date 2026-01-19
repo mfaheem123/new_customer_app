@@ -46,9 +46,9 @@ class ReebookingScreen extends StatelessWidget {
                       // ============================================  Map
                       Stack(
                         children: [
-                          Container(
+                          SizedBox(
                             height: 400,
-                           // child: OpenStreetMapView(),
+                            //child: OpenStreetMapView(),
                             // decoration:  BoxDecoration(
                             //   image: DecorationImage(
                             //     image: AssetImage("assets/images/map_image.png"),

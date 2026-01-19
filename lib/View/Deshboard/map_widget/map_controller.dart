@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -15,6 +16,7 @@ class MapLocationController extends GetxController {
   void onInit() {
     super.onInit();
    getUserLocation();
+
   }
   Future<void> getUserLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -81,10 +83,11 @@ class MapLocationController extends GetxController {
 
   void onMapMove(position, bool hasGesture) {
     if (hasGesture && position.center != null) {
-      currentPosition.value = position.center;
-      updateAddress(position.center);
+      currentPosition.value = position.center!;
+      updateAddress(position.center!);
     }
   }
+
 
   void moveToCurrent() {
     if (currentPosition.value != null) {

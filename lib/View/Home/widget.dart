@@ -1,4 +1,6 @@
 ///===================================================== === >>   (Address/ Airport / station) container and list hai ini teeno ki
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Controller/Home/home-controller.dart';
@@ -26,12 +28,12 @@ class _containerWidgetState extends State<containerWidget> {
       :  Get.put(profileModelController());
 
 
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SwapController>(
       builder: (controller) {
         return Container(
+         // color: Colors.black,
           child: Column(
             children: [
 
@@ -195,7 +197,7 @@ class _containerWidgetState extends State<containerWidget> {
                 ),
               ),
 
-              SizedBox(height: 20),
+              SizedBox(height: 10),
 
               //===========================-========================  list show addresses
               Obx(
@@ -205,64 +207,73 @@ class _containerWidgetState extends State<containerWidget> {
                     controller.selectedIndex.value == 0
                         ?
                     SizedBox(
-                      height:MediaQuery.of(context).size.height*0.2,
+                      height:MediaQuery.of(context).size.height*0.19,
 
                       //color: Colors.grey,
-                      child: Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        mainAxisAlignment:
-                        MainAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            onTap: () {
-                              Get.to(AddHomeScreen());
-                            },
-                            title: Text(
-                              "Home",
-                              style: AppTextStyles.medium(),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          mainAxisAlignment:
+                          MainAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              onTap: () {
+                                Get.to(AddHomeScreen());
+                              },
+                              title: Text(
+                                "Home",
+                                style: AppTextStyles.regular(),
+                              ),
+                              subtitle:   Text(
+                                profileController.profileData?.addhomeAddress ?? 'Address',
+                                style: AppTextStyles.small(),
+                              ),
+                        
+                              leading: Icon(
+                                controller.iconItems[controller
+                                    .selectedIndex
+                                    .value]["icon"],
+                                color: CustomColor.textColor,
+                                size: 25,
+                              ),
+                        
                             ),
-                            subtitle:   Text(
-                              profileController.profileData?.addhomeAddress ?? 'Address',
-                              style: AppTextStyles.regular(),
+                        
+                            ListTile(
+                              onTap: () {
+                                Get.to(AddWork_Screen());
+                              },
+                              title: Text(
+                                "Add Work",
+                                style: AppTextStyles.regular(),
+                              ),
+                              subtitle: Text(
+                                profileController.profileData?.addworkAddress ?? 'Address',
+                                style: AppTextStyles.small(),
+                              ),
+                              leading: Icon(
+                                controller.iconItems[controller.selectedIndex.value]["icon"],
+                                color: CustomColor.textColor,
+                                size: 25,
+                              ),
+                        
                             ),
-
-                            leading: Icon(
-                              controller.iconItems[controller
-                                  .selectedIndex
-                                  .value]["icon"],
-                              color: CustomColor.textColor,
-                              size: 25,
-                            ),
-
-                          ),
-                          ListTile(
-                            onTap: () {
-                              Get.to(AddWork_Screen());
-                            },
-                            title: Text(
-                              "Add Work",
-                              style: AppTextStyles.medium(),
-                            ),
-                            subtitle: Text(
-                              profileController.profileData?.addworkAddress ?? 'Address',
-                              style: AppTextStyles.regular(),
-                            ),
-                            leading: Icon(
-                              controller.iconItems[controller.selectedIndex.value]["icon"],
-                              color: CustomColor.textColor,
-                              size: 25,
-                            ),
-
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     )
                         : Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      // height: (homeC.showVia1.value && homeC.showVia2.value)
+                      //     ? MediaQuery.of(context).size.height * 0.2
+                      //     : (homeC.showVia1.value)
+                      //     ? MediaQuery.of(context).size.height * 0.25
+                      //     : MediaQuery.of(context).size.height * 0.3,
                       height: (homeC.showVia1.value && homeC.showVia2.value)
-                          ? MediaQuery.of(context).size.height * 0.21   // 2 VIA → smallest
+                          ? MediaQuery.of(context).size.height * 0.18 // 2 VIA → smallest
                           : (homeC.showVia1.value)
-                          ? MediaQuery.of(context).size.height * 0.28   // 1 VIA → medium
+                          ? MediaQuery.of(context).size.height * 0.25   // 1 VIA → medium
                           : MediaQuery.of(context).size.height * 0.35,  // 0 VIA → large
 
                       child: ListView.builder(

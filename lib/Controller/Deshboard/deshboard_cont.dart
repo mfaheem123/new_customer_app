@@ -14,15 +14,16 @@ class DeshBoardAddHome_Controller extends GetxController {
 
   final RxnInt editingIndex = RxnInt();
 
-  RxBool showMap = false.obs;
 
-  @override
-  void onReady() {
-    super.onReady();
-    Future.delayed(const Duration(milliseconds: 400), () {
-      showMap.value = true;     // ⏳ Delay mount
-    });
-  }
+
+  // RxBool showMap = false.obs;
+  // @override
+  // void onReady() {
+  //   super.onReady();
+  //   Future.delayed(const Duration(milliseconds: 400), () {
+  //     showMap.value = true;     // ⏳ Delay mount
+  //   });
+  // }
 
 
   // TextField
