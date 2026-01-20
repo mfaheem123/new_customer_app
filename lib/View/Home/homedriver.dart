@@ -5,6 +5,7 @@ import 'package:customer/View/Widgets/textformfield.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../Deshboard/map_widget/map_polyLine.dart';
 import '../Widgets/elevat_button.dart';
 import '../profile/controller/profile_controller.dart';
 import 'dialogbox.dart';
@@ -62,6 +63,7 @@ class HomeDriver extends StatelessWidget {
                             children: [
                               Column(
                                 children: [
+
                                   /// PICKUP
                                   Padding(
                                     padding: const EdgeInsets.only(right: 25.0),
@@ -82,70 +84,83 @@ class HomeDriver extends StatelessWidget {
                                   const SizedBox(height: 12),
 
                                   /// VIA FIELDS
-                                  Obx(() => Column(
-                                    children: [
-                                      if (homeC.showVia1.value)
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: CustomTextField(
-                                                controller: homeC.viaController1,
-                                                hintText: "1st Stop",
-                                                borderRadius: 20,
-                                                prefixIcon: Icon(
-                                                  Icons.wb_sunny_outlined,
-                                                  size: 20,
-                                                  color: CustomColor.textField_Icon_Color,
+                                  Obx(() =>
+                                      Column(
+                                        children: [
+                                          if (homeC.showVia1.value)
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: CustomTextField(
+                                                    controller: homeC
+                                                        .viaController1,
+                                                    hintText: "1st Stop",
+                                                    borderRadius: 20,
+                                                    prefixIcon: Icon(
+                                                      Icons.wb_sunny_outlined,
+                                                      size: 20,
+                                                      color: CustomColor
+                                                          .textField_Icon_Color,
+                                                    ),
+                                                    onChanged: (v) {
+                                                      homeC.viaLocation1(v);
+                                                    },
+                                                  ),
                                                 ),
-                                                onChanged: (v) {
-                                                  homeC.viaLocation1(v);
-                                                },
-                                              ),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            GestureDetector(
-                                              onTap: () => homeC.removeField(1),
-                                              child: const Icon(
-                                                Icons.clear,
-                                                color: CustomColor.Icon_Color,
-                                                size: 20,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      if (homeC.showVia1.value) const SizedBox(height: 12),
-                                      if (homeC.showVia2.value)
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: CustomTextField(
-                                                controller: homeC.viaController2,
-                                                hintText: "2nd Stop",
-                                                borderRadius: 20,
-                                                prefixIcon: Icon(
-                                                  Icons.wb_sunny_outlined,
-                                                  size: 20,
-                                                  color: CustomColor.textField_Icon_Color,
+                                                const SizedBox(width: 5),
+                                                GestureDetector(
+                                                  onTap: () =>
+                                                      homeC.removeField(1),
+                                                  child: const Icon(
+                                                    Icons.clear,
+                                                    color: CustomColor
+                                                        .Icon_Color,
+                                                    size: 20,
+                                                  ),
                                                 ),
-                                                onChanged: (v) {
-                                                  homeC.viaLocation2(v);
-                                                },
-                                              ),
+                                              ],
                                             ),
-                                            const SizedBox(width: 5),
-                                            GestureDetector(
-                                              onTap: () => homeC.removeField(2),
-                                              child: const Icon(
-                                                Icons.clear,
-                                                color: CustomColor.Icon_Color,
-                                                size: 20,
-                                              ),
+                                          if (homeC.showVia1
+                                              .value) const SizedBox(
+                                              height: 12),
+                                          if (homeC.showVia2.value)
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: CustomTextField(
+                                                    controller: homeC
+                                                        .viaController2,
+                                                    hintText: "2nd Stop",
+                                                    borderRadius: 20,
+                                                    prefixIcon: Icon(
+                                                      Icons.wb_sunny_outlined,
+                                                      size: 20,
+                                                      color: CustomColor
+                                                          .textField_Icon_Color,
+                                                    ),
+                                                    onChanged: (v) {
+                                                      homeC.viaLocation2(v);
+                                                    },
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 5),
+                                                GestureDetector(
+                                                  onTap: () =>
+                                                      homeC.removeField(2),
+                                                  child: const Icon(
+                                                    Icons.clear,
+                                                    color: CustomColor
+                                                        .Icon_Color,
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      if (homeC.showVia2.value) const SizedBox(height: 12),
-                                    ],
-                                  )),
+                                          if (homeC.showVia2
+                                              .value) const SizedBox(
+                                              height: 12),
+                                        ],
+                                      )),
 
                                   /// DROPOFF
                                   Padding(
@@ -170,7 +185,8 @@ class HomeDriver extends StatelessWidget {
 
                               /// SWAP BUTTON
                               Obx(
-                                    () => homeC.canShowSwap
+                                    () =>
+                                homeC.canShowSwap
                                     ? Positioned(
                                   right: -5,
                                   top: 40,
@@ -193,7 +209,7 @@ class HomeDriver extends StatelessWidget {
 
                           /// +ADD(VIA) BUTTON
                           Padding(
-                            padding: const EdgeInsets.only(right: 45),
+                            padding: const EdgeInsets.only(right: 30),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -236,29 +252,40 @@ class HomeDriver extends StatelessWidget {
                               return containerWidget();
                             }
 
-                            if (controller.searchList.isNotEmpty && controller.pickUp.text.isNotEmpty) {
+                            if (controller.searchList.isNotEmpty &&
+                                controller.pickUp.text.isNotEmpty) {
                               return commonSearchContainer(
                                 context: context,
                                 list: controller.searchList,
                                 onTap: (item) {
                                   homeC.pickUp.text = item.name ?? "";
+                                  homeC.setPickup(
+                                    item.lat ?? 0.0,
+                                    item.lon ?? 0.0,
+                                  );
                                   controller.searchList.clear();
                                 },
                               );
                             }
 
-                            if (controller.dropSearchList.isNotEmpty && controller.dropOff.text.isNotEmpty) {
+                            if (controller.dropSearchList.isNotEmpty &&
+                                controller.dropOff.text.isNotEmpty) {
                               return commonSearchContainer(
                                 context: context,
                                 list: controller.dropSearchList,
                                 onTap: (item) {
                                   homeC.dropOff.text = item.name ?? "";
+                                  homeC.setDrop(
+                                    item.lat ?? 0.0,
+                                    item.lon ?? 0.0,
+                                  );
                                   controller.dropSearchList.clear();
                                 },
                               );
                             }
 
-                            if (controller.viaSearchList1.isNotEmpty && controller.viaController1.text.isNotEmpty) {
+                            if (controller.viaSearchList1.isNotEmpty &&
+                                controller.viaController1.text.isNotEmpty) {
                               return commonSearchContainer(
                                 context: context,
                                 list: controller.viaSearchList1,
@@ -269,7 +296,8 @@ class HomeDriver extends StatelessWidget {
                               );
                             }
 
-                            if (controller.viaSearchList2.isNotEmpty && controller.viaController2.text.isNotEmpty) {
+                            if (controller.viaSearchList2.isNotEmpty &&
+                                controller.viaController2.text.isNotEmpty) {
                               return commonSearchContainer(
                                 context: context,
                                 list: controller.viaSearchList2,
@@ -308,12 +336,13 @@ class HomeDriver extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              Get.dialog(
-                                const Dialog(
-                                  backgroundColor: Color(0xFF231F20),
-                                  child: Dialogbox(),
-                                ),
-                              );
+                              Get.to(MapScreen());
+                              // Get.dialog(
+                              //   const Dialog(
+                              //     backgroundColor: Color(0xFF231F20),
+                              //     child: Dialogbox(),
+                              //   ),
+                              // );
                             },
                           ),
                         ),
@@ -362,7 +391,10 @@ class HomeDriver extends StatelessWidget {
   }) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.45,
+        maxHeight: MediaQuery
+            .of(context)
+            .size
+            .height * 0.45,
         minHeight: 100,
       ),
       child: ListView.builder(
@@ -370,19 +402,52 @@ class HomeDriver extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = list[index];
           return ListTile(
-            leading: const Icon(Icons.location_on, color: CustomColor.Icon_Color),
+            leading: const Icon(
+              Icons.location_on,
+              color: CustomColor.Icon_Color,
+            ),
             title: Text(
               "${item.name ?? ""} ${item.postcode ?? ""}",
               style: AppTextStyles.regular(),
             ),
-            onTap: () => onTap(item),
+            onTap: () => onTap(item), // 🔥 callback
           );
         },
       ),
     );
   }
+
 }
 
+
+//   Widget commonSearchContainer({
+//     required BuildContext context,
+//     required List list,
+//     required Function(dynamic) onTap,
+//   }) {
+//     return ConstrainedBox(
+//       constraints: BoxConstraints(
+//         maxHeight: MediaQuery.of(context).size.height * 0.45,
+//         minHeight: 100,
+//       ),
+//       child: ListView.builder(
+//         itemCount: list.length,
+//         itemBuilder: (context, index) {
+//           final item = list[index];
+//           return ListTile(
+//             leading: const Icon(Icons.location_on, color: CustomColor.Icon_Color),
+//             title: Text(
+//               "${item.name ?? ""} ${item.postcode ?? ""}",
+//               style: AppTextStyles.regular(),
+//             ),
+//             onTap: () => onTap(item),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+//
 
 
 

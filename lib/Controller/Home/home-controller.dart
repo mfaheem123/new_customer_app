@@ -15,20 +15,22 @@ class SwapController extends GetxController {
   final TextEditingController viaController1 = TextEditingController();
   final TextEditingController viaController2 = TextEditingController();
 
- void pickupCurrentLocation(){
-
-   pickUp.text = mapC.currentAddress.value;
- }
 
 
 
   // final mapWedgit =OpenStreetMapWidget();
-  final mapC = Get.isRegistered<MapLocationController>()
-      ? Get.find<MapLocationController>()
-      : Get.put(MapLocationController());
+  final mapC = Get.isRegistered<PickLocationController>()
+      ? Get.find<PickLocationController>()
+      : Get.put(PickLocationController());
 
 
 
+
+  void pickupCurrentLocation(){
+
+    // pickUp.text = mapC.currentAddress.value;
+    pickUp.text = mapC.address.value;
+  }
 
 
 
@@ -119,6 +121,20 @@ class SwapController extends GetxController {
   RxList<Result> searchList = <Result>[].obs;
 
 
+  double selectedPickUPLat = 0.0;
+  double selectedPickUPLon = 0.0;
+
+
+
+
+  void setPickup(double lat, double lon) {
+    selectedPickUPLat = lat;
+    selectedPickUPLon = lon;
+    update();
+  }
+
+
+
   Future<void> pickupLocation(String text) async {
     if (text.isEmpty) {
       searchList.clear();
@@ -130,7 +146,7 @@ class SwapController extends GetxController {
 
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.4:5000/api/services/search?search=${pickUp.text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
     );
@@ -146,12 +162,16 @@ class SwapController extends GetxController {
   }
 
 
+
   ///   ///============================= ======================== ================ ============   drop off location search
 // DropOff related
   RxBool dropSearchLoading = false.obs;
   RxList<Result> dropSearchList = <Result>[].obs;
 
-// ================= LIVE SEARCH API FOR DROPOFF =================
+  double selectedDropLat = 0.0;
+  double selectedDropLon = 0.0;
+
+
   Future<void> dropOffLocation(String text) async {
     // Agar text field empty ho toh list clear karo
     if (text.isEmpty) {
@@ -165,7 +185,7 @@ class SwapController extends GetxController {
     // API call
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.4:5000/api/services/search?search=${text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${text.toUpperCase()}',
       auth: true,
       isProgressShow: false, // User loader nahi chahiye
     );
@@ -179,6 +199,12 @@ class SwapController extends GetxController {
 
     // Loader OFF
     dropSearchLoading.value = false;
+  }
+
+  void setDrop(double lat, double lon) {
+    selectedDropLat = lat;
+    selectedDropLon = lon;
+    update();
   }
 
 
@@ -200,7 +226,7 @@ class SwapController extends GetxController {
 
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.4:5000/api/services/search?search=${viaController1.text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
     );
@@ -233,7 +259,7 @@ class SwapController extends GetxController {
 
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.4:5000/api/services/search?search=${viaController2.text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
     );

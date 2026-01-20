@@ -1,10 +1,7 @@
 import 'package:customer/View/Widgets/color.dart';
-import 'package:customer/View/rides/ride_info_screen.dart';
-import 'package:customer/View/rides/ridecomplete.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../Deshboard/dashboard.dart';
 import '../Widgets/all_text.dart';
 import '../Widgets/elevat_button.dart';
