@@ -43,6 +43,7 @@ class MapScreen extends StatelessWidget {
               initialZoom: 13,
               onMapReady: () {
                 // 🔥 FIT BOTH POINTS ON SCREEN
+
                 mapController.fitCamera(
                   CameraFit.bounds(
                     bounds: LatLngBounds.fromPoints([
