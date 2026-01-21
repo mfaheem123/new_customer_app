@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import '../../View/Deshboard/map_widget/map_controller.dart';
 import '../../api_servies/api_servies.dart';
 import 'model/pickuplocationmodel.dart';
@@ -130,6 +132,7 @@ class SwapController extends GetxController {
   void setPickup(double lat, double lon) {
     selectedPickUPLat = lat;
     selectedPickUPLon = lon;
+    fetchRoute();
     update();
   }
 
@@ -204,6 +207,7 @@ class SwapController extends GetxController {
   void setDrop(double lat, double lon) {
     selectedDropLat = lat;
     selectedDropLon = lon;
+    fetchRoute();
     update();
   }
 
@@ -274,4 +278,47 @@ class SwapController extends GetxController {
 
   }
 
+
+
+
+
+  ///-========================================================== ==============================     map Working
+
+
+
+  // ✅ Route points
+  List<LatLng> routePoints = [];
+  // ✅ Fetch route from OSRM API
+  Future<void> fetchRoute() async  {
+    if (selectedPickUPLat == 0.0 ||
+        selectedPickUPLon == 0.0 ||
+        selectedDropLat == 0.0 ||
+        selectedDropLon == 0.0) return;
+
+    final url =
+        'https://router.project-osrm.org/route/v1/driving/'
+        '${selectedPickUPLon},${selectedPickUPLat};'
+        '${selectedDropLon},${selectedDropLat}'
+        '?overview=full&geometries=geojson';
+
+    try {
+      final dio = Dio();
+      final response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        final coordinates = data['routes'][0]['geometry']['coordinates'];
+
+        routePoints = coordinates.map<LatLng>((c) {
+          return LatLng(c[1], c[0]); // lat, lon order important
+        }).toList();
+
+        update(); // rebuild GetBuilder (MapScreen)
+      } else {
+        print("Error fetching route: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception fetching route: $e");
+    }
+  }
 }
