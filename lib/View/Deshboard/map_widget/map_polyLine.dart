@@ -30,41 +30,69 @@ class MapScreen extends StatelessWidget {
                   );
                 }
 
-                final pickupLatLng =
-                LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
-                final dropLatLng =
-                LatLng(c.selectedDropLat, c.selectedDropLon);
+                final pickupLatLng =  LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
+                final dropLatLng =  LatLng(c.selectedDropLat, c.selectedDropLon);
+                //
+                // // Optional: approximate fit bounds
+                // if (c.routePoints.isNotEmpty) {
+                //   WidgetsBinding.instance.addPostFrameCallback((_) {
+                //     mapController.move(
+                //       LatLng(
+                //         (c.routePoints.first.latitude +
+                //             c.routePoints.last.latitude) /
+                //             2,
+                //         (c.routePoints.first.longitude +
+                //
+                //             c.routePoints.last.longitude) /
+                //             2,
+                //       ),
+                //       9, // zoom level, adjust as needed
+                //     );
+                //   });
+                // }
 
-                // Optional: approximate fit bounds
-                if (c.routePoints.isNotEmpty) {
+                if (c.isMapReady && c.routePoints.isNotEmpty) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    mapController.move(
-                      LatLng(
-                        (c.routePoints.first.latitude +
-                            c.routePoints.last.latitude) /
-                            2,
-                        (c.routePoints.first.longitude +
-                            c.routePoints.last.longitude) /
-                            2,
+                    final bounds = LatLngBounds.fromPoints(c.routePoints);
+
+                    mapController.fitCamera(
+                      CameraFit.bounds(
+                        bounds: bounds,
+                        padding: const EdgeInsets.all(60),
                       ),
-                      15, // zoom level, adjust as needed
                     );
                   });
                 }
 
+
+
                 return FlutterMap(
+
                   mapController: mapController,
                   options: MapOptions(
                     initialCenter: LatLng(
                         (pickupLatLng.latitude + dropLatLng.latitude) / 2,
                         (pickupLatLng.longitude + dropLatLng.longitude) / 2),
                     initialZoom: 13,
+                    //
+                    onMapReady: () {
+                      c.isMapReady = true;
+                      c.update(); // rebuild GetBuilder
+                    },
+                    //
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      subdomains: const ['a', 'b', 'c'],
                       userAgentPackageName: 'com.example.customer',
+                      maxZoom: 19,
                     ),
+
+                    // TileLayer(
+                    //   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    //   userAgentPackageName: 'com.example.customer',
+                    // ),
 
                     // Polyline
                     if (c.routePoints.isNotEmpty)

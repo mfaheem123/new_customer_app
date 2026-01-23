@@ -76,6 +76,15 @@ class HomeDriver extends StatelessWidget {
                                         size: 15,
                                         color: CustomColor.textField_Icon_Color,
                                       ),
+                                      suffixIcon: InkWell(
+                                        onTap:(){
+                                          homeC.pickUp.clear();
+                                        } ,
+                                        child: Icon(Icons.cancel,
+                                          size: 15,
+                                          color: CustomColor.textField_Icon_Color,
+                                        ),
+                                      ),
                                       onChanged: (v) {
                                         homeC.pickupLocation(v);
                                       },
@@ -99,8 +108,15 @@ class HomeDriver extends StatelessWidget {
                                                     prefixIcon: Icon(
                                                       Icons.wb_sunny_outlined,
                                                       size: 20,
-                                                      color: CustomColor
-                                                          .textField_Icon_Color,
+                                                      color: CustomColor.textField_Icon_Color,),
+                                                    suffixIcon: InkWell(
+                                                      onTap:(){
+                                                        homeC.viaController1.clear();
+                                                      } ,
+                                                      child: Icon(Icons.cancel,
+                                                        size: 15,
+                                                        color: CustomColor.textField_Icon_Color,
+                                                      ),
                                                     ),
                                                     onChanged: (v) {
                                                       homeC.viaLocation1(v);
@@ -135,8 +151,15 @@ class HomeDriver extends StatelessWidget {
                                                     prefixIcon: Icon(
                                                       Icons.wb_sunny_outlined,
                                                       size: 20,
-                                                      color: CustomColor
-                                                          .textField_Icon_Color,
+                                                      color: CustomColor.textField_Icon_Color,),
+                                                    suffixIcon: InkWell(
+                                                      onTap:(){
+                                                        homeC.viaController2.clear();
+                                                      } ,
+                                                      child: Icon(Icons.cancel,
+                                                        size: 15,
+                                                        color: CustomColor.textField_Icon_Color,
+                                                      ),
                                                     ),
                                                     onChanged: (v) {
                                                       homeC.viaLocation2(v);
@@ -173,6 +196,15 @@ class HomeDriver extends StatelessWidget {
                                         Icons.location_pin,
                                         size: 20,
                                         color: CustomColor.textField_Icon_Color,
+                                      ),
+                                      suffixIcon: InkWell(
+                                        onTap:(){
+                                          homeC.dropOff.clear();
+                                        } ,
+                                        child: Icon(Icons.cancel,
+                                          size: 15,
+                                          color: CustomColor.textField_Icon_Color,
+                                        ),
                                       ),
                                       onChanged: (v) {
                                         homeC.dropOffLocation(v);

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,7 +11,6 @@ import 'model/pickuplocationmodel.dart';
 class SwapController extends GetxController {
 
 
-
   var viaControllers = <TextEditingController>[].obs;
   final TextEditingController pickUp = TextEditingController(); // observable list
   final TextEditingController dropOff = TextEditingController(); // observable list
@@ -18,29 +19,20 @@ class SwapController extends GetxController {
   final TextEditingController viaController2 = TextEditingController();
 
 
-
-
   // final mapWedgit =OpenStreetMapWidget();
   final mapC = Get.isRegistered<PickLocationController>()
       ? Get.find<PickLocationController>()
       : Get.put(PickLocationController());
 
 
-
-
-  void pickupCurrentLocation(){
-
+  void pickupCurrentLocation() {
     // pickUp.text = mapC.currentAddress.value;
     pickUp.text = mapC.address.value;
   }
 
 
-
   var selectedItem = (0).obs;
   RxInt selectedIndex = 0.obs;
-
-
-
 
 
   List<Map<String, dynamic>> iconItems = [
@@ -78,13 +70,11 @@ class SwapController extends GetxController {
   }
 
 
-
   void swapField() {
     String temp = pickUp.text;
     pickUp.text = dropOff.text;
     dropOff.text = temp;
   }
-
 
 
   // Swap button show/hide logic
@@ -116,8 +106,7 @@ class SwapController extends GetxController {
   }
 
 
-
-///   ///============================= ======================== ================ ============  Pick Up location search
+  ///   ///============================= ======================== ================ ============  Pick Up location search
 
   RxBool searchloading = false.obs;
   RxList<Result> searchList = <Result>[].obs;
@@ -127,15 +116,12 @@ class SwapController extends GetxController {
   double selectedPickUPLon = 0.0;
 
 
-
-
   void setPickup(double lat, double lon) {
     selectedPickUPLat = lat;
     selectedPickUPLon = lon;
     fetchRoute();
     update();
   }
-
 
 
   Future<void> pickupLocation(String text) async {
@@ -149,21 +135,20 @@ class SwapController extends GetxController {
 
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp.text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp
+          .text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
     );
 
-    if ( response!.statusCode == 200) {
+    if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
 
       searchList.value = model.result ?? [];
     }
 
     searchloading.value = false;
-
   }
-
 
 
   ///   ///============================= ======================== ================ ============   drop off location search
@@ -188,7 +173,8 @@ class SwapController extends GetxController {
     // API call
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${text
+          .toUpperCase()}',
       auth: true,
       isProgressShow: false, // User loader nahi chahiye
     );
@@ -230,19 +216,19 @@ class SwapController extends GetxController {
 
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1.text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1
+          .text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
     );
 
-    if ( response!.statusCode == 200) {
+    if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
 
       viaSearchList1.value = model.result ?? [];
     }
 
     viaSearchloading1.value = false;
-
   }
 
   ///   ///============================= ======================== ================ ============   via 2 location search
@@ -263,62 +249,61 @@ class SwapController extends GetxController {
 
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2.text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2
+          .text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
     );
 
-    if ( response!.statusCode == 200) {
-    LocationModel model = LocationModel.fromJson(response.data);
+    if (response!.statusCode == 200) {
+      LocationModel model = LocationModel.fromJson(response.data);
 
       viaSearchList2.value = model.result ?? [];
     }
 
     viaSearchloading2.value = false;
-
   }
-
-
-
 
 
   ///-========================================================== ==============================     map Working
 
+  bool isMapReady = false;
 
 
   // ✅ Route points
   List<LatLng> routePoints = [];
-  // ✅ Fetch route from OSRM API
-  Future<void> fetchRoute() async  {
-    if (selectedPickUPLat == 0.0 ||
-        selectedPickUPLon == 0.0 ||
-        selectedDropLat == 0.0 ||
-        selectedDropLon == 0.0) return;
+// ✅ Fetch route from OSRM API
+Future<void> fetchRoute() async  {
+  if (selectedPickUPLat == 0.0 ||
+      selectedPickUPLon == 0.0 ||
+      selectedDropLat == 0.0 ||
+      selectedDropLon == 0.0) return;
 
-    final url =
-        'https://router.project-osrm.org/route/v1/driving/'
-        '${selectedPickUPLon},${selectedPickUPLat};'
-        '${selectedDropLon},${selectedDropLat}'
-        '?overview=full&geometries=geojson';
+  final url =
+      'https://router.project-osrm.org/route/v1/driving/'
+      '${selectedPickUPLon},${selectedPickUPLat};'
+      '${selectedDropLon},${selectedDropLat}'
+      '?overview=full&geometries=geojson';
 
-    try {
-      final dio = Dio();
-      final response = await dio.get(url);
+  try {
+    final dio = Dio();
+    final response = await dio.get(url);
 
-      if (response.statusCode == 200) {
-        final data = response.data;
-        final coordinates = data['routes'][0]['geometry']['coordinates'];
+    if (response.statusCode == 200) {
+      final data = response.data;
+      final coordinates = data['routes'][0]['geometry']['coordinates'];
 
-        routePoints = coordinates.map<LatLng>((c) {
-          return LatLng(c[1], c[0]); // lat, lon order important
-        }).toList();
+      routePoints = coordinates.map<LatLng>((c) {
+        return LatLng(c[1], c[0]); // lat, lon order important
+      }).toList();
 
-        update(); // rebuild GetBuilder (MapScreen)
-      } else {
-        print("Error fetching route: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Exception fetching route: $e");
+      update(); // rebuild GetBuilder (MapScreen)
+    } else {
+      print("Error fetching route: ${response.statusCode}");
     }
+  } catch (e) {
+    print("Exception fetching route: $e");
   }
+}
+
 }
