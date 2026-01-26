@@ -4,8 +4,7 @@ import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../Deshboard/Widget/openstrretmap.dart';
-import '../Deshboard/Widget/osm.dart';
+
 import '../Widgets/all_text.dart';
 
 class TripDetail extends StatelessWidget {

@@ -1,18 +1,30 @@
+import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../Controller/Home/home-controller.dart';
+import '../../Widgets/color.dart';
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   MapScreen({super.key});
 
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
   final SwapController c = Get.put(SwapController());
+
   final MapController mapController = MapController();
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
       appBar: AppBar(title: const Text("Pickup → Drop Map")),
 
       body: Column(
@@ -109,28 +121,184 @@ class MapScreen extends StatelessWidget {
                     // Markers
                     MarkerLayer(
                       markers: [
+                        // Pickup
                         Marker(
                           point: pickupLatLng,
                           width: 40,
                           height: 40,
                           child: const Icon(
-                            Icons.location_on,
-                            color: Colors.green,
-                            size: 40,
+                            Icons.location_on, color: Colors.green, size: 40,
                           ),
                         ),
+
+                        // VIA 1
+                        if (c.showVia1.value && c.via1Lat != 0.0  && c.via1Lon != 0.0)
+                          Marker(
+                            point: LatLng(c.via1Lat, c.via1Lon),
+                            width: 80,
+                            height: 70,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Card(
+                                  color: Colors.black,
+                                  elevation: 3,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    child: Text(
+                                      "Via 1",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 0.5),
+                                const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                              ],
+                            ),
+                          ),
+                        // VIA 2
+                        if (c.showVia2.value && c.via2Lat != 0.0)
+                          Marker(
+                            point: LatLng(c.via2Lat, c.via2Lon),
+                            width: 80,
+                            height: 70,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Card(
+                                  color: Colors.black,
+                                  elevation: 3,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    child: Text(
+                                      "Via 2",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 0.5),
+                                const Icon(Icons.location_pin, color: Colors.blue, size: 30),
+                              ],
+                            ),
+                          ),
+
+                        // // VIA 1
+                        // if (c.via1Lat != 0.0)
+                        //   Marker(
+                        //     point: LatLng(c.via1Lat, c.via1Lon),
+                        //     width: 80,
+                        //     height: 70,
+                        //     child: Column(
+                        //       mainAxisSize: MainAxisSize.min,
+                        //       children: [
+                        //         Card(
+                        //           color: Colors.black,
+                        //           elevation: 3,
+                        //           shape: RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.circular(6),
+                        //           ),
+                        //           child: const Padding(
+                        //             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        //             child: Text(
+                        //               "Via 1",
+                        //               style: TextStyle(
+                        //                 color: Colors.white,
+                        //                 fontSize: 11,
+                        //                 fontWeight: FontWeight.w600,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //         const SizedBox(height: 0.5),
+                        //         const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                        //       ],
+                        //     ),
+                        //   ),
+                        //
+                        //
+                        // // VIA 2
+                        // if (c.via2Lat != 0.0)
+                        //   Marker(
+                        //     point: LatLng(c.via2Lat, c.via2Lon),
+                        //     width: 80,
+                        //     height: 70,
+                        //     child: Column(
+                        //       mainAxisSize: MainAxisSize.min,
+                        //       children: [
+                        //         Card(
+                        //           color: Colors.black,
+                        //           elevation: 3,
+                        //           shape: RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.circular(6),
+                        //           ),
+                        //           child: const Padding(
+                        //             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        //             child: Text(
+                        //               "Via 2",
+                        //               style: TextStyle(
+                        //                 color: Colors.white,
+                        //                 fontSize: 11,
+                        //                 fontWeight: FontWeight.w600,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //         const SizedBox(height: 0.5),
+                        //         const Icon(Icons.location_pin, color: Colors.blue, size: 30),
+                        //       ],
+                        //     ),
+                        //   ),
+
+
+                        // Drop
                         Marker(
                           point: dropLatLng,
                           width: 40,
                           height: 40,
-                          child: const Icon(
-                            Icons.location_on,
-                            color: Colors.red,
-                            size: 40,
-                          ),
+                          child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
                         ),
                       ],
                     ),
+
+
+                    // MarkerLayer(
+                    //   markers: [
+                    //     Marker(
+                    //       point: pickupLatLng,
+                    //       width: 40,
+                    //       height: 40,
+                    //       child: const Icon(
+                    //         Icons.location_on,
+                    //         color: Colors.green,
+                    //         size: 40,
+                    //       ),
+                    //     ),
+                    //     Marker(
+                    //       point: dropLatLng,
+                    //       width: 40,
+                    //       height: 40,
+                    //       child: const Icon(
+                    //         Icons.location_on,
+                    //         color: Colors.red,
+                    //         size: 40,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 );
               },
@@ -140,26 +308,26 @@ class MapScreen extends StatelessWidget {
       ),
 
       // Bottom info bar
-      bottomNavigationBar: GetBuilder<SwapController>(
-        builder: (c) {
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  "${c.pickUp.text} → ${c.dropOff.text}",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+      // bottomNavigationBar: GetBuilder<SwapController>(
+      //   builder: (c) {
+      //     return Padding(
+      //       padding: const EdgeInsets.all(8),
+      //       child: Card(
+      //         child: Padding(
+      //           padding: const EdgeInsets.all(12),
+      //           child: Text(
+      //             "${c.pickUp.text} → ${c.dropOff.text}",
+      //             textAlign: TextAlign.center,
+      //             style: const TextStyle(
+      //               fontWeight: FontWeight.bold,
+      //               fontSize: 16,
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 }
@@ -172,127 +340,4 @@ class MapScreen extends StatelessWidget {
 
 
 
-// import 'package:customer/Controller/Home/home-controller.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_map/flutter_map.dart';
-// import 'package:get/get.dart';
-// import 'package:latlong2/latlong.dart';
-//
-// class MapScreen extends StatelessWidget {
-//   MapScreen({super.key});
-//
-//   final SwapController c = Get.find<SwapController>();
-//   final MapController mapController = MapController();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text("Pickup → Drop Map")),
-//
-//       body: GetBuilder<SwapController>(
-//         builder: (c) {
-//           // 🔒 Safety check
-//           if (c.selectedPickUPLat == 0.0 ||
-//               c.selectedPickUPLon == 0.0 ||
-//               c.selectedDropLat == 0.0 ||
-//               c.selectedDropLon == 0.0) {
-//             return const Center(
-//               child: Text("Select Pickup and Drop to view map"),
-//             );
-//           }
-//
-//           final pickupLatLng =
-//           LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
-//           final dropLatLng =
-//           LatLng(c.selectedDropLat, c.selectedDropLon);
-//
-//           final mapCenter = LatLng(
-//
-//             (pickupLatLng.latitude + dropLatLng.latitude) / 2,
-//             (pickupLatLng.longitude + dropLatLng.longitude) / 2,
-//           );
-//
-//           return FlutterMap(
-//             options: MapOptions(
-//               initialCenter: mapCenter,
-//               initialZoom: 13,
-//               onMapReady: () {
-//                 // 🔥 FIT BOTH POINTS ON SCREEN
-//
-//                 mapController.fitCamera(
-//                   CameraFit.bounds(
-//                     bounds: LatLngBounds.fromPoints([
-//                       pickupLatLng,
-//                       dropLatLng,
-//                     ]),
-//                     padding: const EdgeInsets.all(60),
-//                   ),
-//                 );
-//               },
-//             ),
-//             children: [
-//               TileLayer(
-//                 urlTemplate:
-//                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-//                 userAgentPackageName: 'com.example.customer',
-//               ),
-//
-//               // ✅ POLYLINE (GENERIC FIX)
-//               PolylineLayer(
-//                 polylines: <Polyline<Object>>[
-//                   Polyline<Object>(
-//                     points: [pickupLatLng, dropLatLng],
-//                     strokeWidth: 4,
-//                     color: Colors.blue,
-//                   ),
-//                 ],
-//               ),
-//
-//               // ✅ MARKERS (flutter_map 8.x)
-//               MarkerLayer(
-//                 markers: [
-//                   Marker(
-//                     point: pickupLatLng,
-//                     width: 40,
-//                     height: 40,
-//                     child: const Icon(
-//                       Icons.location_on,
-//                       color: Colors.green,
-//                       size: 40,
-//                     ),
-//                   ),
-//                   Marker(
-//                     point: dropLatLng,
-//                     width: 40,
-//                     height: 40,
-//                     child: const Icon(
-//                       Icons.location_on,
-//                       color: Colors.red,
-//                       size: 40,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           );
-//         },
-//       ),
-//
-//       bottomNavigationBar: GetBuilder<SwapController>(
-//         builder: (c) => Padding(
-//           padding: const EdgeInsets.all(8),
-//           child: Card(
-//             child: Padding(
-//               padding: const EdgeInsets.all(12),
-//               child: Text(
-//                 "${c.pickUp.text} → ${c.dropOff.text}",
-//                 textAlign: TextAlign.center,
-//                 style: const TextStyle(fontWeight: FontWeight.bold),
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+

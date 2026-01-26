@@ -125,8 +125,10 @@ class HomeDriver extends StatelessWidget {
                                                 ),
                                                 const SizedBox(width: 5),
                                                 GestureDetector(
-                                                  onTap: () =>
-                                                      homeC.removeField(1),
+                                                  onTap: () {
+                                                    homeC.removeField(1);
+                                                    homeC.resetVia1();
+                                                  },
                                                   child: const Icon(
                                                     Icons.clear,
                                                     color: CustomColor
@@ -201,9 +203,7 @@ class HomeDriver extends StatelessWidget {
                                         onTap:(){
                                           homeC.dropOff.clear();
                                         } ,
-                                        child: Icon(Icons.cancel,
-                                          size: 15,
-                                          color: CustomColor.textField_Icon_Color,
+                                        child: Icon(Icons.cancel, size: 15, color: CustomColor.textField_Icon_Color,
                                         ),
                                       ),
                                       onChanged: (v) {
@@ -323,6 +323,9 @@ class HomeDriver extends StatelessWidget {
                                 list: controller.viaSearchList1,
                                 onTap: (item) {
                                   homeC.viaController1.text = item.name ?? "";
+                                  homeC.setVia1(
+                                    item.lat ?? 0.0,
+                                    item.lon ?? 0.0,);
                                   controller.viaSearchList1.clear();
                                 },
                               );
@@ -334,6 +337,9 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.viaSearchList2,
                                 onTap: (item) {
+                                  homeC.setVia2(
+                                    item.lat ?? 0.0,
+                                    item.lon ?? 0.0,);
                                   homeC.viaController2.text = item.name ?? "";
                                   controller.viaSearchList2.clear();
                                 },
@@ -368,13 +374,14 @@ class HomeDriver extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              Get.to(MapScreen());
-                              // Get.dialog(
-                              //   const Dialog(
-                              //     backgroundColor: Color(0xFF231F20),
-                              //     child: Dialogbox(),
-                              //   ),
-                              // );
+                              //Get.to(MapScreen());
+                              homeC.resetVia1();
+                              Get.dialog(
+                                const Dialog(
+                                  backgroundColor: Color(0xFF231F20),
+                                  child: Dialogbox(),
+                                ),
+                              );
                             },
                           ),
                         ),

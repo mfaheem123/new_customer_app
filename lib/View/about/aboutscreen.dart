@@ -1,12 +1,9 @@
-
-import 'package:customer/View/Deshboard/Widget/osm.dart';
-import 'package:customer/View/Deshboard/drawer/drawer.dart';
 import 'package:customer/View/Widgets/all_text.dart';
 import 'package:customer/View/Widgets/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import '../Deshboard/Widget/openstrretmap.dart';
+
 import '../textstyle/apptextstyle.dart';
 
 

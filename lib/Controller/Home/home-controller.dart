@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/date_symbols.dart';
 import 'package:latlong2/latlong.dart';
 import '../../View/Deshboard/map_widget/map_controller.dart';
 import '../../api_servies/api_servies.dart';
@@ -112,16 +113,6 @@ class SwapController extends GetxController {
   RxList<Result> searchList = <Result>[].obs;
 
 
-  double selectedPickUPLat = 0.0;
-  double selectedPickUPLon = 0.0;
-
-
-  void setPickup(double lat, double lon) {
-    selectedPickUPLat = lat;
-    selectedPickUPLon = lon;
-    fetchRoute();
-    update();
-  }
 
 
   Future<void> pickupLocation(String text) async {
@@ -156,9 +147,6 @@ class SwapController extends GetxController {
   RxBool dropSearchLoading = false.obs;
   RxList<Result> dropSearchList = <Result>[].obs;
 
-  double selectedDropLat = 0.0;
-  double selectedDropLon = 0.0;
-
 
   Future<void> dropOffLocation(String text) async {
     // Agar text field empty ho toh list clear karo
@@ -190,12 +178,7 @@ class SwapController extends GetxController {
     dropSearchLoading.value = false;
   }
 
-  void setDrop(double lat, double lon) {
-    selectedDropLat = lat;
-    selectedDropLon = lon;
-    fetchRoute();
-    update();
-  }
+
 
 
   ///   ///============================= ======================== ================ ============   via 1 location search
@@ -268,42 +251,149 @@ class SwapController extends GetxController {
   ///-========================================================== ==============================     map Working
 
   bool isMapReady = false;
-
-
-  // ✅ Route points
   List<LatLng> routePoints = [];
-// ✅ Fetch route from OSRM API
-Future<void> fetchRoute() async  {
-  if (selectedPickUPLat == 0.0 ||
-      selectedPickUPLon == 0.0 ||
-      selectedDropLat == 0.0 ||
-      selectedDropLon == 0.0) return;
 
-  final url =
-      'https://router.project-osrm.org/route/v1/driving/'
-      '${selectedPickUPLon},${selectedPickUPLat};'
-      '${selectedDropLon},${selectedDropLat}'
-      '?overview=full&geometries=geojson';
+  // pick Up lat lng
+  double selectedPickUPLat = 0.0;
+  double selectedPickUPLon = 0.0;
 
-  try {
-    final dio = Dio();
-    final response = await dio.get(url);
+  // drop off  Up lat lng
+  double selectedDropLat = 0.0;
+  double selectedDropLon = 0.0;
 
-    if (response.statusCode == 200) {
-      final data = response.data;
-      final coordinates = data['routes'][0]['geometry']['coordinates'];
+  // VIA STOP 1
+  double via1Lat = 0.0;
+  double via1Lon = 0.0;
 
-      routePoints = coordinates.map<LatLng>((c) {
-        return LatLng(c[1], c[0]); // lat, lon order important
-      }).toList();
+// VIA STOP 2
+  double via2Lat = 0.0;
+  double via2Lon = 0.0;
 
-      update(); // rebuild GetBuilder (MapScreen)
-    } else {
-      print("Error fetching route: ${response.statusCode}");
-    }
-  } catch (e) {
-    print("Exception fetching route: $e");
+
+  void setPickup(double lat, double lon) {
+    selectedPickUPLat = lat;
+    selectedPickUPLon = lon;
+    fetchRoute();
+    update();
   }
+
+  void setDrop(double lat, double lon) {
+    selectedDropLat = lat;
+    selectedDropLon = lon;
+    fetchRoute();
+    update();
+  }
+
+  void setVia1(double lat, double lon) {
+    via1Lat = lat;
+    via1Lon = lon;
+    fetchRoute();
+    update();
+  }
+
+  void setVia2(double lat, double lon) {
+    via2Lat = lat;
+    via2Lon = lon;
+    fetchRoute();
+    update();
+  }
+
+void resetVia1(){
+    if(showVia1.value == false ){
+       via1Lat = 0.0;
+       via1Lon = 0.0;
+    }
+    update();
 }
+
+
+  Future<void> fetchRoute() async {
+    if (selectedPickUPLat == 0.0 ||
+        selectedPickUPLon == 0.0 ||
+        selectedDropLat == 0.0 ||
+        selectedDropLon == 0.0) return;
+
+    String coordinates = "";
+
+    // Pickup
+    coordinates += "${selectedPickUPLon},${selectedPickUPLat}";
+
+    // Via 1 (optional)
+    if (via1Lat != 0.0 && via1Lon != 0.0) {
+      coordinates += ";${via1Lon},${via1Lat}";
+    }
+
+    // Via 2 (optional)
+    if (via2Lat != 0.0 && via2Lon != 0.0) {
+      coordinates += ";${via2Lon},${via2Lat}";
+    }
+
+    // Drop
+    coordinates += ";${selectedDropLon},${selectedDropLat}";
+
+    final url =
+        'https://router.project-osrm.org/route/v1/driving/$coordinates'
+        '?overview=full&geometries=geojson';
+
+    try {
+      final dio = Dio();
+      final response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        final coords = data['routes'][0]['geometry']['coordinates'] as List?;
+
+        if (coords != null) {
+          routePoints = coords.map<LatLng>((point) {
+            final lat = (point[1] as num).toDouble();
+            final lon = (point[0] as num).toDouble();
+            return LatLng(lat, lon);
+          }).toList();
+        }
+
+        update();
+      }
+    } catch (e) {
+      print("Route error: $e");
+    }
+  }
+
+
+
+
+//   List<LatLng> routePoints = [];
+// // ✅ Fetch route from OSRM API
+// Future<void> fetchRoute() async  {
+//   if (selectedPickUPLat == 0.0 ||
+//       selectedPickUPLon == 0.0 ||
+//       selectedDropLat == 0.0 ||
+//       selectedDropLon == 0.0) return;
+//
+//   final url =
+//       'https://router.project-osrm.org/route/v1/driving/'
+//       '${selectedPickUPLon},${selectedPickUPLat};'
+//       '${selectedDropLon},${selectedDropLat}'
+//       '?overview=full&geometries=geojson';
+//
+//   try {
+//     final dio = Dio();
+//     final response = await dio.get(url);
+//
+//     if (response.statusCode == 200) {
+//       final data = response.data;
+//       final coordinates = data['routes'][0]['geometry']['coordinates'];
+//
+//       routePoints = coordinates.map<LatLng>((c) {
+//         return LatLng(c[1], c[0]); // lat, lon order important
+//       }).toList();
+//
+//       update(); // rebuild GetBuilder (MapScreen)
+//     } else {
+//       print("Error fetching route: ${response.statusCode}");
+//     }
+//   } catch (e) {
+//     print("Exception fetching route: $e");
+//   }
+// }
 
 }
