@@ -78,7 +78,7 @@ class HomeDriver extends StatelessWidget {
                                       ),
                                       suffixIcon: InkWell(
                                         onTap:(){
-                                          homeC.pickUp.clear();
+                                          homeC.removePickUpField();
                                         } ,
                                         child: Icon(Icons.cancel,
                                           size: 15,
@@ -126,8 +126,9 @@ class HomeDriver extends StatelessWidget {
                                                 const SizedBox(width: 5),
                                                 GestureDetector(
                                                   onTap: () {
-                                                    homeC.removeField(1);
-                                                    homeC.resetVia1();
+                                                    homeC.removeFields(1);
+
+
                                                   },
                                                   child: const Icon(
                                                     Icons.clear,
@@ -171,7 +172,7 @@ class HomeDriver extends StatelessWidget {
                                                 const SizedBox(width: 5),
                                                 GestureDetector(
                                                   onTap: () =>
-                                                      homeC.removeField(2),
+                                                      homeC.removeFields(2),
                                                   child: const Icon(
                                                     Icons.clear,
                                                     color: CustomColor
@@ -201,7 +202,7 @@ class HomeDriver extends StatelessWidget {
                                       ),
                                       suffixIcon: InkWell(
                                         onTap:(){
-                                          homeC.dropOff.clear();
+                                          homeC.removeDropOff();
                                         } ,
                                         child: Icon(Icons.cancel, size: 15, color: CustomColor.textField_Icon_Color,
                                         ),
@@ -374,14 +375,13 @@ class HomeDriver extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              //Get.to(MapScreen());
-                              homeC.resetVia1();
-                              Get.dialog(
-                                const Dialog(
-                                  backgroundColor: Color(0xFF231F20),
-                                  child: Dialogbox(),
-                                ),
-                              );
+                              Get.to(MapScreen());
+                              // Get.dialog(
+                              //   const Dialog(
+                              //     backgroundColor: Color(0xFF231F20),
+                              //     child: Dialogbox(),
+                              //   ),
+                              // );
                             },
                           ),
                         ),

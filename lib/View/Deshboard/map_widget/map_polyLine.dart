@@ -1,13 +1,14 @@
-import 'package:customer/View/textstyle/apptextstyle.dart';
+  import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../Controller/Home/home-controller.dart';
-import '../../Widgets/color.dart';
+
 
 class MapScreen extends StatefulWidget {
-  MapScreen({super.key});
+  const MapScreen({super.key});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -32,19 +33,33 @@ class _MapScreenState extends State<MapScreen> {
           // ======= Map =======
           Expanded(
             child: GetBuilder<SwapController>(
+              id: "map",
               builder: (c) {
                 if (c.selectedPickUPLat == 0.0 ||
                     c.selectedPickUPLon == 0.0 ||
                     c.selectedDropLat == 0.0 ||
                     c.selectedDropLon == 0.0) {
-                  return const Center(
-                    child: Text("Select Pickup and Drop to view map"),
+                  return Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 30, 1, 44),
+                      Color.fromARGB(255, 227, 194, 242),
+                      ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,)
+                    ),
+                    child: Center(
+                      child: Text("Select Pickup and Drop to view map",
+                        textAlign: TextAlign.center,
+                          maxLines: 2,
+                          style: AppTextStyles.heading(),),
+                    ),
                   );
                 }
 
                 final pickupLatLng =  LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
                 final dropLatLng =  LatLng(c.selectedDropLat, c.selectedDropLon);
-                //
+
                 // // Optional: approximate fit bounds
                 // if (c.routePoints.isNotEmpty) {
                 //   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -89,7 +104,7 @@ class _MapScreenState extends State<MapScreen> {
                     //
                     onMapReady: () {
                       c.isMapReady = true;
-                      c.update(); // rebuild GetBuilder
+                      c.update();
                     },
                     //
                   ),
@@ -132,68 +147,74 @@ class _MapScreenState extends State<MapScreen> {
                         ),
 
                         // VIA 1
-                        if (c.showVia1.value && c.via1Lat != 0.0  && c.via1Lon != 0.0)
+                        if (//
+                         c.showVia1.value &&
+                            c.via1Lat != 0.0  && c.via1Lon != 0.0)
                           Marker(
                             point: LatLng(c.via1Lat, c.via1Lon),
                             width: 80,
                             height: 70,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Card(
-                                  color: Colors.black,
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                    child: Text(
-                                      "Via 1",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 0.5),
-                                const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                              ],
-                            ),
+                            child:  const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                            // Column(
+                            //   mainAxisSize: MainAxisSize.min,
+                            //   children: [
+                            //     Card(
+                            //       color: Colors.black,
+                            //       elevation: 3,
+                            //       shape: RoundedRectangleBorder(
+                            //         borderRadius: BorderRadius.circular(6),
+                            //       ),
+                            //       child: const Padding(
+                            //         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            //         child: Text(
+                            //           "Via 1",
+                            //           style: TextStyle(
+                            //             color: Colors.white,
+                            //             fontSize: 11,
+                            //             fontWeight: FontWeight.w600,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     const SizedBox(height: 0.5),
+                            //     const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                            //   ],
+                            // ),
                           ),
                         // VIA 2
-                        if (c.showVia2.value && c.via2Lat != 0.0)
+                        if (
+                        c.showVia2.value &&
+                            c.via2Lat != 0.0  && c.via2Lon != 0.0)
                           Marker(
                             point: LatLng(c.via2Lat, c.via2Lon),
                             width: 80,
                             height: 70,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Card(
-                                  color: Colors.black,
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                    child: Text(
-                                      "Via 2",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 0.5),
-                                const Icon(Icons.location_pin, color: Colors.blue, size: 30),
-                              ],
-                            ),
+                            child: const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                            // Column(
+                            //   mainAxisSize: MainAxisSize.min,
+                            //   children: [
+                            //     Card(
+                            //       color: Colors.black,
+                            //       elevation: 3,
+                            //       shape: RoundedRectangleBorder(
+                            //         borderRadius: BorderRadius.circular(6),
+                            //       ),
+                            //       child: const Padding(
+                            //         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            //         child: Text(
+                            //           "Via 2",
+                            //           style: TextStyle(
+                            //             color: Colors.white,
+                            //             fontSize: 11,
+                            //             fontWeight: FontWeight.w600,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     const SizedBox(height: 0.5),
+                            //     const Icon(Icons.location_pin, color: Colors.blue, size: 30),
+                            //   ],
+                            // ),
                           ),
 
                         // // VIA 1

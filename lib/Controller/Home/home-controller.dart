@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbols.dart';
 import 'package:latlong2/latlong.dart';
@@ -96,15 +97,15 @@ class SwapController extends GetxController {
   }
 
   // Remove via field
-  void removeField(int fieldNumber) {
-    if (fieldNumber == 1) {
-      viaController1.clear();
-      showVia1.value = false;
-    } else if (fieldNumber == 2) {
-      viaController2.clear();
-      showVia2.value = false;
-    }
-  }
+  // void removeField(int fieldNumber) {
+  //   if (fieldNumber == 1) {
+  //     viaController1.clear();
+  //     showVia1.value = false;
+  //   } else if (fieldNumber == 2) {
+  //     viaController2.clear();
+  //     showVia2.value = false;
+  //   }
+  // }
 
 
   ///   ///============================= ======================== ================ ============  Pick Up location search
@@ -250,6 +251,11 @@ class SwapController extends GetxController {
 
   ///-========================================================== ==============================     map Working
 
+
+  MapController? mapController;
+  int _routeRequestId = 0;
+
+
   bool isMapReady = false;
   List<LatLng> routePoints = [];
 
@@ -283,28 +289,81 @@ class SwapController extends GetxController {
     fetchRoute();
     update();
   }
-
   void setVia1(double lat, double lon) {
     via1Lat = lat;
     via1Lon = lon;
+    showVia1.value = true;
     fetchRoute();
-    update();
+    update(["map"]);
   }
 
   void setVia2(double lat, double lon) {
     via2Lat = lat;
     via2Lon = lon;
+    showVia2.value = true;
     fetchRoute();
-    update();
+    update(["map"]);
   }
 
-void resetVia1(){
-    if(showVia1.value == false ){
-       via1Lat = 0.0;
-       via1Lon = 0.0;
-    }
-    update();
+void removePickUpField(){
+
+  pickUp.clear();
+  selectedPickUPLat = 0.0;
+  selectedPickUPLon = 0.0;
+
+
+  fetchRoute();
+  update(["map"]);
 }
+
+  void removeDropOff(){
+    dropOff.clear();
+    selectedDropLat= 0.0;
+    selectedDropLon = 0.0;
+
+
+    fetchRoute();
+    update(["map"]);
+  }
+
+
+  // void setVia1(double lat, double lon) {
+  //   via1Lat = lat;
+  //   via1Lon = lon;
+  //   fetchRoute();
+  //   update();
+  // }
+  //
+  // void setVia2(double lat, double lon) {
+  //   via2Lat = lat;
+  //   via2Lon = lon;
+  //   fetchRoute();
+  //   update();
+  // }
+
+  void removeFields(int fieldNumber) {
+    if (fieldNumber == 1) {
+      viaController1.clear();
+      showVia1.value = false;
+
+      // 💥 CRITICAL
+      via1Lat = 0.0;
+      via1Lon = 0.0;
+    }
+
+    else if (fieldNumber == 2) {
+      viaController2.clear();
+      showVia2.value = false;
+
+      // 💥 CRITICAL
+      via2Lat = 0.0;
+      via2Lon = 0.0;
+    }
+
+    fetchRoute();       //  route recalc
+    update(["map"]);    //  map rebuild
+  }
+
 
 
   Future<void> fetchRoute() async {
@@ -313,22 +372,18 @@ void resetVia1(){
         selectedDropLat == 0.0 ||
         selectedDropLon == 0.0) return;
 
-    String coordinates = "";
+    final requestId = ++_routeRequestId; // track latest call
 
-    // Pickup
-    coordinates += "${selectedPickUPLon},${selectedPickUPLat}";
+    String coordinates = "${selectedPickUPLon},${selectedPickUPLat}";
 
-    // Via 1 (optional)
     if (via1Lat != 0.0 && via1Lon != 0.0) {
       coordinates += ";${via1Lon},${via1Lat}";
     }
 
-    // Via 2 (optional)
     if (via2Lat != 0.0 && via2Lon != 0.0) {
       coordinates += ";${via2Lon},${via2Lat}";
     }
 
-    // Drop
     coordinates += ";${selectedDropLon},${selectedDropLat}";
 
     final url =
@@ -339,19 +394,26 @@ void resetVia1(){
       final dio = Dio();
       final response = await dio.get(url);
 
+      // 🧠 Ignore old responses
+      if (requestId != _routeRequestId) return;
+
       if (response.statusCode == 200) {
-        final data = response.data;
-        final coords = data['routes'][0]['geometry']['coordinates'] as List?;
+        final coords = response.data['routes'][0]['geometry']['coordinates'];
 
-        if (coords != null) {
-          routePoints = coords.map<LatLng>((point) {
-            final lat = (point[1] as num).toDouble();
-            final lon = (point[0] as num).toDouble();
-            return LatLng(lat, lon);
-          }).toList();
+        routePoints = coords.map<LatLng>((p) {
+          return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
+        }).toList();
+
+        update(["map"]); // 👈 only rebuild map
+
+        if (isMapReady && mapController != null) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            final bounds = LatLngBounds.fromPoints(routePoints);
+            mapController!.fitCamera(
+              CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(60)),
+            );
+          });
         }
-
-        update();
       }
     } catch (e) {
       print("Route error: $e");
@@ -359,7 +421,59 @@ void resetVia1(){
   }
 
 
+  // Future<void> fetchRoute() async {
+  //   if (selectedPickUPLat == 0.0 ||
+  //       selectedPickUPLon == 0.0 ||
+  //       selectedDropLat == 0.0 ||
+  //       selectedDropLon == 0.0) return;
+  //
+  //   String coordinates = "";
+  //
+  //   // Pickup
+  //   coordinates += "${selectedPickUPLon},${selectedPickUPLat}";
+  //
+  //   // Via 1 (optional)
+  //   if (via1Lat != 0.0 && via1Lon != 0.0) {
+  //     coordinates += ";${via1Lon},${via1Lat}";
+  //   }
+  //
+  //   // Via 2 (optional)
+  //   if (via2Lat != 0.0 && via2Lon != 0.0) {
+  //     coordinates += ";${via2Lon},${via2Lat}";
+  //   }
+  //
+  //   // Drop
+  //   coordinates += ";${selectedDropLon},${selectedDropLat}";
+  //
+  //   final url =
+  //       'https://router.project-osrm.org/route/v1/driving/$coordinates'
+  //       '?overview=full&geometries=geojson';
+  //
+  //   try {
+  //     final dio = Dio();
+  //     final response = await dio.get(url);
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = response.data;
+  //       final coords = data['routes'][0]['geometry']['coordinates'] as List?;
+  //
+  //       if (coords != null) {
+  //         routePoints = coords.map<LatLng>((point) {
+  //           final lat = (point[1] as num).toDouble();
+  //           final lon = (point[0] as num).toDouble();
+  //           return LatLng(lat, lon);
+  //         }).toList();
+  //       }
+  //
+  //       update();
+  //     }
+  //   } catch (e) {
+  //     print("Route error: $e");
+  //   }
+  // }
 
+
+///
 
 //   List<LatLng> routePoints = [];
 // // ✅ Fetch route from OSRM API
