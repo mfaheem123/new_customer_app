@@ -100,7 +100,7 @@ class _MapScreenState extends State<MapScreen> {
                     initialCenter: LatLng(
                         (pickupLatLng.latitude + dropLatLng.latitude) / 2,
                         (pickupLatLng.longitude + dropLatLng.longitude) / 2),
-                    initialZoom: 13,
+                    initialZoom: 9,
                     //
                     onMapReady: () {
                       c.isMapReady = true;
@@ -128,7 +128,7 @@ class _MapScreenState extends State<MapScreen> {
                           Polyline(
                             points: c.routePoints,
                             strokeWidth: 4,
-                            color: Colors.blue,
+                            color: Colors.deepPurpleAccent,
                           ),
                         ],
                       ),
@@ -146,10 +146,9 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ),
 
-                        // VIA 1
-                        if (//
-                         c.showVia1.value &&
-                            c.via1Lat != 0.0  && c.via1Lon != 0.0)
+
+                        ///                                                                      VIA 1
+                        if (c.showVia1.value && c.via1Lat != 0.0  && c.via1Lon != 0.0)
                           Marker(
                             point: LatLng(c.via1Lat, c.via1Lon),
                             width: 80,
@@ -181,10 +180,39 @@ class _MapScreenState extends State<MapScreen> {
                             //   ],
                             // ),
                           ),
-                        // VIA 2
+
+
+                        ///                                                       DISTANCE LABEL ON POLYLINE
+                        if (c.routeCenterPoint != null)
+                          Marker(
+                            point: c.routeCenterPoint!,
+                            width: 100,
+                            height: 50,
+                            child: Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(color: Colors.black26, blurRadius: 4)
+                                ],
+                              ),
+                              child: Text(
+                              "${c.totalRouteDistanceMiles.toStringAsFixed(2)} mi "
+                                // "\n ${c.estimatedTimeMinutes.toStringAsFixed(0)} min"
+                                ,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.small(),
+                              ),
+                            ),
+                          ),
+
+
+
+                        ///                                                           VIA 2
                         if (
-                        c.showVia2.value &&
-                            c.via2Lat != 0.0  && c.via2Lon != 0.0)
+                        c.showVia2.value && c.via2Lat != 0.0  && c.via2Lon != 0.0)
                           Marker(
                             point: LatLng(c.via2Lat, c.via2Lon),
                             width: 80,

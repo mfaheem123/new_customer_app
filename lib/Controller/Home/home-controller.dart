@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'package:intl/date_symbols.dart';
 import 'package:latlong2/latlong.dart';
 import '../../View/Deshboard/map_widget/map_controller.dart';
 import '../../api_servies/api_servies.dart';
@@ -114,8 +111,6 @@ class SwapController extends GetxController {
   RxList<Result> searchList = <Result>[].obs;
 
 
-
-
   Future<void> pickupLocation(String text) async {
     if (text.isEmpty) {
       searchList.clear();
@@ -178,8 +173,6 @@ class SwapController extends GetxController {
     // Loader OFF
     dropSearchLoading.value = false;
   }
-
-
 
 
   ///   ///============================= ======================== ================ ============   via 1 location search
@@ -289,6 +282,20 @@ class SwapController extends GetxController {
     fetchRoute();
     update();
   }
+  // void setVia1(double lat, double lon) {
+  //   via1Lat = lat;
+  //   via1Lon = lon;
+  //   fetchRoute();
+  //   update();
+  // }
+  //
+  // void setVia2(double lat, double lon) {
+  //   via2Lat = lat;
+  //   via2Lon = lon;
+  //   fetchRoute();
+  //   update();
+  // }
+
   void setVia1(double lat, double lon) {
     via1Lat = lat;
     via1Lon = lon;
@@ -305,20 +312,19 @@ class SwapController extends GetxController {
     update(["map"]);
   }
 
-void removePickUpField(){
+  void removePickUpField() {
+    pickUp.clear();
+    selectedPickUPLat = 0.0;
+    selectedPickUPLon = 0.0;
 
-  pickUp.clear();
-  selectedPickUPLat = 0.0;
-  selectedPickUPLon = 0.0;
 
+    fetchRoute();
+    update(["map"]);
+  }
 
-  fetchRoute();
-  update(["map"]);
-}
-
-  void removeDropOff(){
+  void removeDropOff() {
     dropOff.clear();
-    selectedDropLat= 0.0;
+    selectedDropLat = 0.0;
     selectedDropLon = 0.0;
 
 
@@ -326,20 +332,53 @@ void removePickUpField(){
     update(["map"]);
   }
 
+  double totalRouteDistanceMiles = 0.0; // miles
+  LatLng? routeCenterPoint;
+  double estimatedTimeMinutes = 0.0;
 
-  // void setVia1(double lat, double lon) {
-  //   via1Lat = lat;
-  //   via1Lon = lon;
-  //   fetchRoute();
-  //   update();
-  // }
+
+  void calculateRouteCenter() {
+    if (routePoints.isEmpty) {
+      routeCenterPoint = null;
+      update(["distance"]);
+      return;
+    }
+
+    routeCenterPoint = routePoints[routePoints.length ~/ 2];
+    update(["distance"]);
+  }
+
+  // void calculateRouteDistance() {
+  //   if (routePoints.length < 2) {
+  //     totalRouteDistanceMiles = 0;
+  //     routeCenterPoint = null;
+  //     update(["distance"]);
+  //     return;
+  //   }
   //
-  // void setVia2(double lat, double lon) {
-  //   via2Lat = lat;
-  //   via2Lon = lon;
-  //   fetchRoute();
-  //   update();
+  //   final Distance distance = Distance();
+  //   double totalMeters = 0;
+  //
+  //   for (int i = 0; i < routePoints.length - 1; i++) {
+  //     totalMeters += distance(routePoints[i], routePoints[i + 1]);
+  //   }
+  //
+  //   //  METERS → MILES
+  //   totalRouteDistanceMiles = totalMeters * 0.000621371;
+  //
+  //   //  ETA CALCULATION
+  //   double averageSpeedMph = 30; // change if needed
+  //   double timeInHours = totalRouteDistanceMiles / averageSpeedMph;
+  //   estimatedTimeMinutes = timeInHours * 60;
+  //
+  //   // Polyline center
+  //   routeCenterPoint = routePoints[routePoints.length ~/ 2];
+  //
+  //   update(["distance"]);
   // }
+
+
+
 
   void removeFields(int fieldNumber) {
     if (fieldNumber == 1) {
@@ -360,10 +399,9 @@ void removePickUpField(){
       via2Lon = 0.0;
     }
 
-    fetchRoute();       //  route recalc
-    update(["map"]);    //  map rebuild
+    fetchRoute(); //  route recalc
+    update(["map"]); //  map rebuild
   }
-
 
 
   Future<void> fetchRoute() async {
@@ -372,18 +410,21 @@ void removePickUpField(){
         selectedDropLat == 0.0 ||
         selectedDropLon == 0.0) return;
 
-    final requestId = ++_routeRequestId; // track latest call
+    final requestId = ++_routeRequestId; // Track latest API call
 
     String coordinates = "${selectedPickUPLon},${selectedPickUPLat}";
 
+    // VIA 1
     if (via1Lat != 0.0 && via1Lon != 0.0) {
       coordinates += ";${via1Lon},${via1Lat}";
     }
 
+    // VIA 2
     if (via2Lat != 0.0 && via2Lon != 0.0) {
       coordinates += ";${via2Lon},${via2Lat}";
     }
 
+    // DROP
     coordinates += ";${selectedDropLon},${selectedDropLat}";
 
     final url =
@@ -391,26 +432,49 @@ void removePickUpField(){
         '?overview=full&geometries=geojson';
 
     try {
-      final dio = Dio();
-      final response = await dio.get(url);
+      final response = await Dio().get(url);
 
-      // 🧠 Ignore old responses
+      // Ignore old responses
       if (requestId != _routeRequestId) return;
 
       if (response.statusCode == 200) {
-        final coords = response.data['routes'][0]['geometry']['coordinates'];
+        final route = response.data['routes'][0];
 
+        /// 🟣 POLYLINE POINTS
+        final coords = route['geometry']['coordinates'];
         routePoints = coords.map<LatLng>((p) {
-          return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
+          return LatLng(
+            (p[1] as num).toDouble(),
+            (p[0] as num).toDouble(),
+          );
         }).toList();
 
-        update(["map"]); // 👈 only rebuild map
+        /// DISTANCE (meters → miles)
+        double distanceMeters = (route['distance'] as num).toDouble();
+        totalRouteDistanceMiles = distanceMeters * 0.000621371;
 
-        if (isMapReady && mapController != null) {
-          Future.delayed(const Duration(milliseconds: 200), () {
+        ///  DURATION (seconds → minutes)
+        double durationSeconds = (route['duration'] as num).toDouble();
+        estimatedTimeMinutes = durationSeconds / 60;
+
+        ///  CENTER POINT FOR DISTANCE LABEL
+        if (routePoints.isNotEmpty) {
+          routeCenterPoint = routePoints[routePoints.length ~/ 2];
+        } else {
+          routeCenterPoint = null;
+        }
+
+        update(["map", "distance"]);
+
+        ///  AUTO FIT MAP TO ROUTE
+        if (isMapReady && mapController != null && routePoints.isNotEmpty) {
+          Future.delayed(const Duration(milliseconds: 100), () {
             final bounds = LatLngBounds.fromPoints(routePoints);
             mapController!.fitCamera(
-              CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(60)),
+              CameraFit.bounds(
+                bounds: bounds,
+                padding: const EdgeInsets.all(60),
+              ),
             );
           });
         }
@@ -421,28 +485,26 @@ void removePickUpField(){
   }
 
 
-  // Future<void> fetchRoute() async {
+
+
+// Future<void> fetchRoute() async {
   //   if (selectedPickUPLat == 0.0 ||
   //       selectedPickUPLon == 0.0 ||
   //       selectedDropLat == 0.0 ||
   //       selectedDropLon == 0.0) return;
   //
-  //   String coordinates = "";
+  //   final requestId = ++_routeRequestId; // track latest call
   //
-  //   // Pickup
-  //   coordinates += "${selectedPickUPLon},${selectedPickUPLat}";
+  //   String coordinates = "${selectedPickUPLon},${selectedPickUPLat}";
   //
-  //   // Via 1 (optional)
   //   if (via1Lat != 0.0 && via1Lon != 0.0) {
   //     coordinates += ";${via1Lon},${via1Lat}";
   //   }
   //
-  //   // Via 2 (optional)
   //   if (via2Lat != 0.0 && via2Lon != 0.0) {
   //     coordinates += ";${via2Lon},${via2Lat}";
   //   }
   //
-  //   // Drop
   //   coordinates += ";${selectedDropLon},${selectedDropLat}";
   //
   //   final url =
@@ -453,61 +515,32 @@ void removePickUpField(){
   //     final dio = Dio();
   //     final response = await dio.get(url);
   //
+  //     // 🧠 Ignore old responses
+  //     if (requestId != _routeRequestId) return;
+  //
   //     if (response.statusCode == 200) {
-  //       final data = response.data;
-  //       final coords = data['routes'][0]['geometry']['coordinates'] as List?;
+  //       final coords = response.data['routes'][0]['geometry']['coordinates'];
   //
-  //       if (coords != null) {
-  //         routePoints = coords.map<LatLng>((point) {
-  //           final lat = (point[1] as num).toDouble();
-  //           final lon = (point[0] as num).toDouble();
-  //           return LatLng(lat, lon);
-  //         }).toList();
+  //       routePoints = coords.map<LatLng>((p) {
+  //         return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
+  //       }).toList();
+  //
+  //       update(["map"]); // 👈 only rebuild map\
+  //       calculateRouteDistance();
+  //
+  //       if (isMapReady && mapController != null) {
+  //         Future.delayed(const Duration(milliseconds: 200), () {
+  //           final bounds = LatLngBounds.fromPoints(routePoints);
+  //           mapController!.fitCamera(
+  //             CameraFit.bounds(
+  //                 bounds: bounds, padding: const EdgeInsets.all(60)),
+  //           );
+  //         });
   //       }
-  //
-  //       update();
   //     }
   //   } catch (e) {
   //     print("Route error: $e");
   //   }
   // }
-
-
-///
-
-//   List<LatLng> routePoints = [];
-// // ✅ Fetch route from OSRM API
-// Future<void> fetchRoute() async  {
-//   if (selectedPickUPLat == 0.0 ||
-//       selectedPickUPLon == 0.0 ||
-//       selectedDropLat == 0.0 ||
-//       selectedDropLon == 0.0) return;
-//
-//   final url =
-//       'https://router.project-osrm.org/route/v1/driving/'
-//       '${selectedPickUPLon},${selectedPickUPLat};'
-//       '${selectedDropLon},${selectedDropLat}'
-//       '?overview=full&geometries=geojson';
-//
-//   try {
-//     final dio = Dio();
-//     final response = await dio.get(url);
-//
-//     if (response.statusCode == 200) {
-//       final data = response.data;
-//       final coordinates = data['routes'][0]['geometry']['coordinates'];
-//
-//       routePoints = coordinates.map<LatLng>((c) {
-//         return LatLng(c[1], c[0]); // lat, lon order important
-//       }).toList();
-//
-//       update(); // rebuild GetBuilder (MapScreen)
-//     } else {
-//       print("Error fetching route: ${response.statusCode}");
-//     }
-//   } catch (e) {
-//     print("Exception fetching route: $e");
-//   }
-// }
 
 }
