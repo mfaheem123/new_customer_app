@@ -11,8 +11,8 @@ class SwapController extends GetxController {
 
 
   var viaControllers = <TextEditingController>[].obs;
-  final TextEditingController pickUp = TextEditingController(); // observable list
-  final TextEditingController dropOff = TextEditingController(); // observable list
+  final TextEditingController pickUp = TextEditingController();
+  final TextEditingController dropOff = TextEditingController();
 
   final TextEditingController viaController1 = TextEditingController();
   final TextEditingController viaController2 = TextEditingController();
@@ -119,14 +119,24 @@ class SwapController extends GetxController {
 
 
     searchloading.value = true;
-
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp
-          .text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
+      //'services/search',
+      // queryParameters: {
+      //   'search':HomeController.text
+      // }
     );
+
+    // var response = await ApiService.get(
+    //   '',
+    //   fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp
+    //       .text.toUpperCase()}',
+    //   auth: true,
+    //   isProgressShow: false,
+    // );
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -155,13 +165,23 @@ class SwapController extends GetxController {
     dropSearchLoading.value = true;
 
     // API call
+
     var response = await ApiService.get(
       '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${text
-          .toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${dropOff.text.toUpperCase()}',
       auth: true,
-      isProgressShow: false, // User loader nahi chahiye
+      isProgressShow: false,
+      //'services/search',
+      // queryParameters: {
+      //   'search':HomeController.text
+      // }
     );
+    // var response = await ApiService.get(
+    //   '',
+    //   fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${dropOff.text.toUpperCase()}',
+    //   auth: true,
+    //   isProgressShow: false, // User loader nahi chahiye
+    // );
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -192,12 +212,23 @@ class SwapController extends GetxController {
     viaSearchloading1.value = true;
 
     var response = await ApiService.get(
+      //'services/search',
       '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1
-          .text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
+      // queryParameters: {
+      //   'search':HomeController.text
+      // }
     );
+
+    // var response = await ApiService.get(
+    //   '',
+    //   fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1
+    //       .text.toUpperCase()}',
+    //   auth: true,
+    //   isProgressShow: false,
+    // );
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -224,13 +255,24 @@ class SwapController extends GetxController {
 
     viaSearchloading2.value = true;
 
+
     var response = await ApiService.get(
+      //'services/search',
       '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2
-          .text.toUpperCase()}',
+      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
+      // queryParameters: {
+      //   'search':HomeController.text
+      // }
     );
+    // var response = await ApiService.get(
+    //   '',
+    //   fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2
+    //       .text.toUpperCase()}',
+    //   auth: true,
+    //   isProgressShow: false,
+    // );
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
