@@ -88,6 +88,10 @@ class HomeDriver extends StatelessWidget {
                                       onChanged: (v) {
                                         homeC.pickupLocation(v);
                                       },
+                                        onTap: () {
+                                          homeC.activeField.value = "pickup";
+                                        }
+
                                     ),
                                   ),
                                   const SizedBox(height: 12),
@@ -209,6 +213,9 @@ class HomeDriver extends StatelessWidget {
                                       ),
                                       onChanged: (v) {
                                         homeC.dropOffLocation(v);
+                                      },
+                                      onTap: (){
+                                        homeC.activeField.value = "drop";
                                       },
                                     ),
                                   ),

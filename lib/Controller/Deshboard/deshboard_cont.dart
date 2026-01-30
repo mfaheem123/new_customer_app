@@ -148,14 +148,14 @@ class DeshBoardAddHome_Controller extends GetxController {
     homeSearchloading.value = true;
 
     var response = await ApiService.get(
-      //'services/search',
-      '',
-      fullUrl: 'http://192.168.110.4:5000/api/services/search?search=${HomeController.text.toUpperCase()}',
+      'services/search',
+      // '',
+      // fullUrl: 'http://192.168.110.4:5000/api/services/search?search=${HomeController.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
-      // queryParameters: {
-      //   'search':HomeController.text
-      // }
+      queryParameters: {
+        'search':HomeController.text
+      }
     );
 
     if ( response!.statusCode == 200) {
@@ -271,14 +271,14 @@ class DeshBoardAddHome_Controller extends GetxController {
     workSearchloading.value = true;
 
     var response = await ApiService.get(
-      //'services/search',
-      '',
-      fullUrl: 'http://192.168.110.4:5000/api/services/search?search=${WorkAdressController.text.toUpperCase()}',
+      'services/search',
+      // '',
+      // fullUrl: 'http://192.168.110.4:5000/api/services/search?search=${WorkAdressController.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
-      // queryParameters: {
-      //   'search':WorkAdressController.text
-      // }
+      queryParameters: {
+        'search':WorkAdressController.text
+      }
     );
 
     if ( response!.statusCode == 200) {

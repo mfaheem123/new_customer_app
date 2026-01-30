@@ -21,6 +21,9 @@ class CustomTextField extends StatelessWidget {
   final bool enabled;
   final dynamic inputFormatters;
   final FocusNode? focusNode;
+  final VoidCallback? onTap;
+  final bool readOnly;
+
 
   const CustomTextField({
     super.key,
@@ -47,6 +50,9 @@ class CustomTextField extends StatelessWidget {
     this.enabled = true,
     this.inputFormatters,
     this.focusNode,
+    this.onTap,
+    this.readOnly = false,
+
 
   });
 
@@ -70,6 +76,8 @@ class CustomTextField extends StatelessWidget {
       maxLines: obscureText ? 1 : maxLines,
       inputFormatters: [],
       style: AppTextStyles.regular(color: Colors.black),
+      onTap: onTap,
+      readOnly: readOnly,
 
       decoration: InputDecoration(
         label: lable,

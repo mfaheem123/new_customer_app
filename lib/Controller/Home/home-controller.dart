@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import '../../View/Deshboard/map_widget/map_controller.dart';
+import '../../View/Home/model/Airportl_ist_model.dart';
 import '../../api_servies/api_servies.dart';
 import 'model/pickuplocationmodel.dart';
 
@@ -23,15 +24,17 @@ class SwapController extends GetxController {
       ? Get.find<PickLocationController>()
       : Get.put(PickLocationController());
 
-
+//===============================================   pick UP lication
   void pickupCurrentLocation() {
     // pickUp.text = mapC.currentAddress.value;
     pickUp.text = mapC.address.value;
   }
 
-
+///======================================================================================  listWidget working and api
   var selectedItem = (0).obs;
   RxInt selectedIndex = 0.obs;
+
+  RxString activeField = "".obs;
 
 
   List<Map<String, dynamic>> iconItems = [
@@ -40,33 +43,158 @@ class SwapController extends GetxController {
     {"name": "Plane", "icon": Icons.directions_bus},
   ];
 
+  //
+  // List<String> busStops = [
+  //   "Karachi Cantt Station",
+  //   "Lahore Railway Station",
+  //   "Islamabad Railway Station",
+  //   "Rawalpindi Railway Station",
+  //   "Faisalabad Station",
+  //   "PIDC Bus Stop",
+  //   "Tariq Road Bus Stop",
+  //   "Clifton Teen Talwar Bus Stop",
+  //   "Shah Faisal Colony Stop",
+  //   "Saddar Mobile Market Stop",
+  //   "Cantt Station Bus Stop",
+  //   "Lahore Thokar Niaz Baig Stop",
+  //   "Kalma Chowk Bus Stop",
+  //   "Model Town Link Road Stop",
+  //   "Anarkali Stop",
+  //   "Rawalpindi Faizabad Bus Stop",
+  //   "Murree Road Committee Chowk Stop",
+  //   "Peshawar Khyber Bazaar Stop",
+  //   "Faisalabad D Ground Bus Stop"
+  // ];
 
-  List<String> busStops = [
-    "Korangi 2 No. Bus Stop",
-    "Nagan Chowrangi Bus Stop",
-    "Gulshan Chowrangi Bus Stop",
-    "Sohrab Goth Bus Stop",
-    "Johar Mor Bus Stop",
-    "Kala Pul Bus Stop",
-    "PIDC Bus Stop",
-    "Tariq Road Bus Stop",
-    "Clifton Teen Talwar Bus Stop",
-    "Shah Faisal Colony Stop",
-    "Saddar Mobile Market Stop",
-    "Cantt Station Bus Stop",
-    "Lahore Thokar Niaz Baig Stop",
-    "Kalma Chowk Bus Stop",
-    "Model Town Link Road Stop",
-    "Anarkali Stop",
-    "Rawalpindi Faizabad Bus Stop",
-    "Murree Road Committee Chowk Stop",
-    "Peshawar Khyber Bazaar Stop",
-    "Faisalabad D Ground Bus Stop"
+  /// 🔹 THIS list UI me show ho rahi hai
+  List<String> busStops = [];
+
+  /// 🔹 Airport API data
+  List<Location> airportLocations = [];
+
+  /// 🔹 Train static data
+  List<String> trainStops = [
+    "Karachi Cantt Station",
+    "Lahore Railway Station",
+    "Islamabad Railway Station",
+    "Rawalpindi Railway Station",
+    "Faisalabad Station",
   ];
 
+
+
+
+  RxBool airportLoading = false.obs;
+
+  Future<void> fetchAirports() async {
+    airportLoading.value = true;
+    update();
+
+    var response = await ApiService.get(
+      "airports/get",   // 👈 base url ApiService me hoga
+      auth: true,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      final data = AirportList.fromJson(response.data);
+
+      airportLocations = data.locations ?? [];
+
+      // UI list ke liye sirf names
+      busStops = airportLocations.map((e) => e.name ?? "").toList();
+    } else {
+      airportLocations.clear();
+      busStops.clear();
+    }
+
+    airportLoading.value = false;
+    update();
+  }
+
+
+
+///
   void changeIndex(int index) {
     selectedIndex.value = index;
+
+    if (index != 1) {
+      // Airport se bahar gaye
+      selectedPickUPLat = 0.0;
+      selectedPickUPLon = 0.0;
+    }
+
+    if (index == 1) {
+      if (airportLocations.isEmpty) {
+        fetchAirports();
+      } else {
+        busStops = airportLocations.map((e) => e.name ?? "").toList();
+      }
+    } else if (index == 2) {
+      busStops = trainStops;
+    }
+
+    update();
   }
+
+
+ /// field focus
+  void selectLocation(int index) {
+    if (activeField.value == "pickup") {
+      selectPickup(index);
+    } else {
+      selectDrop(index);
+    }
+  }
+
+
+
+  void selectPickup(int index) {
+    pickUp.text = busStops[index];
+
+    // ✈️ AIRPORT selected
+    if (selectedIndex.value == 1) {
+      final loc = airportLocations[index];
+
+      final   lat = double.tryParse(loc.latitude ?? "");
+      final lng = double.tryParse(loc.longitude ?? "");
+
+      if (lat != null && lng != null) {
+        selectedPickUPLat = lat;
+        selectedPickUPLon = lng;
+
+        print("✅ Airport Pickup set: $lat , $lng");
+
+        fetchRoute(); // 🔥 route auto update
+        update(["map", "distance"]);
+      }
+    }
+  }
+
+  void selectDrop(int index) {
+    dropOff.text = busStops[index]; // airport ya train list
+
+    // Agar airport drop hai
+    if (selectedIndex.value == 1) {
+      final loc = airportLocations[index];
+
+      final lat = double.tryParse(loc.latitude ?? "");
+      final lng = double.tryParse(loc.longitude ?? "");
+
+      if (lat != null && lng != null) {
+        selectedDropLat = lat;
+        selectedDropLon = lng;
+
+        print("✅ Airport Drop set: $lat , $lng");
+
+        fetchRoute(); // route auto update
+        update(["map", "distance"]);
+      }
+    }
+  }
+
+
+
+  ///----------------------------------------------------------------------------------------  where to go
 
 
   void swapField() {
@@ -120,14 +248,15 @@ class SwapController extends GetxController {
 
     searchloading.value = true;
     var response = await ApiService.get(
-      '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp.text.toUpperCase()}',
+      'services/search',
+      //'',
+      // fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
-      //'services/search',
-      // queryParameters: {
-      //   'search':HomeController.text
-      // }
+
+      queryParameters: {
+        'search':pickUp.text
+      }
     );
 
     // var response = await ApiService.get(
@@ -167,14 +296,15 @@ class SwapController extends GetxController {
     // API call
 
     var response = await ApiService.get(
-      '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${dropOff.text.toUpperCase()}',
+      'services/search',
+      // '',
+      // fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${dropOff.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
-      //'services/search',
-      // queryParameters: {
-      //   'search':HomeController.text
-      // }
+
+      queryParameters: {
+        'search':dropOff.text
+      }
     );
     // var response = await ApiService.get(
     //   '',
@@ -212,14 +342,14 @@ class SwapController extends GetxController {
     viaSearchloading1.value = true;
 
     var response = await ApiService.get(
-      //'services/search',
-      '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1.text.toUpperCase()}',
+      'services/search',
+      // '',
+      // fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
-      // queryParameters: {
-      //   'search':HomeController.text
-      // }
+      queryParameters: {
+        'search':viaController1.text
+      }
     );
 
     // var response = await ApiService.get(
@@ -257,14 +387,14 @@ class SwapController extends GetxController {
 
 
     var response = await ApiService.get(
-      //'services/search',
-      '',
-      fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2.text.toUpperCase()}',
+      'services/search',
+      // '',
+      // fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
-      // queryParameters: {
-      //   'search':HomeController.text
-      // }
+      queryParameters: {
+        'search':viaController2.text
+      }
     );
     // var response = await ApiService.get(
     //   '',
@@ -452,7 +582,8 @@ class SwapController extends GetxController {
         selectedDropLat == 0.0 ||
         selectedDropLon == 0.0) return;
 
-    final requestId = ++_routeRequestId; // Track latest API call
+    // Track latest API call
+    final requestId = ++_routeRequestId;
 
     String coordinates = "${selectedPickUPLon},${selectedPickUPLat}";
 

@@ -231,9 +231,7 @@ class _containerWidgetState extends State<containerWidget> {
                               ),
                         
                               leading: Icon(
-                                controller.iconItems[controller
-                                    .selectedIndex
-                                    .value]["icon"],
+                                controller.iconItems[controller.selectedIndex.value]["icon"],
                                 color: CustomColor.textColor,
                                 size: 25,
                               ),
@@ -257,7 +255,8 @@ class _containerWidgetState extends State<containerWidget> {
                                 color: CustomColor.textColor,
                                 size: 25,
                               ),
-                        
+
+
                             ),
                           ],
                         ),
@@ -276,26 +275,37 @@ class _containerWidgetState extends State<containerWidget> {
                           ? MediaQuery.of(context).size.height * 0.25   // 1 VIA → medium
                           : MediaQuery.of(context).size.height * 0.35,  // 0 VIA → large
 
-                      child: ListView.builder(
+                      child: Obx(()=> homeC.airportLoading.value
+                          ?  LinearProgressIndicator(
+                        minHeight: 3,
+                        color: CustomColor.Icon_Color,
+                        backgroundColor: Colors.white24,
+                      )
+                      : ListView.builder(
                         itemCount: homeC.busStops.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            title: Text(
-                              homeC.busStops[index],
-                              style: AppTextStyles.regular(),
-                            ),
+                              title: Text(
+                                homeC.busStops[index],
+                                style: AppTextStyles.medium(),
+                              ),
 
-                            leading: Icon(
-                              controller.iconItems[controller
-                                  .selectedIndex
-                                  .value]["icon"],
-                              color: CustomColor.textColor,
-                              size: 25,
-                            ),
-
+                              leading: Icon(
+                                controller.iconItems[controller
+                                    .selectedIndex
+                                    .value]["icon"],
+                                color: CustomColor.textColor,
+                                size: 25,
+                              ),
+                              onTap: () {
+                                homeC.selectLocation(index);
+                                //homeC.selectDrop(index);
+                                // Get.back();
+                              }
                           );
                         },
-                      ),
+                      ),),
+
                     ),
                   ],
                 ),
