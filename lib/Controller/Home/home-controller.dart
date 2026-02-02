@@ -34,7 +34,7 @@ class SwapController extends GetxController {
   var selectedItem = (0).obs;
   RxInt selectedIndex = 0.obs;
 
-  RxString activeField = "".obs;
+
 
 
   List<Map<String, dynamic>> iconItems = [
@@ -136,62 +136,125 @@ class SwapController extends GetxController {
     update();
   }
 
-
+  RxString activeField = "pickup".obs;
  /// field focus
-  void selectLocation(int index) {
-    if (activeField.value == "pickup") {
-      selectPickup(index);
-    } else {
-      selectDrop(index);
-    }
-  }
+  void selectLocationFromList(int index) {
+    String address = "";
+    double lat = 0.0;
+    double lng = 0.0;
 
-
-
-  void selectPickup(int index) {
-    pickUp.text = busStops[index];
-
-    // ✈️ AIRPORT selected
+    /// ✈️ AIRPORT
     if (selectedIndex.value == 1) {
       final loc = airportLocations[index];
+      address = loc.name ?? loc.address ?? "";
+      lat = double.tryParse(loc.latitude ?? "0") ?? 0;
+      lng = double.tryParse(loc.longitude ?? "0") ?? 0;
+    }
 
-      final   lat = double.tryParse(loc.latitude ?? "");
-      final lng = double.tryParse(loc.longitude ?? "");
+    /// 🚆 TRAIN (static — lat/lng nahi)
+    else if (selectedIndex.value == 2) {
+      address = trainStops[index];
+    }
 
-      if (lat != null && lng != null) {
+    /// 🏠 ADDRESS (home/work)
+    else {
+      address = busStops[index];
+    }
+
+    /// 🔥 FIELD TARGETING
+    switch (activeField.value) {
+      case "pickup":
+        pickUp.text = address;
         selectedPickUPLat = lat;
         selectedPickUPLon = lng;
+        print("🟢 PICKUP SET → $address | Lat: $lat | Lng: $lng");
+        break;
 
-        print("✅ Airport Pickup set: $lat , $lng");
+      case "via1":
+        viaController1.text = address;
+        via1Lat = lat;
+        via1Lon = lng;
+        showVia1.value = true;
+        print("🟡 VIA 1 SET → $address | Lat: $lat | Lng: $lng");
+        break;
 
-        fetchRoute(); // 🔥 route auto update
-        update(["map", "distance"]);
-      }
-    }
-  }
+      case "via2":
+        viaController2.text = address;
+        via2Lat = lat;
+        via2Lon = lng;
+        showVia2.value = true;
+        print("🟠 VIA 2 SET → $address | Lat: $lat | Lng: $lng");
+        break;
 
-  void selectDrop(int index) {
-    dropOff.text = busStops[index]; // airport ya train list
-
-    // Agar airport drop hai
-    if (selectedIndex.value == 1) {
-      final loc = airportLocations[index];
-
-      final lat = double.tryParse(loc.latitude ?? "");
-      final lng = double.tryParse(loc.longitude ?? "");
-
-      if (lat != null && lng != null) {
+      case "drop":
+        dropOff.text = address;
         selectedDropLat = lat;
         selectedDropLon = lng;
-
-        print("✅ Airport Drop set: $lat , $lng");
-
-        fetchRoute(); // route auto update
-        update(["map", "distance"]);
-      }
+        print("🔴 DROP SET → $address | Lat: $lat | Lng: $lng");
+        break;
     }
+
+
+    fetchRoute();
+      update(["map", "distance"]);
+
   }
 
+
+  //  void selectLocation(int index) {
+ //    if (activeField.value == "pickup") {
+ //      selectPickup(index);
+ //    } else {
+ //      selectDrop(index);
+ //    }
+ //  }
+
+
+  //
+  // void selectPickup(int index) {
+  //   pickUp.text = busStops[index];
+  //
+  //   // ✈️ AIRPORT selected
+  //   if (selectedIndex.value == 1) {
+  //     final loc = airportLocations[index];
+  //
+  //     final   lat = double.tryParse(loc.latitude ?? "");
+  //     final lng = double.tryParse(loc.longitude ?? "");
+  //
+  //     if (lat != null && lng != null) {
+  //       selectedPickUPLat = lat;
+  //       selectedPickUPLon = lng;
+  //
+  //       print("✅ Airport Pickup set: $lat , $lng");
+  //
+  //       fetchRoute(); // 🔥 route auto update
+  //       update(["map", "distance"]);
+  //     }
+  //   }
+  // }
+  //
+  // void selectDrop(int index) {
+  //   dropOff.text = busStops[index]; // airport ya train list
+  //
+  //   // Agar airport drop hai
+  //   if (selectedIndex.value == 1) {
+  //     final loc = airportLocations[index];
+  //
+  //     final lat = double.tryParse(loc.latitude ?? "");
+  //     final lng = double.tryParse(loc.longitude ?? "");
+  //
+  //     if (lat != null && lng != null) {
+  //       selectedDropLat = lat;
+  //       selectedDropLon = lng;
+  //
+  //       print("✅ Airport Drop set: $lat , $lng");
+  //
+  //       fetchRoute(); // route auto update
+  //       update(["map", "distance"]);
+  //     }
+  //   }
+  // }
+  //
 
 
   ///----------------------------------------------------------------------------------------  where to go
@@ -550,30 +613,47 @@ class SwapController extends GetxController {
   // }
 
 
-
-
-  void removeFields(int fieldNumber) {
-    if (fieldNumber == 1) {
-      viaController1.clear();
-      showVia1.value = false;
-
-      // 💥 CRITICAL
-      via1Lat = 0.0;
-      via1Lon = 0.0;
-    }
-
-    else if (fieldNumber == 2) {
-      viaController2.clear();
-      showVia2.value = false;
-
-      // 💥 CRITICAL
-      via2Lat = 0.0;
-      via2Lon = 0.0;
-    }
-
-    fetchRoute(); //  route recalc
-    update(["map"]); //  map rebuild
+  void removeVia1() {
+    via1Lat = 0;
+    via1Lon = 0;
+    viaController1.clear();
+    showVia1.value = false;
+    fetchRoute();
+    update(["map", "distance"]);
   }
+
+  void removeVia2() {
+    via2Lat = 0;
+    via2Lon = 0;
+    viaController2.clear();
+    showVia2.value = false;
+    fetchRoute();
+    update(["map", "distance"]);
+  }
+
+
+  // void removeFields(int fieldNumber) {
+  //   if (fieldNumber == 1) {
+  //     viaController1.clear();
+  //     showVia1.value = false;
+  //
+  //     // 💥 CRITICAL
+  //     via1Lat = 0.0;
+  //     via1Lon = 0.0;
+  //   }
+  //
+  //   else if (fieldNumber == 2) {
+  //     viaController2.clear();
+  //     showVia2.value = false;
+  //
+  //     // 💥 CRITICAL
+  //     via2Lat = 0.0;
+  //     via2Lon = 0.0;
+  //   }
+  //
+  //   fetchRoute(); //  route recalc
+  //   update(["map"]); //  map rebuild
+  // }
 
 
   Future<void> fetchRoute() async {

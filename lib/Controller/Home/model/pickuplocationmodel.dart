@@ -50,12 +50,19 @@ class Result {
   });
 
 
+  // factory Result.fromJson(Map<String, dynamic> json) => Result(
+  //   name: json["name"],
+  //   postcode: json["postcode"],
+  //   lat: json["lat"]?.toDouble(),
+  //   lon: json["lon"]?.toDouble(),
+  // );
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     name: json["name"],
     postcode: json["postcode"],
-    lat: json["lat"]?.toDouble(),
-    lon: json["lon"]?.toDouble(),
+    lat: double.tryParse(json["lat"]?.toString() ?? '') ?? 0.0,
+    lon: double.tryParse(json["lon"]?.toString() ?? '') ?? 0.0,
   );
+
 
   Map<String, dynamic> toJson() => {
     "name": name,

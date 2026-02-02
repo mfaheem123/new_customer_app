@@ -125,14 +125,15 @@ class HomeDriver extends StatelessWidget {
                                                     onChanged: (v) {
                                                       homeC.viaLocation1(v);
                                                     },
+                                                    onTap: (){
+                                                      homeC.activeField.value = "via1";
+                                                    },
                                                   ),
                                                 ),
                                                 const SizedBox(width: 5),
                                                 GestureDetector(
                                                   onTap: () {
-                                                    homeC.removeFields(1);
-
-
+                                                    homeC.removeVia1();
                                                   },
                                                   child: const Icon(
                                                     Icons.clear,
@@ -171,24 +172,24 @@ class HomeDriver extends StatelessWidget {
                                                     onChanged: (v) {
                                                       homeC.viaLocation2(v);
                                                     },
+                                                    onTap: (){
+                                                      homeC.activeField.value = "via2";
+                                                    },
                                                   ),
                                                 ),
                                                 const SizedBox(width: 5),
                                                 GestureDetector(
                                                   onTap: () =>
-                                                      homeC.removeFields(2),
+                                                      homeC.removeVia2(),
                                                   child: const Icon(
                                                     Icons.clear,
-                                                    color: CustomColor
-                                                        .Icon_Color,
+                                                    color: CustomColor.Icon_Color,
                                                     size: 20,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          if (homeC.showVia2
-                                              .value) const SizedBox(
-                                              height: 12),
+                                          if (homeC.showVia2.value) const SizedBox(height: 12),
                                         ],
                                       )),
 
@@ -382,13 +383,13 @@ class HomeDriver extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              Get.to(MapScreen());
-                              // Get.dialog(
-                              //   const Dialog(
-                              //     backgroundColor: Color(0xFF231F20),
-                              //     child: Dialogbox(),
-                              //   ),
-                              // );
+                              // Get.to(MapScreen());
+                              Get.dialog(
+                                const Dialog(
+                                  backgroundColor: Color(0xFF231F20),
+                                  child: Dialogbox(),
+                                ),
+                              );
                             },
                           ),
                         ),

@@ -1,6 +1,5 @@
 ///===================================================== === >>   (Address/ Airport / station) container and list hai ini teeno ki
 
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Controller/Home/home-controller.dart';
@@ -18,25 +17,22 @@ class containerWidget extends StatefulWidget {
 }
 
 class _containerWidgetState extends State<containerWidget> {
-
   final homeC = Get.isRegistered<SwapController>()
       ? Get.find<SwapController>()
-      :  Get.put(SwapController());
+      : Get.put(SwapController());
 
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
-      :  Get.put(profileModelController());
-
+      : Get.put(profileModelController());
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SwapController>(
       builder: (controller) {
         return Container(
-         // color: Colors.black,
+          // color: Colors.black,
           child: Column(
             children: [
-
               // ================================================ Address / Airoplane / Train  Coloum
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 15),
@@ -54,7 +50,7 @@ class _containerWidgetState extends State<containerWidget> {
                   children: [
                     // ==========================================================       Address
                     Obx(
-                          () => GestureDetector(
+                      () => GestureDetector(
                         onTap: () {
                           homeC.selectedItem(0);
                           homeC.changeIndex(0);
@@ -73,8 +69,7 @@ class _containerWidgetState extends State<containerWidget> {
                                 : Colors.white10,
                           ),
                           child: Column(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
                                 Icons.location_on,
@@ -89,8 +84,7 @@ class _containerWidgetState extends State<containerWidget> {
                                 style: AppTextStyles.small(
                                   weight: FontWeight.bold,
                                   size: 11,
-                                  color:
-                                  homeC.selectedItem.value == 0
+                                  color: homeC.selectedItem.value == 0
                                       ? Colors.black
                                       : Colors.white,
                                 ),
@@ -103,7 +97,7 @@ class _containerWidgetState extends State<containerWidget> {
 
                     // =================== Airport ===================
                     Obx(
-                          () => GestureDetector(
+                      () => GestureDetector(
                         onTap: () {
                           homeC.selectedItem(1);
                           homeC.changeIndex(1);
@@ -119,8 +113,7 @@ class _containerWidgetState extends State<containerWidget> {
                                 : Colors.white10,
                           ),
                           child: Column(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
                                 Icons.airplanemode_active,
@@ -147,7 +140,7 @@ class _containerWidgetState extends State<containerWidget> {
 
                     // =================== Train ===================
                     Obx(
-                          () => GestureDetector(
+                      () => GestureDetector(
                         onTap: () {
                           homeC.selectedItem(2);
                           homeC.changeIndex(2);
@@ -166,8 +159,7 @@ class _containerWidgetState extends State<containerWidget> {
                                 : Colors.white10,
                           ),
                           child: Column(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
                                 Icons.train_outlined,
@@ -182,8 +174,7 @@ class _containerWidgetState extends State<containerWidget> {
                                 style: AppTextStyles.small(
                                   weight: FontWeight.bold,
 
-                                  color:
-                                  homeC.selectedItem.value == 2
+                                  color: homeC.selectedItem.value == 2
                                       ? Colors.black
                                       : Colors.white,
                                 ),
@@ -201,121 +192,144 @@ class _containerWidgetState extends State<containerWidget> {
 
               //===========================-========================  list show addresses
               Obx(
-                    () => Column(
+                () => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     controller.selectedIndex.value == 0
-                        ?
-                    SizedBox(
-                      height:MediaQuery.of(context).size.height*0.19,
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.19,
 
-                      //color: Colors.grey,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                          mainAxisAlignment:
-                          MainAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              onTap: () {
-                                Get.to(AddHomeScreen());
-                              },
-                              title: Text(
-                                "Home",
-                                style: AppTextStyles.regular(),
+                            //color: Colors.grey,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  ListTile(
+                                    onTap: () {
+                                      Get.to(AddHomeScreen());
+                                    },
+                                    title: Text(
+                                      "Home",
+                                      style: AppTextStyles.regular(),
+                                    ),
+                                    subtitle: Text(
+                                      profileController
+                                              .profileData
+                                              ?.addhomeAddress ??
+                                          'Address',
+                                      style: AppTextStyles.small(),
+                                    ),
+
+                                    leading: Icon(
+                                      controller.iconItems[controller
+                                          .selectedIndex
+                                          .value]["icon"],
+                                      color: CustomColor.textColor,
+                                      size: 25,
+                                    ),
+                                  ),
+
+                                  ListTile(
+                                    onTap: () {
+                                      Get.to(AddWork_Screen());
+                                    },
+                                    title: Text(
+                                      "Add Work",
+                                      style: AppTextStyles.regular(),
+                                    ),
+                                    subtitle: Text(
+                                      profileController
+                                              .profileData
+                                              ?.addworkAddress ??
+                                          'Address',
+                                      style: AppTextStyles.small(),
+                                    ),
+                                    leading: Icon(
+                                      controller.iconItems[controller
+                                          .selectedIndex
+                                          .value]["icon"],
+                                      color: CustomColor.textColor,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              subtitle:   Text(
-                                profileController.profileData?.addhomeAddress ?? 'Address',
-                                style: AppTextStyles.small(),
-                              ),
-                        
-                              leading: Icon(
-                                controller.iconItems[controller.selectedIndex.value]["icon"],
-                                color: CustomColor.textColor,
-                                size: 25,
-                              ),
-                        
                             ),
-                        
-                            ListTile(
-                              onTap: () {
-                                Get.to(AddWork_Screen());
-                              },
-                              title: Text(
-                                "Add Work",
-                                style: AppTextStyles.regular(),
-                              ),
-                              subtitle: Text(
-                                profileController.profileData?.addworkAddress ?? 'Address',
-                                style: AppTextStyles.small(),
-                              ),
-                              leading: Icon(
-                                controller.iconItems[controller.selectedIndex.value]["icon"],
-                                color: CustomColor.textColor,
-                                size: 25,
-                              ),
-
-
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
+                          )
                         : Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      // height: (homeC.showVia1.value && homeC.showVia2.value)
-                      //     ? MediaQuery.of(context).size.height * 0.2
-                      //     : (homeC.showVia1.value)
-                      //     ? MediaQuery.of(context).size.height * 0.25
-                      //     : MediaQuery.of(context).size.height * 0.3,
-                      height: (homeC.showVia1.value && homeC.showVia2.value)
-                          ? MediaQuery.of(context).size.height * 0.18 // 2 VIA → smallest
-                          : (homeC.showVia1.value)
-                          ? MediaQuery.of(context).size.height * 0.25   // 1 VIA → medium
-                          : MediaQuery.of(context).size.height * 0.35,  // 0 VIA → large
+                            margin: const EdgeInsets.symmetric(horizontal: 20),
+                            // height: (homeC.showVia1.value && homeC.showVia2.value)
+                            //     ? MediaQuery.of(context).size.height * 0.2
+                            //     : (homeC.showVia1.value)
+                            //     ? MediaQuery.of(context).size.height * 0.25
+                            //     : MediaQuery.of(context).size.height * 0.3,
+                            height:
+                                (homeC.showVia1.value && homeC.showVia2.value)
+                                ? MediaQuery.of(context).size.height * 0.18 // 2 VIA → smallest
+                                : (homeC.showVia1.value)
+                                ? MediaQuery.of(context).size.height *0.25 // 1 VIA → medium
+                                : MediaQuery.of(context).size.height *0.35, // 0 VIA → large
 
-                      child: Obx(()=> homeC.airportLoading.value
-                          ?  LinearProgressIndicator(
-                        minHeight: 3,
-                        color: CustomColor.Icon_Color,
-                        backgroundColor: Colors.white24,
-                      )
-                      : ListView.builder(
-                        itemCount: homeC.busStops.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                              title: Text(
-                                homeC.busStops[index],
-                                style: AppTextStyles.medium(),
-                              ),
+                            child: Obx(
+                              () => homeC.airportLoading.value
+                               ? Column(
+                                children: [
+                                  /// 🔹 TOP SLIM LOADER
+                                  SizedBox(
+                                    height: 3,
+                                    width: double.infinity,
+                                    child: LinearProgressIndicator(
+                                      minHeight: 3,
+                                      color: CustomColor.Icon_Color,
+                                      backgroundColor: Colors.white24,
+                                    ),
+                                  ),
 
-                              leading: Icon(
-                                controller.iconItems[controller
-                                    .selectedIndex
-                                    .value]["icon"],
-                                color: CustomColor.textColor,
-                                size: 25,
-                              ),
-                              onTap: () {
-                                homeC.selectLocation(index);
-                                //homeC.selectDrop(index);
-                                // Get.back();
-                              }
-                          );
-                        },
-                      ),),
+                                  /// 🔹 Remaining empty space (so height stays same)
+                                  const Expanded(child: SizedBox()),
+                                ],
+                              )
+        //     SizedBox(
+                              //   height: 2,
+                              //   width: double.infinity,
+                              //   child: LinearProgressIndicator(
+                              //     minHeight: 3,
+                              //     color: CustomColor.Icon_Color,
+                              //     backgroundColor: Colors.white24,
+                              //   ),
+                              // )
+                                  : ListView.builder(
+                                      itemCount: homeC.busStops.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title: Text(
+                                            homeC.busStops[index],
+                                            style: AppTextStyles.medium(),
+                                          ),
 
-                    ),
+                                          leading: Icon(
+                                            controller.iconItems[controller.selectedIndex.value]["icon"],
+                                            color: CustomColor.textColor,
+                                            size: 25,
+                                          ),
+                                          onTap: () {
+                                            homeC.selectLocationFromList(index);
+                                            //homeC.selectDrop(index);
+                                            // Get.back();
+                                          },
+                                        );
+                                      },
+                                    ),
+                            ),
+                          ),
                   ],
                 ),
               ),
             ],
           ),
         );
-      }
+      },
     );
   }
 }
-
-
