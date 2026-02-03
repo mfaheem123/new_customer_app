@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import '../../View/Deshboard/Home/model/Airportl_ist_model.dart';
 import '../../View/Deshboard/map_widget/map_controller.dart';
-import '../../View/Home/model/Airportl_ist_model.dart';
+
 import '../../api_servies/api_servies.dart';
 import 'model/pickuplocationmodel.dart';
+
 
 class SwapController extends GetxController {
 
@@ -24,11 +26,37 @@ class SwapController extends GetxController {
       ? Get.find<PickLocationController>()
       : Get.put(PickLocationController());
 
-//===============================================   pick UP lication
+//===============================================   pick UP location
+
+  // void pickupCurrentLocation() {
+  //   if (mapC.selectedLocation.value == null) {
+  //     print("❌ Location not ready yet");
+  //     return;
+  //   }
+  //
+  //   pickUp.text = mapC.address.value;
+  //
+  //   // final lat = mapC.selectedLocation.value!.latitude;
+  //   // final lng = mapC.selectedLocation.value!.longitude;
+  //   //
+  //   // print(" 🔴 LAT: $lat , LNG: $lng");
+  // }
   void pickupCurrentLocation() {
-    // pickUp.text = mapC.currentAddress.value;
+    final loc = mapC.selectedLocation.value;
+
+    if (loc == null) {
+      print("❌ Location not ready yet");
+      return;
+    }
+
     pickUp.text = mapC.address.value;
+
+    /// 🔥 MAP → ROUTE SYSTEM
+    setPickup(loc.latitude, loc.longitude);
+
+    print("🟢 PICKUP FROM CURRENT LOCATION → ${loc.latitude}, ${loc.longitude}");
   }
+
 
 ///======================================================================================  listWidget working and api
   var selectedItem = (0).obs;
@@ -43,28 +71,7 @@ class SwapController extends GetxController {
     {"name": "Plane", "icon": Icons.directions_bus},
   ];
 
-  //
-  // List<String> busStops = [
-  //   "Karachi Cantt Station",
-  //   "Lahore Railway Station",
-  //   "Islamabad Railway Station",
-  //   "Rawalpindi Railway Station",
-  //   "Faisalabad Station",
-  //   "PIDC Bus Stop",
-  //   "Tariq Road Bus Stop",
-  //   "Clifton Teen Talwar Bus Stop",
-  //   "Shah Faisal Colony Stop",
-  //   "Saddar Mobile Market Stop",
-  //   "Cantt Station Bus Stop",
-  //   "Lahore Thokar Niaz Baig Stop",
-  //   "Kalma Chowk Bus Stop",
-  //   "Model Town Link Road Stop",
-  //   "Anarkali Stop",
-  //   "Rawalpindi Faizabad Bus Stop",
-  //   "Murree Road Committee Chowk Stop",
-  //   "Peshawar Khyber Bazaar Stop",
-  //   "Faisalabad D Ground Bus Stop"
-  // ];
+
 
   /// 🔹 THIS list UI me show ho rahi hai
   List<String> busStops = [];
@@ -201,60 +208,6 @@ class SwapController extends GetxController {
   }
 
 
-  //  void selectLocation(int index) {
- //    if (activeField.value == "pickup") {
- //      selectPickup(index);
- //    } else {
- //      selectDrop(index);
- //    }
- //  }
-
-
-  //
-  // void selectPickup(int index) {
-  //   pickUp.text = busStops[index];
-  //
-  //   // ✈️ AIRPORT selected
-  //   if (selectedIndex.value == 1) {
-  //     final loc = airportLocations[index];
-  //
-  //     final   lat = double.tryParse(loc.latitude ?? "");
-  //     final lng = double.tryParse(loc.longitude ?? "");
-  //
-  //     if (lat != null && lng != null) {
-  //       selectedPickUPLat = lat;
-  //       selectedPickUPLon = lng;
-  //
-  //       print("✅ Airport Pickup set: $lat , $lng");
-  //
-  //       fetchRoute(); // 🔥 route auto update
-  //       update(["map", "distance"]);
-  //     }
-  //   }
-  // }
-  //
-  // void selectDrop(int index) {
-  //   dropOff.text = busStops[index]; // airport ya train list
-  //
-  //   // Agar airport drop hai
-  //   if (selectedIndex.value == 1) {
-  //     final loc = airportLocations[index];
-  //
-  //     final lat = double.tryParse(loc.latitude ?? "");
-  //     final lng = double.tryParse(loc.longitude ?? "");
-  //
-  //     if (lat != null && lng != null) {
-  //       selectedDropLat = lat;
-  //       selectedDropLon = lng;
-  //
-  //       print("✅ Airport Drop set: $lat , $lng");
-  //
-  //       fetchRoute(); // route auto update
-  //       update(["map", "distance"]);
-  //     }
-  //   }
-  // }
-  //
 
 
   ///----------------------------------------------------------------------------------------  where to go
@@ -284,16 +237,6 @@ class SwapController extends GetxController {
     }
   }
 
-  // Remove via field
-  // void removeField(int fieldNumber) {
-  //   if (fieldNumber == 1) {
-  //     viaController1.clear();
-  //     showVia1.value = false;
-  //   } else if (fieldNumber == 2) {
-  //     viaController2.clear();
-  //     showVia2.value = false;
-  //   }
-  // }
 
 
   ///   ///============================= ======================== ================ ============  Pick Up location search
@@ -322,13 +265,7 @@ class SwapController extends GetxController {
       }
     );
 
-    // var response = await ApiService.get(
-    //   '',
-    //   fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${pickUp
-    //       .text.toUpperCase()}',
-    //   auth: true,
-    //   isProgressShow: false,
-    // );
+
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -369,12 +306,6 @@ class SwapController extends GetxController {
         'search':dropOff.text
       }
     );
-    // var response = await ApiService.get(
-    //   '',
-    //   fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${dropOff.text.toUpperCase()}',
-    //   auth: true,
-    //   isProgressShow: false, // User loader nahi chahiye
-    // );
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -415,13 +346,7 @@ class SwapController extends GetxController {
       }
     );
 
-    // var response = await ApiService.get(
-    //   '',
-    //   fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1
-    //       .text.toUpperCase()}',
-    //   auth: true,
-    //   isProgressShow: false,
-    // );
+
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -459,13 +384,7 @@ class SwapController extends GetxController {
         'search':viaController2.text
       }
     );
-    // var response = await ApiService.get(
-    //   '',
-    //   fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2
-    //       .text.toUpperCase()}',
-    //   auth: true,
-    //   isProgressShow: false,
-    // );
+
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -517,19 +436,7 @@ class SwapController extends GetxController {
     fetchRoute();
     update();
   }
-  // void setVia1(double lat, double lon) {
-  //   via1Lat = lat;
-  //   via1Lon = lon;
-  //   fetchRoute();
-  //   update();
-  // }
-  //
-  // void setVia2(double lat, double lon) {
-  //   via2Lat = lat;
-  //   via2Lon = lon;
-  //   fetchRoute();
-  //   update();
-  // }
+
 
   void setVia1(double lat, double lon) {
     via1Lat = lat;
@@ -583,34 +490,7 @@ class SwapController extends GetxController {
     update(["distance"]);
   }
 
-  // void calculateRouteDistance() {
-  //   if (routePoints.length < 2) {
-  //     totalRouteDistanceMiles = 0;
-  //     routeCenterPoint = null;
-  //     update(["distance"]);
-  //     return;
-  //   }
-  //
-  //   final Distance distance = Distance();
-  //   double totalMeters = 0;
-  //
-  //   for (int i = 0; i < routePoints.length - 1; i++) {
-  //     totalMeters += distance(routePoints[i], routePoints[i + 1]);
-  //   }
-  //
-  //   //  METERS → MILES
-  //   totalRouteDistanceMiles = totalMeters * 0.000621371;
-  //
-  //   //  ETA CALCULATION
-  //   double averageSpeedMph = 30; // change if needed
-  //   double timeInHours = totalRouteDistanceMiles / averageSpeedMph;
-  //   estimatedTimeMinutes = timeInHours * 60;
-  //
-  //   // Polyline center
-  //   routeCenterPoint = routePoints[routePoints.length ~/ 2];
-  //
-  //   update(["distance"]);
-  // }
+
 
 
   void removeVia1() {
@@ -632,28 +512,7 @@ class SwapController extends GetxController {
   }
 
 
-  // void removeFields(int fieldNumber) {
-  //   if (fieldNumber == 1) {
-  //     viaController1.clear();
-  //     showVia1.value = false;
-  //
-  //     // 💥 CRITICAL
-  //     via1Lat = 0.0;
-  //     via1Lon = 0.0;
-  //   }
-  //
-  //   else if (fieldNumber == 2) {
-  //     viaController2.clear();
-  //     showVia2.value = false;
-  //
-  //     // 💥 CRITICAL
-  //     via2Lat = 0.0;
-  //     via2Lon = 0.0;
-  //   }
-  //
-  //   fetchRoute(); //  route recalc
-  //   update(["map"]); //  map rebuild
-  // }
+
 
 
   Future<void> fetchRoute() async {
@@ -740,60 +599,5 @@ class SwapController extends GetxController {
 
 
 
-// Future<void> fetchRoute() async {
-  //   if (selectedPickUPLat == 0.0 ||
-  //       selectedPickUPLon == 0.0 ||
-  //       selectedDropLat == 0.0 ||
-  //       selectedDropLon == 0.0) return;
-  //
-  //   final requestId = ++_routeRequestId; // track latest call
-  //
-  //   String coordinates = "${selectedPickUPLon},${selectedPickUPLat}";
-  //
-  //   if (via1Lat != 0.0 && via1Lon != 0.0) {
-  //     coordinates += ";${via1Lon},${via1Lat}";
-  //   }
-  //
-  //   if (via2Lat != 0.0 && via2Lon != 0.0) {
-  //     coordinates += ";${via2Lon},${via2Lat}";
-  //   }
-  //
-  //   coordinates += ";${selectedDropLon},${selectedDropLat}";
-  //
-  //   final url =
-  //       'https://router.project-osrm.org/route/v1/driving/$coordinates'
-  //       '?overview=full&geometries=geojson';
-  //
-  //   try {
-  //     final dio = Dio();
-  //     final response = await dio.get(url);
-  //
-  //     // 🧠 Ignore old responses
-  //     if (requestId != _routeRequestId) return;
-  //
-  //     if (response.statusCode == 200) {
-  //       final coords = response.data['routes'][0]['geometry']['coordinates'];
-  //
-  //       routePoints = coords.map<LatLng>((p) {
-  //         return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
-  //       }).toList();
-  //
-  //       update(["map"]); // 👈 only rebuild map\
-  //       calculateRouteDistance();
-  //
-  //       if (isMapReady && mapController != null) {
-  //         Future.delayed(const Duration(milliseconds: 200), () {
-  //           final bounds = LatLngBounds.fromPoints(routePoints);
-  //           mapController!.fitCamera(
-  //             CameraFit.bounds(
-  //                 bounds: bounds, padding: const EdgeInsets.all(60)),
-  //           );
-  //         });
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Route error: $e");
-  //   }
-  // }
 
 }

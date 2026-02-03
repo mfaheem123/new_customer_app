@@ -2,12 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../Controller/Home/home-controller.dart';
-import '../Deshboard/AddHome/add_home.dart';
-import '../Deshboard/AddWork/add_work.dart';
-import '../Widgets/color.dart';
-import '../profile/controller/profile_controller.dart';
-import '../textstyle/apptextstyle.dart';
+
+import '../../../Controller/Home/home-controller.dart';
+import '../../Widgets/color.dart';
+import '../../profile/controller/profile_controller.dart';
+import '../../textstyle/apptextstyle.dart';
+import '../AddHome/add_home.dart';
+import '../AddWork/add_work.dart';
+
 
 class containerWidget extends StatefulWidget {
   const containerWidget({super.key});

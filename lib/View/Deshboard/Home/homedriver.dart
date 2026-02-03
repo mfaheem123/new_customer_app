@@ -1,13 +1,13 @@
 import 'package:customer/Controller/Home/home-controller.dart';
-import 'package:customer/View/Home/widget.dart';
+import 'package:customer/View/Deshboard/Home/widget.dart';
 import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/Widgets/textformfield.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../Deshboard/map_widget/map_polyLine.dart';
-import '../Widgets/elevat_button.dart';
-import '../profile/controller/profile_controller.dart';
+import '../../Widgets/elevat_button.dart';
+import '../../profile/controller/profile_controller.dart';
+import '../map_widget/map_polyLine.dart';
 import 'dialogbox.dart';
 
 class HomeDriver extends StatelessWidget {
@@ -383,13 +383,14 @@ class HomeDriver extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              // Get.to(MapScreen());
-                              Get.dialog(
-                                const Dialog(
-                                  backgroundColor: Color(0xFF231F20),
-                                  child: Dialogbox(),
-                                ),
-                              );
+                              //Get.to(MapScreen());
+                              Get.toNamed('/RideInfoScreen');
+                              // Get.dialog(
+                              //   const Dialog(
+                              //     backgroundColor: Color(0xFF231F20),
+                              //     child: Dialogbox(),
+                              //   ),
+                              // );
                             },
                           ),
                         ),

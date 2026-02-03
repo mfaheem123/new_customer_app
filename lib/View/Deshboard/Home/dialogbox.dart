@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Widgets/all_text.dart';
+import '../../Widgets/elevat_button.dart';
+import '../../textstyle/apptextstyle.dart';
 
-import '../Widgets/all_text.dart';
-import '../Widgets/elevat_button.dart';
-import '../textstyle/apptextstyle.dart';
+
 
 class Dialogbox extends StatefulWidget {
   const Dialogbox({super.key});

@@ -56,7 +56,7 @@ class PickupLocationScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   const Icon(
                     Icons.location_pin,
-                    size: 50,
+                    size: 30,
                     color: Colors.red,
                   ),
                 ],
