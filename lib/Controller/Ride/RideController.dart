@@ -2,22 +2,64 @@ import  'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class RideController extends GetxController {
-  final List<String> CarName = [
-    "Any Car",
-    "Saloon Car",
-    "Estate Car",
-    "Seven Seater Van",
-    "Saloon Car",
-    "Estate Car",
-    "Seven seater Van"
-  ];
-  final List<String> seats = ["4", "3", "4", "6", "3", "4", "6"];
-  var selectedIndex = (0).obs;
+import '../../View/rides/ride_model/get_vehicle_model.dart';
+import '../../api_servies/api_servies.dart';
 
+class RideController extends GetxController {
+
+  GetVehicleModel? vehicleData;
+  RxBool loading = false.obs;
+
+  RxInt selectedIndex = (-1).obs;
+  RxInt selectedVehicleId = 0.obs;
+
+  ///  Item select (index + ID)
   void selectItem(int index) {
     selectedIndex.value = index;
+    setSelectedVehicleId(index);
   }
+
+  ///  Vehicle ID get function
+  void setSelectedVehicleId(int index) {
+    final vehicle = vehicleData?.vehicleTypes?[index];
+
+    if (vehicle != null && vehicle.id != null) {
+      selectedVehicleId.value = vehicle.id!;
+    }
+
+  }
+
+  ///  API call
+  Future<void> getVehicleTypes() async {
+    loading.value = true;
+    update();
+
+    var response = await ApiService.get(
+      "vehicle-type/get",
+      auth: true,
+      isProgressShow: false
+    );
+
+    if (response != null && response.statusCode == 200) {
+      vehicleData = GetVehicleModel.fromJson(response.data);
+
+    }
+
+    loading.value = false;
+    update();
+  }
+
+  // final List<String> CarName = [
+  //   "Any Car",
+  //   "Saloon Car",
+  //   "Estate Car",
+  //   "Seven Seater Van",
+  //   "Saloon Car",
+  //   "Estate Car",
+  //   "Seven seater Van"
+  // ];
+  // final List<String> seats = ["4", "3", "4", "6", "3", "4", "6"];
+
 
 
 

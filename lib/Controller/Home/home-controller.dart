@@ -1,9 +1,10 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import '../../View/Deshboard/Home/model/Airportl_ist_model.dart';
+import 'model/Airportl_ist_model.dart';
 import '../../View/Deshboard/map_widget/map_controller.dart';
 
 import '../../api_servies/api_servies.dart';
@@ -237,6 +238,55 @@ class SwapController extends GetxController {
     }
   }
 
+  void validateLocations() {
+    if (pickUp.text.isEmpty && dropOff.text.isEmpty) {
+      showAppSnackBar("Please select pickup and drop-off locations");
+      return;
+    }
+
+    if (pickUp.text.isEmpty) {
+      showAppSnackBar("Please select pickup location");
+      return;
+    }
+
+    if (dropOff.text.isEmpty) {
+      showAppSnackBar("Please select drop-off location");
+      return;
+    }
+
+    Get.toNamed('/RideInfoScreen');
+  }
+
+
+
+  void showAppSnackBar(String message) {
+    BotToast.showCustomText(
+      duration: const Duration(seconds: 2),
+      toastBuilder: (_) => Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.red.shade600,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
 
   ///   ///============================= ======================== ================ ============  Pick Up location search
@@ -244,8 +294,7 @@ class SwapController extends GetxController {
   RxBool searchloading = false.obs;
   RxList<Result> searchList = <Result>[].obs;
 
-
-  Future<void> pickupLocation(String text) async {
+Future<void> pickupLocation(String text) async {
     if (text.isEmpty) {
       searchList.clear();
       return;
@@ -265,8 +314,6 @@ class SwapController extends GetxController {
       }
     );
 
-
-
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
 
@@ -275,6 +322,7 @@ class SwapController extends GetxController {
 
     searchloading.value = false;
   }
+
 
 
   ///   ///============================= ======================== ================ ============   drop off location search

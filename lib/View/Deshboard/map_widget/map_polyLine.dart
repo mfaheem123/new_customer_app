@@ -1,7 +1,6 @@
   import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../Controller/Home/home-controller.dart';
@@ -19,365 +18,365 @@ class _MapScreenState extends State<MapScreen> {
 
   final MapController mapController = MapController();
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      appBar: AppBar(title: const Text("Pickup → Drop Map")),
+    return
+      GetBuilder<SwapController>(
+        id: "map",
+        builder: (c) {
+          if (c.selectedPickUPLat == 0.0 ||
+              c.selectedPickUPLon == 0.0 ||
+              c.selectedDropLat == 0.0 ||
+              c.selectedDropLon == 0.0) {
+            return Center(
+              child: Text("Select Pickup and Drop to view map",
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: AppTextStyles.heading(),),
+            );
 
-      body: Column(
-        children: [
-          // ======= Map =======
-          Expanded(
-            child: GetBuilder<SwapController>(
-              id: "map",
-              builder: (c) {
-                if (c.selectedPickUPLat == 0.0 ||
-                    c.selectedPickUPLon == 0.0 ||
-                    c.selectedDropLat == 0.0 ||
-                    c.selectedDropLon == 0.0) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [
-                          Color.fromARGB(255, 30, 1, 44),
-                      Color.fromARGB(255, 227, 194, 242),
-                      ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,)
-                    ),
-                    child: Center(
-                      child: Text("Select Pickup and Drop to view map",
-                        textAlign: TextAlign.center,
-                          maxLines: 2,
-                          style: AppTextStyles.heading(),),
-                    ),
-                  );
-                }
+            // Container(
+            //   // decoration: BoxDecoration(
+            //   //     gradient: LinearGradient(colors: [
+            //   //       Color.fromARGB(255, 30, 1, 44),
+            //   //       Color.fromARGB(255, 227, 194, 242),
+            //   //     ],
+            //   //       begin: Alignment.topCenter,
+            //   //       end: Alignment.bottomCenter,)
+            //   // ),
+            //   child: Center(
+            //     child: Text("Select Pickup and Drop to view map",
+            //       textAlign: TextAlign.center,
+            //       maxLines: 2,
+            //       style: AppTextStyles.heading(),),
+            //   ),
+            // );
+          }
 
-                final pickupLatLng =  LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
-                final dropLatLng =  LatLng(c.selectedDropLat, c.selectedDropLon);
+          // final pickupLatLng =  LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
+          // final dropLatLng =  LatLng(c.selectedDropLat, c.selectedDropLon);
 
-                // // Optional: approximate fit bounds
-                // if (c.routePoints.isNotEmpty) {
-                //   WidgetsBinding.instance.addPostFrameCallback((_) {
-                //     mapController.move(
-                //       LatLng(
-                //         (c.routePoints.first.latitude +
-                //             c.routePoints.last.latitude) /
-                //             2,
-                //         (c.routePoints.first.longitude +
-                //
-                //             c.routePoints.last.longitude) /
-                //             2,
-                //       ),
-                //       9, // zoom level, adjust as needed
-                //     );
-                //   });
-                // }
+          // // Optional: approximate fit bounds
+          // if (c.routePoints.isNotEmpty) {
+          //   WidgetsBinding.instance.addPostFrameCallback((_) {
+          //     mapController.move(
+          //       LatLng(
+          //         (c.routePoints.first.latitude +
+          //             c.routePoints.last.latitude) /
+          //             2,
+          //         (c.routePoints.first.longitude +
+          //
+          //             c.routePoints.last.longitude) /
+          //             2,
+          //       ),
+          //       9, // zoom level, adjust as needed
+          //     );
+          //   });
+          // }
 
-                if (c.isMapReady && c.routePoints.isNotEmpty) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    final bounds = LatLngBounds.fromPoints(c.routePoints);
+          if (c.isMapReady && c.routePoints.isNotEmpty) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final bounds = LatLngBounds.fromPoints(c.routePoints);
 
-                    mapController.fitCamera(
-                      CameraFit.bounds(
-                        bounds: bounds,
-                        padding: const EdgeInsets.all(60),
-                      ),
-                    );
-                  });
-                }
+              mapController.fitCamera(
+                CameraFit.bounds(
+                  bounds: bounds,
+                  padding: const EdgeInsets.all(60),
+                ),
+              );
+            });
+          }
 
+          final pickupLatLng =
+          LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
+          final dropLatLng =
+          LatLng(c.selectedDropLat, c.selectedDropLon);
 
+          /// 🔥 AUTO FIT PICKUP + DROP + ROUTE
+          if (c.isMapReady) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final List<LatLng> points = [];
 
-                return FlutterMap(
+              points.add(pickupLatLng);
+              points.add(dropLatLng);
 
-                  mapController: mapController,
-                  options: MapOptions(
-                    initialCenter: LatLng(
-                        (pickupLatLng.latitude + dropLatLng.latitude) / 2,
-                        (pickupLatLng.longitude + dropLatLng.longitude) / 2),
-                    initialZoom: 9,
-                    //
-                    onMapReady: () {
-                      c.isMapReady = true;
-                      c.update();
-                    },
-                    //
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                      subdomains: const ['a', 'b', 'c'],
-                      userAgentPackageName: 'com.example.customer',
-                      maxZoom: 19,
-                    ),
+              if (c.routePoints.isNotEmpty) {
+                points.addAll(c.routePoints);
+              }
 
-                    // TileLayer(
-                    //   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    //   userAgentPackageName: 'com.example.customer',
-                    // ),
+              final bounds = LatLngBounds.fromPoints(points);
 
-                    // Polyline
-                    if (c.routePoints.isNotEmpty)
-                      PolylineLayer(
-                        polylines: [
-                          Polyline(
-                            points: c.routePoints,
-                            strokeWidth: 4,
-                            color: Colors.deepPurpleAccent,
-                          ),
-                        ],
-                      ),
-
-                    // Markers
-                    MarkerLayer(
-                      markers: [
-                        // Pickup
-                        Marker(
-                          point: pickupLatLng,
-                          width: 40,
-                          height: 40,
-                          child: const Icon(
-                            Icons.location_on, color: Colors.green, size: 40,
-                          ),
-                        ),
-
-
-                        ///                                                                      VIA 1
-                        if (c.showVia1.value && c.via1Lat != 0.0  && c.via1Lon != 0.0)
-                          Marker(
-                            point: LatLng(c.via1Lat, c.via1Lon),
-                            width: 80,
-                            height: 70,
-                            child:  const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                            // Column(
-                            //   mainAxisSize: MainAxisSize.min,
-                            //   children: [
-                            //     Card(
-                            //       color: Colors.black,
-                            //       elevation: 3,
-                            //       shape: RoundedRectangleBorder(
-                            //         borderRadius: BorderRadius.circular(6),
-                            //       ),
-                            //       child: const Padding(
-                            //         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            //         child: Text(
-                            //           "Via 1",
-                            //           style: TextStyle(
-                            //             color: Colors.white,
-                            //             fontSize: 11,
-                            //             fontWeight: FontWeight.w600,
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ),
-                            //     const SizedBox(height: 0.5),
-                            //     const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                            //   ],
-                            // ),
-                          ),
-
-
-                        ///                                                       DISTANCE LABEL ON POLYLINE
-                        if (c.routeCenterPoint != null)
-                          Marker(
-                            point: c.routeCenterPoint!,
-                            width: 100,
-                            height: 50,
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(color: Colors.black26, blurRadius: 4)
-                                ],
-                              ),
-                              child: Text(
-                              "${c.totalRouteDistanceMiles.toStringAsFixed(2)} miles "
-                                "\n ${c.estimatedTimeMinutes.toStringAsFixed(0)} min"
-                                ,
-                                textAlign: TextAlign.center,
-                                style: AppTextStyles.small(),
-                              ),
-                            ),
-                          ),
+              mapController.fitCamera(
+                CameraFit.bounds(
+                  bounds: bounds,
+                  padding: const EdgeInsets.all(60),
+                ),
+              );
+            });
+          }
 
 
 
-                        ///                                                           VIA 2
-                        if (
-                        c.showVia2.value && c.via2Lat != 0.0  && c.via2Lon != 0.0)
-                          Marker(
-                            point: LatLng(c.via2Lat, c.via2Lon),
-                            width: 80,
-                            height: 70,
-                            child: const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                            // Column(
-                            //   mainAxisSize: MainAxisSize.min,
-                            //   children: [
-                            //     Card(
-                            //       color: Colors.black,
-                            //       elevation: 3,
-                            //       shape: RoundedRectangleBorder(
-                            //         borderRadius: BorderRadius.circular(6),
-                            //       ),
-                            //       child: const Padding(
-                            //         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            //         child: Text(
-                            //           "Via 2",
-                            //           style: TextStyle(
-                            //             color: Colors.white,
-                            //             fontSize: 11,
-                            //             fontWeight: FontWeight.w600,
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ),
-                            //     const SizedBox(height: 0.5),
-                            //     const Icon(Icons.location_pin, color: Colors.blue, size: 30),
-                            //   ],
-                            // ),
-                          ),
+          return FlutterMap(
 
-                        // // VIA 1
-                        // if (c.via1Lat != 0.0)
-                        //   Marker(
-                        //     point: LatLng(c.via1Lat, c.via1Lon),
-                        //     width: 80,
-                        //     height: 70,
-                        //     child: Column(
-                        //       mainAxisSize: MainAxisSize.min,
-                        //       children: [
-                        //         Card(
-                        //           color: Colors.black,
-                        //           elevation: 3,
-                        //           shape: RoundedRectangleBorder(
-                        //             borderRadius: BorderRadius.circular(6),
-                        //           ),
-                        //           child: const Padding(
-                        //             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        //             child: Text(
-                        //               "Via 1",
-                        //               style: TextStyle(
-                        //                 color: Colors.white,
-                        //                 fontSize: 11,
-                        //                 fontWeight: FontWeight.w600,
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //         const SizedBox(height: 0.5),
-                        //         const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                        //       ],
-                        //     ),
-                        //   ),
-                        //
-                        //
-                        // // VIA 2
-                        // if (c.via2Lat != 0.0)
-                        //   Marker(
-                        //     point: LatLng(c.via2Lat, c.via2Lon),
-                        //     width: 80,
-                        //     height: 70,
-                        //     child: Column(
-                        //       mainAxisSize: MainAxisSize.min,
-                        //       children: [
-                        //         Card(
-                        //           color: Colors.black,
-                        //           elevation: 3,
-                        //           shape: RoundedRectangleBorder(
-                        //             borderRadius: BorderRadius.circular(6),
-                        //           ),
-                        //           child: const Padding(
-                        //             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        //             child: Text(
-                        //               "Via 2",
-                        //               style: TextStyle(
-                        //                 color: Colors.white,
-                        //                 fontSize: 11,
-                        //                 fontWeight: FontWeight.w600,
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //         const SizedBox(height: 0.5),
-                        //         const Icon(Icons.location_pin, color: Colors.blue, size: 30),
-                        //       ],
-                        //     ),
-                        //   ),
-
-
-                        // Drop
-                        Marker(
-                          point: dropLatLng,
-                          width: 40,
-                          height: 40,
-                          child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
-                        ),
-                      ],
-                    ),
-
-
-                    // MarkerLayer(
-                    //   markers: [
-                    //     Marker(
-                    //       point: pickupLatLng,
-                    //       width: 40,
-                    //       height: 40,
-                    //       child: const Icon(
-                    //         Icons.location_on,
-                    //         color: Colors.green,
-                    //         size: 40,
-                    //       ),
-                    //     ),
-                    //     Marker(
-                    //       point: dropLatLng,
-                    //       width: 40,
-                    //       height: 40,
-                    //       child: const Icon(
-                    //         Icons.location_on,
-                    //         color: Colors.red,
-                    //         size: 40,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                  ],
-                );
+            mapController: mapController,
+            options: MapOptions(
+              initialCenter: LatLng(
+                  (pickupLatLng.latitude + dropLatLng.latitude) / 2,
+                  (pickupLatLng.longitude + dropLatLng.longitude) / 2),
+              initialZoom: 8,
+              //
+              onMapReady: () {
+                c.isMapReady = true;
+                c.update(["map"]);
               },
+              //
             ),
-          ),
-        ],
-      ),
+            children: [
+              TileLayer(
+                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: const ['a', 'b', 'c'],
+                userAgentPackageName: 'com.example.customer',
+                maxZoom: 19,
+              ),
 
-      // Bottom info bar
-      // bottomNavigationBar: GetBuilder<SwapController>(
-      //   builder: (c) {
-      //     return Padding(
-      //       padding: const EdgeInsets.all(8),
-      //       child: Card(
-      //         child: Padding(
-      //           padding: const EdgeInsets.all(12),
-      //           child: Text(
-      //             "${c.pickUp.text} → ${c.dropOff.text}",
-      //             textAlign: TextAlign.center,
-      //             style: const TextStyle(
-      //               fontWeight: FontWeight.bold,
-      //               fontSize: 16,
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //     );
-      //   },
-      // ),
-    );
+              // TileLayer(
+              //   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+              //   userAgentPackageName: 'com.example.customer',
+              // ),
+
+              // Polyline
+              if (c.routePoints.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: c.routePoints,
+                      strokeWidth: 4,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                  ],
+                ),
+
+              ///                                                                  Pick up Marker
+              MarkerLayer(
+                markers: [
+                  // Pickup
+                  Marker(
+                    point: pickupLatLng,
+                    width: 40,
+                    height: 40,
+                    child: const Icon(
+                      Icons.location_on, color: Colors.green, size: 40,
+                    ),
+                  ),
+
+
+                  ///                                                                      VIA 1
+                  if (c.showVia1.value && c.via1Lat != 0.0  && c.via1Lon != 0.0)
+                    Marker(
+                      point: LatLng(c.via1Lat, c.via1Lon),
+                      width: 80,
+                      height: 70,
+                      child:  const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                      // Column(
+                      //   mainAxisSize: MainAxisSize.min,
+                      //   children: [
+                      //     Card(
+                      //       color: Colors.black,
+                      //       elevation: 3,
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(6),
+                      //       ),
+                      //       child: const Padding(
+                      //         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      //         child: Text(
+                      //           "Via 1",
+                      //           style: TextStyle(
+                      //             color: Colors.white,
+                      //             fontSize: 11,
+                      //             fontWeight: FontWeight.w600,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     const SizedBox(height: 0.5),
+                      //     const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                      //   ],
+                      // ),
+                    ),
+
+
+                  ///                                                       DISTANCE LABEL ON POLYLINE
+                  if (c.routeCenterPoint != null)
+                    Marker(
+                      point: c.routeCenterPoint!,
+                      width: 100,
+                      height: 50,
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black26, blurRadius: 4)
+                          ],
+                        ),
+                        child: Text(
+                          "${c.totalRouteDistanceMiles.toStringAsFixed(2)} miles "
+                              "\n ${c.estimatedTimeMinutes.toStringAsFixed(0)} min"
+                          ,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.small(),
+                        ),
+                      ),
+                    ),
+
+
+
+                  ///                                                           VIA 2
+                  if (
+                  c.showVia2.value && c.via2Lat != 0.0  && c.via2Lon != 0.0)
+                    Marker(
+                      point: LatLng(c.via2Lat, c.via2Lon),
+                      width: 80,
+                      height: 70,
+                      child: const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                      // Column(
+                      //   mainAxisSize: MainAxisSize.min,
+                      //   children: [
+                      //     Card(
+                      //       color: Colors.black,
+                      //       elevation: 3,
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(6),
+                      //       ),
+                      //       child: const Padding(
+                      //         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      //         child: Text(
+                      //           "Via 2",
+                      //           style: TextStyle(
+                      //             color: Colors.white,
+                      //             fontSize: 11,
+                      //             fontWeight: FontWeight.w600,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     const SizedBox(height: 0.5),
+                      //     const Icon(Icons.location_pin, color: Colors.blue, size: 30),
+                      //   ],
+                      // ),
+                    ),
+
+                  // // VIA 1
+                  // if (c.via1Lat != 0.0)
+                  //   Marker(
+                  //     point: LatLng(c.via1Lat, c.via1Lon),
+                  //     width: 80,
+                  //     height: 70,
+                  //     child: Column(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         Card(
+                  //           color: Colors.black,
+                  //           elevation: 3,
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(6),
+                  //           ),
+                  //           child: const Padding(
+                  //             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  //             child: Text(
+                  //               "Via 1",
+                  //               style: TextStyle(
+                  //                 color: Colors.white,
+                  //                 fontSize: 11,
+                  //                 fontWeight: FontWeight.w600,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         const SizedBox(height: 0.5),
+                  //         const Icon(Icons.location_pin, color: Colors.blue, size:30),
+                  //       ],
+                  //     ),
+                  //   ),
+                  //
+                  //
+                  // // VIA 2
+                  // if (c.via2Lat != 0.0)
+                  //   Marker(
+                  //     point: LatLng(c.via2Lat, c.via2Lon),
+                  //     width: 80,
+                  //     height: 70,
+                  //     child: Column(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         Card(
+                  //           color: Colors.black,
+                  //           elevation: 3,
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(6),
+                  //           ),
+                  //           child: const Padding(
+                  //             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  //             child: Text(
+                  //               "Via 2",
+                  //               style: TextStyle(
+                  //                 color: Colors.white,
+                  //                 fontSize: 11,
+                  //                 fontWeight: FontWeight.w600,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         const SizedBox(height: 0.5),
+                  //         const Icon(Icons.location_pin, color: Colors.blue, size: 30),
+                  //       ],
+                  //     ),
+                  //   ),
+
+
+                  ///                                                            Drop Off marker
+                  Marker(
+                    point: dropLatLng,
+                    width: 40,
+                    height: 40,
+                    child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
+                  ),
+                ],
+              ),
+
+
+              // MarkerLayer(
+              //   markers: [
+              //     Marker(
+              //       point: pickupLatLng,
+              //       width: 40,
+              //       height: 40,
+              //       child: const Icon(
+              //         Icons.location_on,
+              //         color: Colors.green,
+              //         size: 40,
+              //       ),
+              //     ),
+              //     Marker(
+              //       point: dropLatLng,
+              //       width: 40,
+              //       height: 40,
+              //       child: const Icon(
+              //         Icons.location_on,
+              //         color: Colors.red,
+              //         size: 40,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+            ],
+          );
+        },
+      );
+
   }
 }
 

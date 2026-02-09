@@ -383,8 +383,8 @@ class HomeDriver extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
+                              homeC.validateLocations();
                               //Get.to(MapScreen());
-                              Get.toNamed('/RideInfoScreen');
                               // Get.dialog(
                               //   const Dialog(
                               //     backgroundColor: Color(0xFF231F20),

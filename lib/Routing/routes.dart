@@ -19,10 +19,10 @@ import '../View/chatscreen.dart';
 import '../View/payments/paymentscreen.dart';
 import '../View/profile/profilescreen.dart';
 import '../View/rides/DriverDetailscreen.dart';
+import '../View/rides/feedback_screen.dart';
 import '../View/rides/ride_info_screen.dart';
 import '../View/rides/ridecomplete.dart';
 import '../View/rides/ridesearchscreen.dart';
-import '../View/thanks/thanksscreen.dart';
 import '../View/yourtrip/tripdetail.dart';
 import '../View/yourtrip/yourtrip.dart';
 
@@ -159,6 +159,7 @@ class AppRoutes{
       page: () => Driverdetailscreen(),
       //binding: PaymentReschedule(),
     ),
+
 
 
 

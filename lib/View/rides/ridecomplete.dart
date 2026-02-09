@@ -8,8 +8,9 @@ import '../../Controller/payment/paymentcontroller.dart';
 import '../Widgets/all_text.dart';
 import '../Widgets/color.dart';
 import '../Widgets/elevat_button.dart';
-import '../thanks/thanksscreen.dart';
-import 'DriverDetailscreen.dart';
+import 'feedback_screen.dart';
+
+
 
 class RideCompleteScreen extends StatelessWidget {
 
@@ -222,7 +223,8 @@ class RideCompleteScreen extends StatelessWidget {
                           child: MyElevatedButton(
                             text: '',
                             onPressed: () {
-                              Get.toNamed('/ThanksScreen');
+                             // Get.toNamed('/ThanksScreen');
+                              Get.to(ThanksScreen());
                             },
                             textWidget:
                             FittedBox(

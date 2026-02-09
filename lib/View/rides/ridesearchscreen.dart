@@ -1,3 +1,4 @@
+import 'package:customer/View/Deshboard/map_widget/map_polyLine.dart';
 import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,8 @@ class RideSearchScreen extends StatelessWidget {
 
     // responsive sizes
     final topBarHeight = screenHeight * (isTablet ? 0.1 : 0.08);
-    final mapHeight = screenHeight * (isTablet ? 0.45 : 0.35);
-    final gifHeight = screenHeight * (isTablet ? 0.25 : 0.2);
+    final mapHeight = screenHeight * (isTablet ? 0.5 : 0.4);
+    final gifHeight = screenHeight * (isTablet ? 0.25 : 0.18);
     final buttonHeight = screenHeight * (isTablet ? 0.08 : 0.07);
     final buttonWidth = screenWidth * (isTablet ? 0.5 : 0.7);
     final fontSizeHeading = screenWidth * (isTablet ? 0.05 : 0.06);
@@ -31,7 +32,7 @@ class RideSearchScreen extends StatelessWidget {
         body: Container(
           width: double.infinity,
           height:double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          //padding: const EdgeInsets.symmetric(horizontal: 15),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -79,6 +80,7 @@ class RideSearchScreen extends StatelessWidget {
 
                 // ================= Map Container
                 Container(
+                  margin: EdgeInsets.symmetric(horizontal: 15),
                   height: mapHeight,
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -89,27 +91,31 @@ class RideSearchScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18),
+                      child: MapScreen()),
                 ),
 
                 const SizedBox(height: 20),
 
                 // ================= Location Text
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(width: 10),
                     const Icon(Icons.location_on, size: 25, color: Colors.red),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        CustomText.Seaching_Text,
-                        style: AppTextStyles.regular(
-                          weight: FontWeight.bold,
-                          size: fontSizeText,
-                        ),
+                    const SizedBox(width: 6),
+                    Text(
+                      CustomText.Seaching_Text,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.medium(
+                        weight: FontWeight.bold,
+                        size: fontSizeText,
                       ),
                     ),
                   ],
                 ),
+
 
                 const SizedBox(height: 10),
 
@@ -148,7 +154,7 @@ class RideSearchScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: SizedBox(
-                            height: screenHeight * (isTablet ? 0.35 : 0.35),
+                            height: screenHeight * (isTablet ? 0.35 : 0.3),
                             width: screenWidth * (isTablet ? 0.6 : 0.8),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -186,7 +192,7 @@ class RideSearchScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 20),
                                     CustomTextButton(
-                                      text: 'No',
+                                      text: '  No  ',
                                       onPressed: () {
                                         Get.to(Driverdetailscreen());
                                       },
