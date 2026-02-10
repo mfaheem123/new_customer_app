@@ -83,15 +83,15 @@ class Driverdetailscreen extends StatelessWidget {
           
                       Container(
                         height: 500,
-                       // color: Colors.red,
+                       // color : Colors.red,
                         decoration: BoxDecoration(
                           //color: Colors.yellow,
                             image:DecorationImage(image: AssetImage("assets/images/map_image.png",), fit: BoxFit.cover)
                         ),
-                        child: MapScreen(),
+                        //child: MapScreen(),
                       ),
           
-                      // SizedBox(height: 15,),
+                      //  SizedBox(height: 15,),
           
                       //
                       // Padding(
