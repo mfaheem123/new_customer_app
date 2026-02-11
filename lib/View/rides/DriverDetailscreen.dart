@@ -90,7 +90,7 @@ class Driverdetailscreen extends StatelessWidget {
                         ),
                         //child: MapScreen(),
                       ),
-          
+
                       //  SizedBox(height: 15,),
           
                       //
@@ -133,7 +133,7 @@ class Driverdetailscreen extends StatelessWidget {
           
           
           
-                    ],
+                    ]
                   ),
                 ),
               ),

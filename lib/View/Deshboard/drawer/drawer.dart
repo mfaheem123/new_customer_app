@@ -47,8 +47,8 @@ class appDrawer extends StatelessWidget {
                       SizedBox(
                         height: 300,
                           child: Center(
-                              child:
-                              Text("No Data Fetched",
+                              child: Text("No Data Fetched",
+                                textAlign: TextAlign.center,
                                 style: AppTextStyles.heading(),
                               )
                           )

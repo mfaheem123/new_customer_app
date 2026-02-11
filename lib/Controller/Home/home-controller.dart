@@ -524,7 +524,7 @@ Future<void> pickupLocation(String text) async {
 
   double totalRouteDistanceMiles = 0.0; // miles
   LatLng? routeCenterPoint;
-  double estimatedTimeMinutes = 0.0;
+  double estimatedTimeMinutes = 0.0; // minutes
 
 
   void calculateRouteCenter() {
