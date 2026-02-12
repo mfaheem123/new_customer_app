@@ -21,46 +21,54 @@ class profileModelController extends GetxController {
 
   ///--------------------------------------------------------------  user get profile api
 
-  Future<void> getuserProfile() async {
-    loading.value = true;
-    update();
 
-    try {
-      var response = await ApiService.get(
-        "auth/customer-profile/${TokenManager.userId}",
-        auth: true,
-      );
 
-      if (response != null && response.statusCode == 200) {
-        profileData = GetProfileModel.fromJson(response.data);
-      } else {
-        profileData = null;
-      }
-    } catch (e) {
-      profileData = null;
-    }
-
-    loading.value = false;
-    update();
-  }
 
   // Future<void> getuserProfile() async {
   //   loading.value = true;
   //   update();
-  //   var response = await ApiService.get(
-  //     "auth/customer-profile/${TokenManager.userId}",
-  //     auth: true,
-  //   );
   //
-  //   if (response!.statusCode == 200) {
-  //     profileData= GetProfileModel.fromJson(response.data);
-  //   } else {
+  //   try {
+  //     var response = await ApiService.get(
+  //      // "auth/customer-profile/${TokenManager.userId}",
+  //       "auth/customer-profile/49",
+  //       auth: true,
+  //     );
+  //
+  //     if (response != null && response.statusCode == 200) {
+  //       profileData = GetProfileModel.fromJson(response.data);
+  //     } else {
+  //       profileData = null;
+  //     }
+  //   } catch (e) {
   //     profileData = null;
   //   }
   //
   //   loading.value = false;
   //   update();
   // }
+
+
+  ///===================================================================
+
+  Future<void> getuserProfile() async {
+    loading.value = true;
+    update();
+    var response = await ApiService.get(
+     // "auth/customer-profile/${TokenManager.userId}",
+      "auth/customer-profile/49",
+      auth: true,
+    );
+
+    if (response!.statusCode == 200) {
+      profileData= GetProfileModel.fromJson(response.data);
+    } else {
+      profileData = null;
+    }
+
+    loading.value = false;
+    update();
+  }
 
   /// ================================= ========================= ==================================== ================== profile image Update
 

@@ -143,43 +143,6 @@ class SignUp_Controller extends GetxController {
 
 
 
-////////////////////////////  direct call api
-
-
-  // Future<void> registerUser() async {
-  //   final dio = Dio();
-  //   final url = "http://192.168.18.16:5000/api/auth/register";
-  //
-  //   try {
-  //     // FormData object for form-data
-  //     FormData formData = FormData.fromMap({
-  //       "first_name": firstNameController.text,
-  //       "last_name": lastNameController.text,
-  //       "email": emailController.text,
-  //       "phone_number": phoneNoControllre.text,
-  //       "password": passwordController.text,
-  //     });
-  //
-  //     final response = await dio.post(
-  //       url,
-  //       data: formData,
-  //       options: Options(
-  //         contentType: "multipart/form-data", // form-data type
-  //       ),
-  //     );
-  //
-  //     if (response.statusCode == 200 ) {
-  //       print("User registered successfully!");
-  //       print("Response: ${response.data}");
-  //     } else {
-  //       print("Failed to register user.");
-  //       print("Status code: ${response.statusCode}");
-  //       print("Response: ${response.data}");
-  //     }
-  //   } catch (e) {
-  //     print("Error occurred: $e");
-  //   }
-  // }
 
 }
 

@@ -565,10 +565,11 @@ void initState() {
                                       text: '',
                                       onPressed: () {
                                         //Get.to(RideSearchScreen());
-                                        print( rideController.getDate);
+                                /*        print( rideController.getDate);
                                         print( rideController.getTime);
                                         rideController.getDate;
-                                         rideController.getTime;
+                                         rideController.getTime;*/
+                                        rideController.getBookingApi();
                                       },
                                       textWidget:
                                       FittedBox(
