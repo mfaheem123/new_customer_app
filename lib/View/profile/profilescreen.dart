@@ -126,17 +126,22 @@ class ProfileScreen extends StatelessWidget {
                     Center(
                       child: Obx(() {
                         return CircleAvatar(
-                          radius: 50,
-                          backgroundImage: controller.selectedImage.value != null
-                              ? FileImage(controller.selectedImage.value!)
-                              : (user.profilePicture != null && user.profilePicture!.isNotEmpty
-                              ? NetworkImage(user.profilePicture!)
-                              : const AssetImage("assets/images/profileimage.png") as ImageProvider),
+                          radius: 55,
+                          // backgroundColor: CustomColor.black,
+                          backgroundColor: Colors.green,
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundImage: controller.selectedImage.value != null
+                                ? FileImage(controller.selectedImage.value!)
+                                : (user.profilePicture != null && user.profilePicture!.isNotEmpty
+                                ? NetworkImage(user.profilePicture!)
+                                : const AssetImage("assets/images/profileimage.png") as ImageProvider),
+                          ),
                         );
                       }),
                     ),
                     Positioned(
-                      right: 150,
+                      right: 130,
                       bottom: 0,
                       child: GestureDetector(
                         onTap: () {

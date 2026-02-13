@@ -80,7 +80,7 @@ class profileModelController extends GetxController {
     final XFile? img = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (img == null) return;
 
-    selectedImage.value = File(img.path); // 👈 instant preview
+    selectedImage.value = File(img.path); //  instant preview
 
     loader(true);
 

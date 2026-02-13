@@ -214,10 +214,33 @@ class SwapController extends GetxController {
   ///----------------------------------------------------------------------------------------  where to go
 
 
+  // void swapField() {
+  //   String temp = pickUp.text;
+  //   pickUp.text = dropOff.text;
+  //   dropOff.text = temp;
+  // }
   void swapField() {
-    String temp = pickUp.text;
+    // Swap the text
+    String tempText = pickUp.text;
     pickUp.text = dropOff.text;
-    dropOff.text = temp;
+    dropOff.text = tempText;
+
+    // Swap the coordinates
+    double tempLat = selectedPickUPLat;
+    double tempLon = selectedPickUPLon;
+
+    selectedPickUPLat = selectedDropLat;
+    selectedPickUPLon = selectedDropLon;
+
+    selectedDropLat = tempLat;
+    selectedDropLon = tempLon;
+
+    // Swap via points visibility? (optional, depends if needed)
+    // Usually via1 & via2 stay as they are
+
+    // Recalculate route after swap
+    fetchRoute();
+    update(["map", "distance"]);
   }
 
 
@@ -560,9 +583,6 @@ Future<void> pickupLocation(String text) async {
   }
 
 
-
-
-
   Future<void> fetchRoute() async {
     if (selectedPickUPLat == 0.0 ||
         selectedPickUPLon == 0.0 ||
@@ -572,24 +592,21 @@ Future<void> pickupLocation(String text) async {
     // Track latest API call
     final requestId = ++_routeRequestId;
 
-    String coordinates = "${selectedPickUPLon},${selectedPickUPLat}";
+    // Build GraphHopper URL with via points
+    String url =
+        'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=f57e40a3-f4c9-41da-8f4d-25d26e0b2e56'
+        '&point=$selectedPickUPLat,$selectedPickUPLon';
 
-    // VIA 1
     if (via1Lat != 0.0 && via1Lon != 0.0) {
-      coordinates += ";${via1Lon},${via1Lat}";
+      url += '&point=$via1Lat,$via1Lon';
+
     }
 
-    // VIA 2
     if (via2Lat != 0.0 && via2Lon != 0.0) {
-      coordinates += ";${via2Lon},${via2Lat}";
+      url += '&point=$via2Lat,$via2Lon';
     }
 
-    // DROP
-    coordinates += ";${selectedDropLon},${selectedDropLat}";
-
-    final url =
-        'https://router.project-osrm.org/route/v1/driving/$coordinates'
-        '?overview=full&geometries=geojson';
+    url += '&point=$selectedDropLat,$selectedDropLon';
 
     try {
       final response = await Dio().get(url);
@@ -598,10 +615,10 @@ Future<void> pickupLocation(String text) async {
       if (requestId != _routeRequestId) return;
 
       if (response.statusCode == 200) {
-        final route = response.data['routes'][0];
+        final route = response.data['paths'][0];
 
         /// 🟣 POLYLINE POINTS
-        final coords = route['geometry']['coordinates'];
+        final coords = route['points']['coordinates'];
         routePoints = coords.map<LatLng>((p) {
           return LatLng(
             (p[1] as num).toDouble(),
@@ -613,11 +630,11 @@ Future<void> pickupLocation(String text) async {
         double distanceMeters = (route['distance'] as num).toDouble();
         totalRouteDistanceMiles = distanceMeters * 0.000621371;
 
-        ///  DURATION (seconds → minutes)
-        double durationSeconds = (route['duration'] as num).toDouble();
-        estimatedTimeMinutes = durationSeconds / 60;
+        /// DURATION (milliseconds → minutes)
+        double durationMs = (route['time'] as num).toDouble();
+        estimatedTimeMinutes = durationMs / 1000 / 60;
 
-        ///  CENTER POINT FOR DISTANCE LABEL
+        /// CENTER POINT FOR DISTANCE LABEL
         if (routePoints.isNotEmpty) {
           routeCenterPoint = routePoints[routePoints.length ~/ 2];
         } else {
@@ -626,7 +643,7 @@ Future<void> pickupLocation(String text) async {
 
         update(["map", "distance"]);
 
-        ///  AUTO FIT MAP TO ROUTE
+        /// AUTO FIT MAP TO ROUTE
         if (isMapReady && mapController != null && routePoints.isNotEmpty) {
           Future.delayed(const Duration(milliseconds: 100), () {
             final bounds = LatLngBounds.fromPoints(routePoints);
@@ -643,6 +660,89 @@ Future<void> pickupLocation(String text) async {
       print("Route error: $e");
     }
   }
+
+
+
+  // Future<void> fetchRoute() async {
+  //   if (selectedPickUPLat == 0.0 ||
+  //       selectedPickUPLon == 0.0 ||
+  //       selectedDropLat == 0.0 ||
+  //       selectedDropLon == 0.0) return;
+  //
+  //   // Track latest API call
+  //   final requestId = ++_routeRequestId;
+  //
+  //   String coordinates = "${selectedPickUPLon},${selectedPickUPLat}";
+  //
+  //   // VIA 1
+  //   if (via1Lat != 0.0 && via1Lon != 0.0) {
+  //     coordinates += ";${via1Lon},${via1Lat}";
+  //   }
+  //
+  //   // VIA 2
+  //   if (via2Lat != 0.0 && via2Lon != 0.0) {
+  //     coordinates += ";${via2Lon},${via2Lat}";
+  //   }
+  //
+  //   // DROP
+  //   coordinates += ";${selectedDropLon},${selectedDropLat}";
+  //
+  //   final url =
+  //       'https://router.project-osrm.org/route/v1/driving/$coordinates'
+  //       '?overview=full&geometries=geojson';
+  //
+  //   try {
+  //     final response = await Dio().get(url);
+  //
+  //     // Ignore old responses
+  //     if (requestId != _routeRequestId) return;
+  //
+  //     if (response.statusCode == 200) {
+  //       final route = response.data['routes'][0];
+  //
+  //       /// 🟣 POLYLINE POINTS
+  //       final coords = route['geometry']['coordinates'];
+  //       routePoints = coords.map<LatLng>((p) {
+  //         return LatLng(
+  //           (p[1] as num).toDouble(),
+  //           (p[0] as num).toDouble(),
+  //         );
+  //       }).toList();
+  //
+  //       /// DISTANCE (meters → miles)
+  //       double distanceMeters = (route['distance'] as num).toDouble();
+  //       totalRouteDistanceMiles = distanceMeters * 0.000621371;
+  //
+  //       ///  DURATION (seconds → minutes)
+  //       double durationSeconds = (route['duration'] as num).toDouble();
+  //       estimatedTimeMinutes = durationSeconds / 60;
+  //
+  //       ///  CENTER POINT FOR DISTANCE LABEL
+  //       if (routePoints.isNotEmpty) {
+  //         routeCenterPoint = routePoints[routePoints.length ~/ 2];
+  //       } else {
+  //         routeCenterPoint = null;
+  //       }
+  //
+  //       update(["map", "distance"]);
+  //
+  //       ///  AUTO FIT MAP TO ROUTE
+  //       if (isMapReady && mapController != null && routePoints.isNotEmpty) {
+  //         Future.delayed(const Duration(milliseconds: 100), () {
+  //           final bounds = LatLngBounds.fromPoints(routePoints);
+  //           mapController!.fitCamera(
+  //             CameraFit.bounds(
+  //               bounds: bounds,
+  //               padding: const EdgeInsets.all(60),
+  //             ),
+  //           );
+  //         });
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("Route error: $e");
+  //   }
+  // }
 
 
 

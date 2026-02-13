@@ -93,7 +93,8 @@ class RideSearchScreen extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(18),
-                      child: MapScreen()),
+                      child: MapScreen()
+                  ),
                 ),
 
                 const SizedBox(height: 20),

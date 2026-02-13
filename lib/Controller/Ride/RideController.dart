@@ -83,12 +83,8 @@ class RideController extends GetxController {
 
 
 // ----------------- Date & Time -----------------
-  var selectedDate = DateTime
-      .now()
-      .obs;
-  var selectedTime = TimeOfDay
-      .now()
-      .obs;
+  var selectedDate = DateTime.now().obs;
+  var selectedTime = TimeOfDay.now().obs;
 
 // Track which quick-time button is selected ("ASAP", "15 min", "30 min")
   var selectedTimeOption = ''.obs;
@@ -241,8 +237,10 @@ class RideController extends GetxController {
   void prepareViaPoints() {
     viaPointsList.clear();
 
-    final profileName = "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}";
-    final profileMobile = profileController.profileData!.phoneNumber;
+   // final profileName = "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}";
+    final profileName = "Mark";
+    //final profileMobile = profileController.profileData!.phoneNumber;
+    final profileMobile ="123467839";
 
     // VIA 1
     if (swapController.viaController1.text.isNotEmpty) {
@@ -277,6 +275,7 @@ class RideController extends GetxController {
 
 
   Future<void> getBookingApi() async {
+    prepareViaPoints();
 
     FormData formData = FormData.fromMap(<String, dynamic>{
       // ---------------- Pickup ----------------
@@ -292,10 +291,15 @@ class RideController extends GetxController {
       // "dropoff_door_number": "dropoff notes",
 
       // ---------------- Customer ----------------
-      "name": "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}" ,
-      "email": profileController.profileData!.email,
-      "mobile": profileController.profileData!.phoneNumber,
-      "telephone": profileController.profileData!.phoneNumber,
+      // "name": "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}" ,
+      // "email": profileController.profileData!.email,
+      // "mobile": profileController.profileData!.phoneNumber,
+      // "telephone": profileController.profileData!.phoneNumber,
+
+      "name": "customer1",
+      "email": "tests@mail.com",
+      "mobile": "123467839",
+      "telephone": "1234536798",
 
       // ---------------- Journey ----------------
       "pickup_date": getDate,
@@ -322,10 +326,16 @@ class RideController extends GetxController {
       // ---------------- Customer Array ----------------
       "customer": [
         {
-          "name": "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}" ,
-          "email": profileController.profileData!.email,
-          "mobile": profileController.profileData!.phoneNumber,
-          "telephone": profileController.profileData!.phoneNumber,
+          // "name": "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}" ,
+          // "email": profileController.profileData!.email,
+          // "mobile": profileController.profileData!.phoneNumber,
+          // "telephone": profileController.profileData!.phoneNumber,
+          // "blacklist": false,
+
+          "name": "customer1",
+          "email": "tests@mail.com",
+          "mobile": "123467839",
+          "telephone": "1234536798",
           "blacklist": false,
         }
       ],
@@ -333,8 +343,10 @@ class RideController extends GetxController {
       // ---------------- Via Points (Optional) ----------------
 
 
-      if (viaPointsList.isNotEmpty)
-        "viapoints": viaPointsList,
+       "viapoints": viaPointsList.isNotEmpty ? viaPointsList : [],
+
+      // if (viaPointsList.isNotEmpty)
+      //   "viapoints": viaPointsList,
 
       // "viapoints": [
       //   {
