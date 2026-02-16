@@ -282,7 +282,7 @@ class RideController extends GetxController {
       "pickup": swapController.pickUp.text,
       "pickup_latitude": swapController.selectedPickUPLat,
       "pickup_longitude": swapController.selectedPickUPLon,
-      // "pickup_door_number": "Pickup notes",
+       "pickup_door_number": swapController.babyNote,
 
       // ---------------- Dropoff ----------------
       "dropoff":swapController.dropOff.text,

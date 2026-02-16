@@ -1,11 +1,10 @@
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
-
 import 'color.dart';
 
 class MyElevatedButton extends StatelessWidget {
   final String text;
-  final Widget? textWidget; // 👈 NEW
+  final Widget? textWidget;
   final VoidCallback onPressed;
   final Color backgroundColor;
   final Color textColor;
@@ -18,7 +17,7 @@ class MyElevatedButton extends StatelessWidget {
     Key? key,
     required this.text,
     required this.onPressed,
-    this.textWidget, // 👈 NEW
+    this.textWidget,
     this.backgroundColor = CustomColor.Button_background_Color,
     this.textColor = CustomColor.Button_Text_Color,
     this.borderRadius = 12.0,
@@ -40,7 +39,7 @@ class MyElevatedButton extends StatelessWidget {
         padding: padding,
       ),
       onPressed: onPressed,
-      child: textWidget ?? Text(      // 👈 If custom widget exists, use it
+      child: textWidget ?? Text(
         text,
         style: AppTextStyles.medium(
           size: fontSize,

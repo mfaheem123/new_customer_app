@@ -20,6 +20,18 @@ class SwapController extends GetxController {
 
   final TextEditingController viaController1 = TextEditingController();
   final TextEditingController viaController2 = TextEditingController();
+  final TextEditingController babyNoteController   = TextEditingController();
+
+
+  var babyNote = "";
+  void babynoteText(){
+    babyNote = babyNoteController.text;
+    Get.back();
+     babyNoteController.clear();
+    print(babyNote);
+  }
+
+
 
 
   // final mapWedgit =OpenStreetMapWidget();
@@ -636,7 +648,7 @@ Future<void> pickupLocation(String text) async {
 
         /// CENTER POINT FOR DISTANCE LABEL
         if (routePoints.isNotEmpty) {
-          routeCenterPoint = routePoints[routePoints.length ~/ 2];
+          routeCenterPoint = routePoints[routePoints.length ~/ 2.5];
         } else {
           routeCenterPoint = null;
         }
@@ -663,7 +675,7 @@ Future<void> pickupLocation(String text) async {
 
 
 
-  // Future<void> fetchRoute() async {
+   // Future<void> fetchRoute() async {
   //   if (selectedPickUPLat == 0.0 ||
   //       selectedPickUPLon == 0.0 ||
   //       selectedDropLat == 0.0 ||

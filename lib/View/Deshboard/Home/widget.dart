@@ -5,6 +5,9 @@ import 'package:get/get.dart';
 
 import '../../../Controller/Home/home-controller.dart';
 import '../../Widgets/color.dart';
+import '../../Widgets/elevat_button.dart';
+import '../../Widgets/text_button.dart';
+import '../../Widgets/textformfield.dart';
 import '../../profile/controller/profile_controller.dart';
 import '../../textstyle/apptextstyle.dart';
 import '../AddHome/add_home.dart';
@@ -224,9 +227,7 @@ class _containerWidgetState extends State<containerWidget> {
                                     ),
 
                                     leading: Icon(
-                                      controller.iconItems[controller
-                                          .selectedIndex
-                                          .value]["icon"],
+                                      controller.iconItems[controller.selectedIndex.value]["icon"],
                                       color: CustomColor.textColor,
                                       size: 25,
                                     ),
@@ -241,10 +242,7 @@ class _containerWidgetState extends State<containerWidget> {
                                       style: AppTextStyles.regular(),
                                     ),
                                     subtitle: Text(
-                                      profileController
-                                              .profileData
-                                              ?.addworkAddress ??
-                                          'Address',
+                                      profileController.profileData?.addworkAddress ?? 'Address',
                                       style: AppTextStyles.small(),
                                     ),
                                     leading: Icon(
@@ -255,6 +253,23 @@ class _containerWidgetState extends State<containerWidget> {
                                       size: 25,
                                     ),
                                   ),
+
+                                  ListTile(
+                                    onTap: () {
+                                      print("Baby note ");
+                                      showBabyNoteDialog();
+                                    },
+                                    title: Text(
+                                      "Baby Note",
+                                      style: AppTextStyles.regular(),
+                                    ),
+                                    leading: Icon(
+                                      Icons.note_alt_outlined,
+                                      color: CustomColor.Icon_Color,
+                                      size: 25,
+                                    ),
+                                  ),
+
                                 ],
                               ),
                             ),
@@ -334,4 +349,97 @@ class _containerWidgetState extends State<containerWidget> {
       },
     );
   }
+
+
+
+  void showBabyNoteDialog() {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        backgroundColor: CustomColor.Container_Colors,
+        title: Text(
+          "Baby Note",
+          textAlign: TextAlign.center,
+          style: AppTextStyles.medium(
+            color: Colors.white,
+            weight: FontWeight.bold,
+          ),
+        ),
+        content:
+        CustomTextField(
+          controller: homeC.babyNoteController,
+          hintText: "Enter baby note...",
+          borderRadius: 15,
+          // fillColor: CustomColor.textfield_fill,
+          maxlength: 30,
+          maxLines: 3,
+          contentPadding: EdgeInsets.symmetric(vertical: 25, horizontal: 15),
+        ),
+        // TextField(
+        // //  controller: babyNoteController,
+        //   maxLines: 3,
+        //   style: const TextStyle(color: Colors.white),
+        //   decoration: InputDecoration(
+        //     hintText: "Enter baby note...",
+        //     hintStyle: TextStyle(color: Colors.white54),
+        //     filled: true,
+        //     fillColor: Colors.white10,
+        //     border: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(8),
+        //       borderSide: BorderSide.none,
+        //     ),
+        //   ),
+        // ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomTextButton(
+                text: 'Cancel',
+                onPressed: () {
+                  homeC.babyNoteController.clear();
+                  Get.back();
+
+                },
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                borderRadius: 8,
+                elevation: 2,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+              ),
+
+              SizedBox(width: 12),
+
+              CustomTextButton(
+                text: '  Save  ',
+                onPressed: () {
+                  homeC.babynoteText();
+                },
+                backgroundColor: CustomColor.Button_background_Color,
+                textColor: Colors.white,
+                borderRadius: 8,
+                elevation: 2,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+              ),
+            ],
+          ),
+        ],
+
+      ),
+      barrierDismissible: false,
+    );
+  }
+
 }
