@@ -14,14 +14,16 @@ class LoginController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   var isLoading = false.obs;
 
-  Future<void> login() async {
-    isLoading.value = true;
+  // Future<void> login() async {
+  //   isLoading.value = true;
+  //
+  //   await Future.delayed(Duration(seconds: 2));
+  //
+  //   isLoading.value = false;
+  //   Get.toNamed('/DeshBoard_Screen');
+  // }
 
-    await Future.delayed(Duration(seconds: 2));
 
-    isLoading.value = false;
-    Get.toNamed('/DeshBoard_Screen');
-  }
   void clearFields(){
 
     emailController.clear();
@@ -31,13 +33,13 @@ class LoginController extends GetxController {
 
     Future<void> userLoginApi() async {
       FormData formData = FormData.fromMap({
-        "email": emailController.text.trim(),
-        "password": passwordController.text.trim(),
+        "email": emailController.text,
+        "password": passwordController.text,
       });
 
       var response = await ApiService.post(
         formData,
-        "auth/login",
+        "customers/login",
         multiPart: false,
         auth: false,
       );
@@ -49,11 +51,12 @@ class LoginController extends GetxController {
         /// 🔐 Save token & id in GetStorage
         TokenManager.saveSession(
           token: data['token'],
-          userId: data['user']['id'],   // agar API me user object hai
+          userId: data['customer']['id'],   // agar API me user object hai
         );
 
         BotToast.showText(text: "Login Successful");
-        print("========================================================= ===================          ===============            ======== = ${data['user']['id']}");
+        print("========================================================= ===================          ===============            ======== = ${data['customer']['id']}");
+        print("========================================================= ===================          ===============            ======== = ${ data['token']}");
         clearFields();
         Get.offAllNamed('/DeshBoard_Screen');
         return;

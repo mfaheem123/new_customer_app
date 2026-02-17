@@ -38,12 +38,29 @@ class DeshBoard_Screen extends StatelessWidget {
               flex: 6,
               child: Stack(
                 children: [
+
+                  // ================= Map Widget FIXED =================
                   Positioned.fill(
-                    child: Image.asset(
-                      "assets/images/map2.png",
-                      fit: BoxFit.cover,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isKeyboardOpen =
+                            MediaQuery.of(context).viewInsets.bottom > 0;
+
+                        return IgnorePointer(
+                          ignoring: isKeyboardOpen,
+                          child: PickupLocationScreen(),
+                        );
+                      },
                     ),
                   ),
+
+
+                  // Positioned.fill(
+                  //   child: Image.asset(
+                  //     "assets/images/map2.png",
+                  //     fit: BoxFit.cover,
+                  //   ),
+                  // ),
                   // Uncomment this to use actual map widget
                   // Positioned.fill(
                   //   child: OpenStreetMapView(),
@@ -57,7 +74,7 @@ class DeshBoard_Screen extends StatelessWidget {
                       height: 60,
                       width: 60,
                       decoration: BoxDecoration(
-                        color: CustomColor.background,
+                        color: CustomColor.Container_Colors,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: IconButton(

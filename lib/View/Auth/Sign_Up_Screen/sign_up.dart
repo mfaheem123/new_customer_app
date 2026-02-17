@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:customer/Controller/Auth_Controller/sigup_controller.dart';
 import 'package:customer/View/Auth/Login_screens/login.dart';
 import 'package:customer/View/Auth/trems.dart';
@@ -23,12 +24,11 @@ class SigUp_Screen extends StatefulWidget {
 }
 
 class _SigUp_ScreenState extends State<SigUp_Screen> {
-
   //final signupController = Get.find<SignUp_Controller>();
 
   final signupController = Get.isRegistered<SignUp_Controller>()
       ? Get.find<SignUp_Controller>()
-      :  Get.put(SignUp_Controller());
+      : Get.put(SignUp_Controller());
 
   //final  signupController = Get.put(SignUp_Controller());
 
@@ -37,14 +37,14 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
     return Scaffold(
       backgroundColor: CustomColor.background,
       body: Container(
-        height:MediaQuery.of(context).size.height,
-        width:MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(horizontal: 15),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color.fromARGB(255, 30, 1, 44),
-              Color.fromARGB(255, 227, 194, 242)
+              Color.fromARGB(255, 227, 194, 242),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -65,33 +65,32 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text( CustomText.Sig_up, style: AppTextStyles.heading(size: 40),),
+                    Text(
+                      CustomText.Sig_up,
+                      style: AppTextStyles.heading(size: 40),
+                    ),
                     SizedBox(height: 5),
                     Text(
                       CustomText.Sigup_Description_text,
-                        style: AppTextStyles.medium(),
+                      style: AppTextStyles.medium(),
                     ),
                     SizedBox(height: 40),
 
                     /// first name
-                CustomTextField(
-                  controller: signupController.firstNameController,
-                  FontSize: 14,
-                  maxlength: 20,
-                  hintText: CustomText.hint_text_first_Name,
-                  prefixIcon: Icon(
-                    Icons.person,
-                    color: CustomColor.textField_Icon_Color,
-                  ),
-                  borderRadius: 15,
-
-
-                ),
-
-
-
+                    CustomTextField(
+                      controller: signupController.firstNameController,
+                      FontSize: 14,
+                      maxlength: 20,
+                      hintText: CustomText.hint_text_first_Name,
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: CustomColor.textField_Icon_Color,
+                      ),
+                      borderRadius: 15,
+                    ),
 
                     SizedBox(height: 25),
+
                     /// last name
                     CustomTextField(
                       controller: signupController.lastNameController,
@@ -103,46 +102,52 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                         color: CustomColor.textField_Icon_Color,
                       ),
                       borderRadius: 15,
-
-
                     ),
 
+                    SizedBox(height: 25),
 
-                  SizedBox(height: 25),
                     /// email
                     CustomTextField(
                       hintText: CustomText.hint_text_email,
                       controller: signupController.emailController,
                       FontSize: 14,
                       maxlength: 30,
-                      prefixIcon: Icon(Icons.email, color: CustomColor.textField_Icon_Color),
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: CustomColor.textField_Icon_Color,
+                      ),
                       borderRadius: 15,
-                     // fillColor: CustomColor.textfield_fill,
+                      // fillColor: CustomColor.textfield_fill,
                     ),
 
                     SizedBox(height: 25),
+
                     /// phone no
                     Container(
-                      height:70,
+                      height: 70,
                       //padding: EdgeInsets.symmetric(vertical: 7),
                       child: PhoneNumber_TextField(
                         hintText: CustomText.hint_text_phone_number,
                         controller: signupController.phoneNoController,
-
                       ),
                     ),
                     SizedBox(height: 25),
 
                     /// password controller
                     Obx(
-                      ()=> CustomTextField(
+                      () => CustomTextField(
                         maxlength: 15,
                         suffixIcon: GestureDetector(
-                            onTap: (){
-                              signupController.isPasswordVisible.value = !signupController.isPasswordVisible.value;
-                              // signupController.togglePasswordVisibility();
-                            },
-                            child: Icon(signupController.isPasswordVisible.value ?Icons.remove_red_eye:Icons.visibility_off)
+                          onTap: () {
+                            signupController.isPasswordVisible.value =
+                                !signupController.isPasswordVisible.value;
+                            // signupController.togglePasswordVisibility();
+                          },
+                          child: Icon(
+                            signupController.isPasswordVisible.value
+                                ? Icons.remove_red_eye
+                                : Icons.visibility_off,
+                          ),
                         ),
                         controller: signupController.passwordController,
                         obscureText: !signupController.isPasswordVisible.value,
@@ -165,7 +170,8 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                             activeColor: CustomColor.textField_Icon_Color,
                           ),
                           Text(
-                           "${CustomText.SigUp_Trems_Text} ",style: AppTextStyles.small(),
+                            "${CustomText.SigUp_Trems_Text} ",
+                            style: AppTextStyles.small(),
                           ),
                           Expanded(
                             child: InkWell(
@@ -173,12 +179,12 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                                 Get.to(TermsAndConditionsScreen());
                               },
                               child: Text(
-                              CustomText.SigUp_TremsAndCondition,
+                                CustomText.SigUp_TremsAndCondition,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTextStyles.small(
-                                color: CustomColor.trems,
-                              ),
+                                  color: CustomColor.trems,
+                                ),
                               ),
                             ),
                           ),
@@ -192,31 +198,46 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
               //  ---------------------Sign Up Button---------------------------------
               SizedBox(height: 10),
 
-              Center(
-                child:  SizedBox(
-                  height: 55,
-                  width: 250,
-                  child: MyElevatedButton(
-                    text: "Sign Up",
-                    textWidget: FittedBox(
-                      child: Text("Sign Up",style: AppTextStyles.medium(size: 25,weight: FontWeight.bold),),
-                    ),
-                    onPressed: () {
+        Obx(() {
+          final isChecked = signupController.isCheckedBox.value;
 
-                      signupController.registerUser();
-                      //Get.to(SigIn_Screen());
-                    },
+          return Center(
+            child: SizedBox(
+              height: 55,
+              width: 250,
+              child: MyElevatedButton(
+                text: "Sign Up",
+                textWidget: FittedBox(
+                  child: Text(
+                    "Sign Up",
+                    style: AppTextStyles.medium(
+                      size: 25,
+                      weight: FontWeight.bold,
+                    ),
                   ),
                 ),
+                onPressed: isChecked
+                    ? () {
+                  signupController.registerUser();
+                }
+                    : () {
+                  BotToast.showText(
+                    text: "Please accept Terms & Conditions",
+                  );
+                },
               ),
+            ),
+          );
+        }),
 
 
-              Row(
+        Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(width: 5,),
+                  SizedBox(width: 5),
                   Text(
-                    CustomText.Already_Account_Text,style: AppTextStyles.small(),
+                    CustomText.Already_Account_Text,
+                    style: AppTextStyles.small(),
                   ),
                   TextButton(
                     onPressed: () {
@@ -224,11 +245,12 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                     },
                     child: Text(
                       "Log In",
-                      style: AppTextStyles.regular( weight: FontWeight.bold,
-                        color: CustomColor.Button_background_Color,)
-
+                      style: AppTextStyles.regular(
+                        weight: FontWeight.bold,
+                        color: CustomColor.Button_background_Color,
                       ),
                     ),
+                  ),
                 ],
               ),
 

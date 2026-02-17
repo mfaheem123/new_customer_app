@@ -16,15 +16,17 @@ class SignUp_Controller extends GetxController {
   TextEditingController passwordController = TextEditingController();
 
 
-  var isCheckedBox = false.obs;
+  RxBool isCheckedBox = false.obs;
+
+  void checked_box(bool? value) {
+    isCheckedBox.value = value ?? false;
+  }
+
 
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  void checked_box(bool? value) {
-    isCheckedBox.value = value ?? false;
-  }
   void clearFields(){
 
     lastNameController.clear();
@@ -40,39 +42,88 @@ class SignUp_Controller extends GetxController {
   /// ===================================================================================== >>> Validation
 
 
-  // bool isValidEmail(String email) {
-  //   return GetUtils.isEmail(email);
-  // }
-  //
-  // // Password Validation
-  // bool isValidPassword(String password) {
-  //   return password.length >= 6;
-  // }
-  //
-  // // Name Validation
-  // bool isValidName(String name) {
-  //   return name.trim().isNotEmpty;
-  // }
-  //
-  // // Number Validation (Pakistani number example)
-  // bool isValidNumber(String number) {
-  //   return GetUtils.isPhoneNumber(number);
-  // }
+  bool isValidEmail(String email) {
+    return GetUtils.isEmail(email);
+  }
+
+  // Password Validation
+  bool isValidPassword(String password) {
+    return password.length >= 6;
+  }
+
+  // Name Validation
+  bool isValidName(String name) {
+    return RegExp(r'^[a-zA-Z\s]+$').hasMatch(name.trim());
+  }
+
+  // Number Validation (Pakistani number example)
+  bool isValidNumber(String number) {
+    return GetUtils.isPhoneNumber(number);
+  }
+  bool validateRegisterForm() {
+    if (!isValidName(firstNameController.text)) {
+      BotToast.showText(text: "First name is required");
+      return false;
+    }
+
+    if (!isValidName(lastNameController.text)) {
+      BotToast.showText(text: "Last name is required");
+      return false;
+    }
+
+    if (!isValidEmail(emailController.text)) {
+      BotToast.showText(text: "Please enter a valid email");
+      return false;
+    }
+
+    if (!isValidNumber(phoneNoController.text)) {
+      BotToast.showText(text: "Please enter a valid phone number");
+      return false;
+    }
+
+    if (!isValidPassword(passwordController.text)) {
+      BotToast.showText(text: "Password must be at least 6 characters");
+      return false;
+    }
+
+    return true; // ✅ all good
+  }
+
+
 
 
 
   Future<void> registerUser() async {
+
+    // VALIDATION FIRST
+    if (!validateRegisterForm()) {
+       return; // agar validation fail ho jaye
+    }
+
     FormData formData = FormData.fromMap({
-      "first_name": firstNameController.text,
-      "last_name": lastNameController.text,
+      "sms_flag": true,
+      "name":"${firstNameController.text} ${lastNameController.text}",
+      "mobile": phoneNoController.text,
       "email": emailController.text,
-      "phone_number": phoneNoController.text,
-      "password": passwordController.text,
+    "telephone":phoneNoController.text,
+      //door_number:123
+      //address1:test
+      //address2:test
+      //notes:test
+    "blacklist":false,
+    "password":passwordController.text,
+
+
+      // "first_name": firstNameController.text,
+      // "last_name": lastNameController.text,
+      // "email": emailController.text,
+      // "phone_number": phoneNoController.text,
+      // "password": passwordController.text,
     });
 
     Response? response = await ApiService.post(
       formData,
-      "auth/register",
+      "customers/add",
       multiPart: true,
       auth: false,
     );
@@ -95,17 +146,17 @@ class SignUp_Controller extends GetxController {
       return;
     }
 
-    //  ERROR (SAFE HANDLING)
-    String errorMessage = "Register Failed ";
-
-    if (response.data is Map) {
-      errorMessage = response.data['message']?.toString() ?? errorMessage;
-    } else if (response.data is String) {
-      errorMessage = response.data;
-    }
-
-    BotToast.showText(text: errorMessage);
-    print("FAILED => ${response.data}");
+    // //  ERROR (SAFE HANDLING)
+    // String errorMessage = "Register Failed ";
+    //
+    // if (response.data is Map) {
+    //   errorMessage = response.data['message']?.toString() ?? errorMessage;
+    // } else if (response.data is String) {
+    //   errorMessage = response.data;
+    // }
+    //
+    // BotToast.showText(text: errorMessage);
+    // print("FAILED => ${response.data}");
   }
 
 

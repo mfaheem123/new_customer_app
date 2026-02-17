@@ -14,16 +14,15 @@ import 'model/pickuplocationmodel.dart';
 class SwapController extends GetxController {
 
 
-  var viaControllers = <TextEditingController>[].obs;
   final TextEditingController pickUp = TextEditingController();
   final TextEditingController dropOff = TextEditingController();
-
   final TextEditingController viaController1 = TextEditingController();
   final TextEditingController viaController2 = TextEditingController();
   final TextEditingController babyNoteController   = TextEditingController();
 
 
   var babyNote = "";
+
   void babynoteText(){
     babyNote = babyNoteController.text;
     Get.back();
@@ -41,19 +40,7 @@ class SwapController extends GetxController {
 
 //===============================================   pick UP location
 
-  // void pickupCurrentLocation() {
-  //   if (mapC.selectedLocation.value == null) {
-  //     print("❌ Location not ready yet");
-  //     return;
-  //   }
-  //
-  //   pickUp.text = mapC.address.value;
-  //
-  //   // final lat = mapC.selectedLocation.value!.latitude;
-  //   // final lng = mapC.selectedLocation.value!.longitude;
-  //   //
-  //   // print(" 🔴 LAT: $lat , LNG: $lng");
-  // }
+
   void pickupCurrentLocation() {
     final loc = mapC.selectedLocation.value;
 
@@ -111,7 +98,7 @@ class SwapController extends GetxController {
     update();
 
     var response = await ApiService.get(
-      "airports/get",   // 👈 base url ApiService me hoga
+      "airports/get",   //  base url ApiService me hoga
       auth: true,
     );
 

@@ -34,7 +34,7 @@ class OtpController extends GetxController {
 
   void startTimer() {
     _timer?.cancel(); // prevent multi timers
-    remainingSeconds.value = 30;
+    remainingSeconds.value = 60;
     isOtpExpired.value = false;
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -96,7 +96,7 @@ class OtpController extends GetxController {
 
     final response = await ApiService.post(
       data,
-      "auth/verify-otp",
+      "customers/verify-otp",
       multiPart: false,
       auth: false,
     );
@@ -128,7 +128,7 @@ class OtpController extends GetxController {
 
     final response = await ApiService.post(
       data,
-      "auth/resend-otp",   // <-- Backend ka resend OTP route
+      "customers/resend-otp",   // <-- Backend ka resend OTP route
       multiPart: false,
       auth: false,
     );

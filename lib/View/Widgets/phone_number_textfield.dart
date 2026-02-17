@@ -12,8 +12,9 @@ class PhoneNumber_TextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntlPhoneField(
+      autovalidateMode: AutovalidateMode.disabled, //  validation band
       decoration: InputDecoration(
-
+        errorText: null, //  red error remove
           border: OutlineInputBorder(
               borderSide: const BorderSide(
                   //color: const Color.fromARGB(255, 172, 171, 171)
