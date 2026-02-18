@@ -44,7 +44,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           );
         }
-        final user = controller.profileData;
+        final user = controller.profileData?.customer;
         if (user == null) {
           return Scaffold(
             body: Container(
@@ -121,76 +121,44 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Profile Picture with Obx ONLY for selectedImage
-                Stack(
-                  children: [
-                    Center(
-                      child: Obx(() {
-                        return CircleAvatar(
-                          radius: 55,
-                          // backgroundColor: CustomColor.black,
-                          backgroundColor: Colors.green,
-                          child: CircleAvatar(
-                            radius: 50,
-                            backgroundImage: controller.selectedImage.value != null
-                                ? FileImage(controller.selectedImage.value!)
-                                : (user.profilePicture != null && user.profilePicture!.isNotEmpty
-                                ? NetworkImage(user.profilePicture!)
-                                : const AssetImage("assets/images/profileimage.png") as ImageProvider),
-                          ),
-                        );
-                      }),
-                    ),
-                    Positioned(
-                      right: 130,
-                      bottom: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          controller.changeProfilePicture(TokenManager.userId);
-                        },
-                        child: Icon(
-                          Icons.camera_alt_rounded,
-                          size: 30,
-                          color: CustomColor.Icon_Color,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-
                 // Stack(
-                    //   children: [
-                    //     Center(
-                    //       child: Obx(() {
-                    //         return CircleAvatar(
-                    //           radius: 50,
-                    //           backgroundImage: controller.selectedImage.value != null
-                    //               ? FileImage(controller.selectedImage.value!)
-                    //               : (user.profilePicture != null && user.profilePicture!.isNotEmpty
-                    //               ? NetworkImage(user.profilePicture!) as ImageProvider
-                    //               : const AssetImage("assets/images/profileimage.png")),
-                    //         );
-                    //       }),
-                    //     ),
-                    //     Positioned(
-                    //       left: 230,
-                    //       top: 70,
-                    //       child: GestureDetector(
-                    //         child: Icon(
-                    //           Icons.photo_camera_rounded,
-                    //           size: 30,
-                    //           color: CustomColor.Icon_Color,
-                    //         ),
-                    //         onTap: () {
-                    //          // controller.changeProfilePicture(user.id!);
-                    //           if (controller.profileImg == null) {
-                    //             controller.pickImage();
-                    //           }
-                    //         }
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                //   children: [
+                //     Center(
+                //       child: Obx(() {
+                //         return CircleAvatar(
+                //           radius: 55,
+                //           // backgroundColor: CustomColor.black,
+                //           backgroundColor: Colors.green,
+                //           child: CircleAvatar(
+                //             radius: 50,
+                //           //  backgroundImage: controller.selectedImage.value != null
+                //                 // ? FileImage(controller.selectedImage.value!)
+                //                 // : (user.profilePicture != null && user.profilePicture!.isNotEmpty
+                //                 // ? NetworkImage(user.profilePicture!)
+                //                 // : const AssetImage("assets/images/profileimage.png") as ImageProvider),
+                //           ),
+                //         );
+                //       }),
+                //     ),
+                //     Positioned(
+                //       right: 130,
+                //       bottom: 0,
+                //       child: GestureDetector(
+                //         onTap: () {
+                //           controller.changeProfilePicture(TokenManager.userId);
+                //         },
+                //         child: Icon(
+                //           Icons.camera_alt_rounded,
+                //           size: 30,
+                //           color: CustomColor.Icon_Color,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+
+
+
 
                     const SizedBox(height: 10),
 
@@ -198,12 +166,12 @@ class ProfileScreen extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.person, size: 25, color: Colors.white),
                       title: Text(CustomText.Name, style: AppTextStyles.medium()),
-                      subtitle: Text("${user.firstName} ${user.lastName}", style: AppTextStyles.medium()),
+                      subtitle: Text("${user.name}", style: AppTextStyles.medium()),
                     ),
                     ListTile(
                       leading: const Icon(Icons.phone, size: 25, color: Colors.white),
                       title: Text(CustomText.Mobile, style: AppTextStyles.medium()),
-                      subtitle: Text("${user.phoneNumber}", style: AppTextStyles.medium()),
+                      subtitle: Text("${user.mobile}", style: AppTextStyles.medium()),
                       trailing: const Icon(Icons.edit, color: Colors.white),
                       onTap: () => Get.to(() => ChangPhoneNumber()),
                     ),

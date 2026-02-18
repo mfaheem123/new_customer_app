@@ -17,11 +17,11 @@ class AddWork_Screen extends StatefulWidget {
 }
 
 class _AddWork_ScreenState extends State<AddWork_Screen> {
-  //final mydeshcontroller = Get.put(DeshBoardAddHome_Controller());
+
   final mydeshcontroller = Get.isRegistered<DeshBoardAddHome_Controller>()
       ? Get.find<DeshBoardAddHome_Controller>()
       :  Get.put(DeshBoardAddHome_Controller());
-  // final profileC = Get.put(profileModelController());
+
   final profileC = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
       :  Get.put(profileModelController());
@@ -131,7 +131,7 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
 
                   return GetBuilder<profileModelController>(
                     builder: (controller) {
-                      final address = controller.profileData?.addworkAddress;
+                     final address = controller.profileData?.customer?.address2;
 
                       if (address == null || address.isEmpty || address == " ") {
                         return Padding(

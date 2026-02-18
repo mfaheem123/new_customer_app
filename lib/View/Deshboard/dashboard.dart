@@ -7,6 +7,8 @@ import 'package:customer/View/Widgets/text_button.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Controller/Home/home-controller.dart';
+import '../../Routing/routes_name.dart';
 import '../yourtrip/yourtrip.dart';
 import 'Home/homedriver.dart';
 import 'drawer/drawer.dart';
@@ -14,6 +16,10 @@ import 'map_widget/open_street_map.dart';
 
 class DeshBoard_Screen extends StatelessWidget {
   DeshBoard_Screen({super.key});
+
+  final homeC = Get.isRegistered<SwapController>()
+      ? Get.find<SwapController>()
+      : Get.put(SwapController());
 
   final deshboard_controller = Get.isRegistered<DeshBoardAddHome_Controller>()
       ? Get.find<DeshBoardAddHome_Controller>()
@@ -23,6 +29,12 @@ class DeshBoard_Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
     final screenHeight = MediaQuery.of(context).size.height;
+
+
+    /// Keyboard check (NON-reactive → Obx se bahar)
+    final bool isKeyboardOpen =
+        MediaQuery.of(context).viewInsets.bottom > 0;
+
 
     return SafeArea(
       child: Scaffold(
@@ -39,34 +51,68 @@ class DeshBoard_Screen extends StatelessWidget {
               child: Stack(
                 children: [
 
-                  // ================= Map Widget FIXED =================
-                  Positioned.fill(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isKeyboardOpen =
-                            MediaQuery.of(context).viewInsets.bottom > 0;
+                  ///          ================= Map Widget FIXED =================
 
-                        return IgnorePointer(
-                          ignoring: isKeyboardOpen,
-                          child: PickupLocationScreen(),
-                        );
-                      },
-                    ),
-                  ),
 
+                  /// MAP (Only Rx here)
+                  if (!isKeyboardOpen)
+                    Obx(() {
+                      return deshboard_controller.showMap.value
+                          ? RepaintBoundary(
+                        child: PickupLocationScreen(),
+                      )
+                          : const SizedBox();
+                    }),
+
+
+
+                  // Obx(() {
+                  //     if (MediaQuery.of(context).viewInsets.bottom > 0) {
+                  //       return const SizedBox(); // keyboard open → hide map
+                  //     }
+                  //     if (deshboard_controller.showMap.value) {
+                  //       return RepaintBoundary(child: PickupLocationScreen());
+                  //     } else {
+                  //       return const SizedBox();
+                  //     }
+                  //   }),
+
+                    // SizedBox(
+                    //   height: screenHeight * 0.6,
+                    //   width: double.infinity,
+                    //   child:   // 🔒 isolates map from rebuild
+                    //   PickupLocationScreen(),
+                    //
+                    // ),
 
                   // Positioned.fill(
-                  //   child: Image.asset(
-                  //     "assets/images/map2.png",
-                  //     fit: BoxFit.cover,
+                  //   child: LayoutBuilder(
+                  //     builder: (context, constraints) {
+                  //       final isKeyboardOpen =
+                  //           MediaQuery.of(context).viewInsets.bottom > 0;
+                  //
+                  //       return IgnorePointer(
+                  //         ignoring: isKeyboardOpen,
+                  //         child: PickupLocationScreen(),
+                  //       );
+                  //     },
                   //   ),
                   // ),
-                  // Uncomment this to use actual map widget
-                  // Positioned.fill(
-                  //   child: OpenStreetMapView(),
-                  // ),
+
+
+                 //  Positioned.fill(
+                 //    child: Image.asset(
+                 //      "assets/images/map2.png",
+                 //      fit: BoxFit.cover,
+                 //    ),
+                 //  ),
+                 // // Uncomment this to use actual map widget
+                 //  Positioned.fill(
+                 //    child:PickupLocationScreen(),
+                 //  ),
 
                   // Drawer button
+
                   Positioned(
                     left: 10,
                     top: 20,
@@ -112,7 +158,7 @@ class DeshBoard_Screen extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          "User Name",
+                          "User  ",
                           style: AppTextStyles.medium(weight: FontWeight.bold),
                         ),
                       ],
@@ -121,7 +167,10 @@ class DeshBoard_Screen extends StatelessWidget {
 
                     // "Where To" box
                     InkWell(
-                      onTap: () => Get.to(HomeDriver()),
+                      onTap: () {
+                        Get.toNamed(routesName.HomeDriver);
+                        homeC.pickupCurrentLocation();
+                      },
                       child: Container(
                         height: 50,
                         width: double.infinity,
@@ -205,21 +254,21 @@ class DeshBoard_Screen extends StatelessWidget {
 
 
 
-
-
-
-
-
+//
+//
+//
+//
+//
 // import 'package:customer/Controller/Deshboard/deshboard_cont.dart';
 // import 'package:customer/View/Deshboard/AddHome/add_home.dart';
 // import 'package:customer/View/Deshboard/AddWork/add_work.dart';
-// import 'package:customer/View/Home/homedriver.dart';
 // import 'package:customer/View/Widgets/color.dart';
 // import 'package:customer/View/Widgets/text_button.dart';
 // import 'package:customer/View/textstyle/apptextstyle.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import '../yourtrip/yourtrip.dart';
+// import 'Home/homedriver.dart';
 // import 'drawer/drawer.dart';
 // import 'map_widget/open_street_map.dart';
 //
@@ -266,29 +315,31 @@ class DeshBoard_Screen extends StatelessWidget {
 //                 width: double.infinity,
 //                 child: Stack(
 //                   children: [
-//                     Image.asset(
-//                       "assets/images/map2.png",
-//                       fit: BoxFit.cover,
-//                       width: double.infinity,
-//                       height: double.infinity,
-//                     ),
-//
-//                     // Obx(() {
-//                     //   if (MediaQuery.of(context).viewInsets.bottom > 0) {
-//                     //     return const SizedBox(); // keyboard open → hide map
-//                     //   }
-//                     //   return deshboard_controller.showMap.value
-//                     //       ? RepaintBoundary(child: OpenStreetMapView())
-//                     //       : const SizedBox();
-//                     // }),
-//                     //
-//                     // SizedBox(
-//                     //   height: screenHeight * 0.6,
+//                     // Image.asset(
+//                     //   "assets/images/map2.png",
+//                     //   fit: BoxFit.cover,
 //                     //   width: double.infinity,
-//                     //   child:   // 🔒 isolates map from rebuild
-//                     //     OpenStreetMapView(),
-//                     //
+//                     //   height: double.infinity,
 //                     // ),
+//
+//                     Obx(() {
+//                       if (MediaQuery.of(context).viewInsets.bottom > 0) {
+//                         return const SizedBox(); // keyboard open → hide map
+//                       }
+//                       if (deshboard_controller.showMap.value) {
+//                         return RepaintBoundary(child: PickupLocationScreen());
+//                       } else {
+//                         return const SizedBox();
+//                       }
+//                     }),
+//
+//                     SizedBox(
+//                       height: screenHeight * 0.6,
+//                       width: double.infinity,
+//                       child:   // 🔒 isolates map from rebuild
+//                       PickupLocationScreen(),
+//
+//                     ),
 //
 //
 //                     // /// ================================================================  Drawer Button

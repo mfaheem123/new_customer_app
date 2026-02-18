@@ -22,7 +22,7 @@ class appDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<profileModelController>(
       builder: (controller) {
-        final user = controller.profileData;
+        final user = controller.profileData?.customer;
         return SizedBox(
           width: MediaQuery.of(context).size.width * 0.6,
           child: ClipRRect(
@@ -57,22 +57,22 @@ class appDrawer extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Center(
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundImage: controller.selectedImage.value != null
-                                  ? FileImage(controller.selectedImage.value!) // use .value and null check
-                                  : (user.profilePicture != null && user.profilePicture!.isNotEmpty
-                                  ? NetworkImage(user.profilePicture!) as ImageProvider
-                                  : const AssetImage("assets/images/profileimage.png")),
-                            ),
-                          ),
+                          // Center(
+                          //   child: CircleAvatar(
+                          //     radius: 50,
+                          //     // backgroundImage: controller.selectedImage.value != null
+                          //     //     ? FileImage(controller.selectedImage.value!) // use .value and null check
+                          //     //     : (user.profilePicture != null && user.profilePicture!.isNotEmpty
+                          //     //     ? NetworkImage(user.profilePicture!) as ImageProvider
+                          //     //     : const AssetImage("assets/images/profileimage.png")),
+                          //   ),
+                          // ),
 
                           const SizedBox(height: 10),
                           Padding(
                             padding: const EdgeInsets.only(left: 10.0),
                             child: Text(
-                              user.firstName != null ? "${user.firstName} ${user.lastName}" : "No Data Found",
+                              user.name != null ? "${user.name}" : "No Data Found",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.heading(),
@@ -89,10 +89,7 @@ class appDrawer extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 10.0),
-                            child: Text(
-                              user.phoneNumber ?? "No. not found",
-                              style: AppTextStyles.medium(),
-                            ),
+
                           ),
                         ],
                       ),

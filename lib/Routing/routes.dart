@@ -9,6 +9,7 @@ import '../View/Auth/Login_screens/reset_Password.dart';
 import '../View/Auth/Sign_Up_Screen/sign_up.dart';
 import '../View/Auth/splash_Screen/spalsh.dart';
 import '../View/Auth/trems.dart';
+import '../View/Deshboard/Home/homedriver.dart';
 import '../View/Deshboard/dashboard.dart';
 import '../View/Deshboard/pickup/pickup.dart';
 import '../View/Reebook/Reebookingscreen.dart';
@@ -91,6 +92,10 @@ class AppRoutes{
     GetPage(
         name: routesName.DeshBoard_Screen,
       page: () => DeshBoard_Screen(),
+      // binding: DeshboardBinding(),
+    ), GetPage(
+        name: routesName.HomeDriver,
+      page: () => HomeDriver(),
       // binding: DeshboardBinding(),
     ),
     GetPage(

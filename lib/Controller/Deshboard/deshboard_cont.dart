@@ -16,6 +16,8 @@ class DeshBoardAddHome_Controller extends GetxController {
 
 
 
+
+
   // RxBool showMap = false.obs;
   // @override
   // void onReady() {
@@ -25,41 +27,39 @@ class DeshBoardAddHome_Controller extends GetxController {
   //   });
   // }
 
+  /// Map visibility
+  RxBool showMap = false.obs;
+
+  @override
+  void onReady() {
+    super.onReady();
+
+    /// Delay taake map smooth mount ho (crash / black screen avoid)
+    Future.delayed(const Duration(milliseconds: 400), () {
+      showMap.value = true;
+    });
+  }
+
+  /// Optional helpers
+  void hideMap() => showMap.value = false;
+  void showMapNow() => showMap.value = true;
+
 
   // TextField
   final TextEditingController HomeController = TextEditingController();
   final TextEditingController WorkAdressController = TextEditingController();
 
-  var workAddress = ''.obs;
+  //var workAddress = ''.obs;
 
  ///=====================================  ===========  =============================================== add Home address
 
-  //
-  // void saveItem() {
-  //   if(gethomeaddress.text.isNotEmpty) {
-  //     gethomeaddress.value = HomeController.text;
-  //     editingIndex.value = null;
-  //     HomeController.clear();
-  //   }
-  // }
-  // void saveItem() {
-  //   if(HomeController.text.isNotEmpty) {
-  //     homeAddress.value = HomeController.text;
-  //     editingIndex.value = null;
-  //     HomeController.clear();
-  //   }
-  // }
+
   void editItem() {
-    //HomeController.text =gethomeaddress ?? homeAddress.value;
-    HomeController.text =profileController.profileData?.addhomeAddress;
+   // //HomeController.text =gethomeaddress ?? homeAddress.value;
+  HomeController.text =profileController.profileData!.customer!.address1!;
     editingIndex.value = 0;
   }
-  //
-  //   void deleteItem() {
-  //     profileController.profileData!.addhomeAddress = "";
-  //     profileController.update();
-  //
-  // }
+
   void clearfield(){
     HomeController.clear();
   }
@@ -86,22 +86,13 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     if (response!.statusCode == 200) {
 
-      profileController.profileData!.addhomeAddress = HomeController.text;
+      profileController.profileData!.customer!.address1 = HomeController.text;
 
-     // profileController.update();   // 🔥 THIS refreshes GetBuilder UI
+     // // profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
       BotToast.showText(text: "Address Updated Successfully");
       clearfield();
-    //   profileController.profileData!.addhomeAddress;
-    //   BotToast.showText(text: "Address Updated Successfully");
-    //   clearfield();
-    //   // profileController.profileData!.addhomeAddress = HomeController.text;
-    //
-    //   // profileController.update(["home_address"]);
-    //   //Get.back();
-    // //  saveItem();
-    // // profileController.getuserProfile();
-    //   //Get.find<profileModelController>().getuserProfile();
+
     }
   }
 
@@ -121,9 +112,9 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     if (response!.statusCode == 200) {
 
-      profileController.profileData!.addhomeAddress = "";
+     profileController.profileData!.customer!.address1 = "";
 
-      profileController.update([profileController.profileData!.addhomeAddress]);   //  THIS refreshes GetBuilder UI
+     profileController.update([?profileController.profileData!.customer!.address1]);   //  THIS refreshes GetBuilder UI
 
       BotToast.showText(text: "Address Delete Successfully");
       clearWorkField();
@@ -171,33 +162,18 @@ class DeshBoardAddHome_Controller extends GetxController {
 
 ///======================================= ================================= =================================    add work  ================================  ============================
 
-  // void saveWorkAddress() {
-  //   if (WorkAdressController.text.isNotEmpty) {
-  //     workAddress.value = WorkAdressController.text;
-  //     editingIndex.value = null;
-  //     WorkAdressController.clear();
-  //   }
-  // }
-  //
+
   void editWorkAddress() {
-    WorkAdressController.text =profileController.profileData?.addhomeAddress;
+    WorkAdressController.text =profileController.profileData!.customer!.address2!;
     editingIndex.value = 0;
   }
 
-  // void deleteWorkAddress() {
-  //   workAddress.value = '';
-  //   WorkAdressController.clear();
-  //   editingIndex.value = null;
-  // }
+
 
   void clearWorkField() {
     WorkAdressController.clear();
   }
 
-  // void deleteWorkItem() {
-  //   profileController.profileData!.addhomeAddress = "";
-  //   profileController.update();
-  // }
 
 
   Future<void> AddworkApi() async {
@@ -219,7 +195,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     if (response!.statusCode == 200) {
 
-      profileController.profileData!.addworkAddress = WorkAdressController.text;
+     profileController.profileData!.customer!.address2 = WorkAdressController.text;
 
       //profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
@@ -244,7 +220,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     if (response!.statusCode == 200) {
 
-      profileController.profileData!.addworkAddress = "";
+     profileController.profileData!.customer!.address1 = "";
 
       profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 

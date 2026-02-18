@@ -56,7 +56,7 @@ class profileModelController extends GetxController {
     update();
     var response = await ApiService.get(
      // "auth/customer-profile/${TokenManager.userId}",
-      "auth/customer-profile/49",
+      "customers/getbyid/419",
       auth: true,
     );
 

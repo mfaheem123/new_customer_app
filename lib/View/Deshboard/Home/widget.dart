@@ -218,13 +218,13 @@ class _containerWidgetState extends State<containerWidget> {
                                       "Home",
                                       style: AppTextStyles.regular(),
                                     ),
-                                    subtitle: Text(
-                                      profileController
-                                              .profileData
-                                              ?.addhomeAddress ??
-                                          'Address',
-                                      style: AppTextStyles.small(),
-                                    ),
+                                    // subtitle: Text(
+                                    //   profileController
+                                    //           .profileData
+                                    //           ?.addhomeAddress ??
+                                    //       'Address',
+                                    //   style: AppTextStyles.small(),
+                                    // ),
 
                                     leading: Icon(
                                       controller.iconItems[controller.selectedIndex.value]["icon"],
@@ -241,10 +241,10 @@ class _containerWidgetState extends State<containerWidget> {
                                       "Add Work",
                                       style: AppTextStyles.regular(),
                                     ),
-                                    subtitle: Text(
-                                      profileController.profileData?.addworkAddress ?? 'Address',
-                                      style: AppTextStyles.small(),
-                                    ),
+                                    // subtitle: Text(
+                                    //   profileController.profileData?.addworkAddress ?? 'Address',
+                                    //   style: AppTextStyles.small(),
+                                    // ),
                                     leading: Icon(
                                       controller.iconItems[controller
                                           .selectedIndex

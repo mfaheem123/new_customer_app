@@ -131,7 +131,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
 
                   return GetBuilder<profileModelController>(
                     builder: (controller) {
-                      final address = controller.profileData?.addhomeAddress;
+                     final address = controller.profileData?.customer?.address1;
 
                       if (address == null ||
                           address.isEmpty ||
@@ -153,7 +153,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                         ),
                         child: ListTile(
                           leading: const Icon(Icons.home),
-                          title: Text(address, style: AppTextStyles.small()),
+                         title: Text(address, style: AppTextStyles.small()),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
