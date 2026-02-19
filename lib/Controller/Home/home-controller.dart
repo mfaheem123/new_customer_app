@@ -13,6 +13,17 @@ import 'model/pickuplocationmodel.dart';
 
 class SwapController extends GetxController {
 
+  // final mapWedgit =OpenStreetMapWidget();
+  final mapC = Get.isRegistered<PickLocationController>()
+      ? Get.find<PickLocationController>()
+      : Get.put(PickLocationController());
+
+  @override
+  void onClose() {
+    mapC.dispose();
+    super.onClose();
+  }
+
 
   final TextEditingController pickUp = TextEditingController();
   final TextEditingController dropOff = TextEditingController();
@@ -33,10 +44,6 @@ class SwapController extends GetxController {
 
 
 
-  // final mapWedgit =OpenStreetMapWidget();
-  final mapC = Get.isRegistered<PickLocationController>()
-      ? Get.find<PickLocationController>()
-      : Get.put(PickLocationController());
 
 //===============================================   pick UP location
 

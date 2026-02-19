@@ -17,6 +17,8 @@ import 'map_widget/open_street_map.dart';
 class DeshBoard_Screen extends StatelessWidget {
   DeshBoard_Screen({super.key});
 
+
+
   final homeC = Get.isRegistered<SwapController>()
       ? Get.find<SwapController>()
       : Get.put(SwapController());
@@ -98,8 +100,6 @@ class DeshBoard_Screen extends StatelessWidget {
                   //     },
                   //   ),
                   // ),
-
-
                  //  Positioned.fill(
                  //    child: Image.asset(
                  //      "assets/images/map2.png",
@@ -158,7 +158,9 @@ class DeshBoard_Screen extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          "User  ",
+                          deshboard_controller.profileController.profileData!.customer!.name ?? "User name ",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.medium(weight: FontWeight.bold),
                         ),
                       ],
@@ -166,6 +168,7 @@ class DeshBoard_Screen extends StatelessWidget {
                     const SizedBox(height: 10),
 
                     // "Where To" box
+
                     InkWell(
                       onTap: () {
                         Get.toNamed(routesName.HomeDriver);

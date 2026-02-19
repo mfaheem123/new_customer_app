@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../View/Deshboard/map_widget/map_controller.dart';
 import '../../View/profile/controller/profile_controller.dart';
 import '../../api_servies/api_servies.dart';
 import '../../api_servies/session.dart';
@@ -12,11 +13,19 @@ class DeshBoardAddHome_Controller extends GetxController {
       ? Get.find<profileModelController>()
       :  Get.put(profileModelController());
 
+
+  // final mapWedgit =OpenStreetMapWidget();
+  final mapC = Get.isRegistered<PickLocationController>()
+      ? Get.find<PickLocationController>()
+      : Get.put(PickLocationController());
+
+  @override
+  void onClose() {
+    mapC.dispose();
+    super.onClose();
+  }
+
   final RxnInt editingIndex = RxnInt();
-
-
-
-
 
   // RxBool showMap = false.obs;
   // @override
@@ -75,12 +84,12 @@ class DeshBoardAddHome_Controller extends GetxController {
     }
 
     var data = {
-      "addhome_address": HomeController.text,
+      "address1": HomeController.text,
     };
 
-    var response = await ApiService.put(
+    var response = await ApiService.post(
       data,
-      "auth/customer/home-address/${TokenManager.userId}",
+      "customers/edit/${TokenManager.userId}",
       auth: true,
     );
 
@@ -88,7 +97,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
       profileController.profileData!.customer!.address1 = HomeController.text;
 
-     // // profileController.update();   // 🔥 THIS refreshes GetBuilder UI
+      profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
       BotToast.showText(text: "Address Updated Successfully");
       clearfield();
@@ -101,12 +110,12 @@ class DeshBoardAddHome_Controller extends GetxController {
   Future<void> deleteHomeApi() async {
 
     var data = {
-      "addhome_address": " ",
+      "address1": " ",
     };
 
-    var response = await ApiService.put(
+    var response = await ApiService.post(
       data,
-      "auth/customer/home-address/${TokenManager.userId}",
+      "customers/edit/${TokenManager.userId}",
       auth: true,
     );
 
@@ -114,7 +123,9 @@ class DeshBoardAddHome_Controller extends GetxController {
 
      profileController.profileData!.customer!.address1 = "";
 
-     profileController.update([?profileController.profileData!.customer!.address1]);   //  THIS refreshes GetBuilder UI
+     //profileController.update([?profileController.profileData!.customer!.address1]);   //  THIS refreshes GetBuilder UI
+
+     profileController.update();
 
       BotToast.showText(text: "Address Delete Successfully");
       clearWorkField();
@@ -184,12 +195,12 @@ class DeshBoardAddHome_Controller extends GetxController {
     }
 
     var data = {
-      "addwork_address": WorkAdressController.text,
+      "address2": WorkAdressController.text,
     };
 
-    var response = await ApiService.put(
+    var response = await ApiService.post(
       data,
-      "auth/customer/work-address/${TokenManager.userId}",
+      "customers/edit/${TokenManager.userId}",
       auth: true,
     );
 
@@ -197,7 +208,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
      profileController.profileData!.customer!.address2 = WorkAdressController.text;
 
-      //profileController.update();   // 🔥 THIS refreshes GetBuilder UI
+      profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
       BotToast.showText(text: "Address Updated Successfully");
       clearWorkField();
@@ -209,18 +220,18 @@ class DeshBoardAddHome_Controller extends GetxController {
   Future<void> deleteWorkapi() async {
 
     var data = {
-      "addwork_address": " ",
+      "address2": " ",
     };
 
-    var response = await ApiService.put(
+    var response = await ApiService.post(
       data,
-      "auth/customer/work-address/${TokenManager.userId}",
+      "customers/edit/${TokenManager.userId}",
       auth: true,
     );
 
     if (response!.statusCode == 200) {
 
-     profileController.profileData!.customer!.address1 = "";
+     profileController.profileData!.customer!.address2 = "";
 
       profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
