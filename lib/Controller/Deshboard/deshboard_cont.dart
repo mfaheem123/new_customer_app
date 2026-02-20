@@ -21,7 +21,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
   @override
   void onClose() {
-    mapC.dispose();
+   // mapC.dispose();
     super.onClose();
   }
 
@@ -39,19 +39,30 @@ class DeshBoardAddHome_Controller extends GetxController {
   /// Map visibility
   RxBool showMap = false.obs;
 
+  // @override
+  // void onReady() {
+  //   super.onReady();
+  //
+  //   /// Delay taake map smooth mount ho (crash / black screen avoid)
+  //   Future.delayed(const Duration(milliseconds: 400), () {
+  //     showMap.value = true;
+  //   });
+  // }
   @override
   void onReady() {
     super.onReady();
 
-    /// Delay taake map smooth mount ho (crash / black screen avoid)
+    /// Safe delayed mount
     Future.delayed(const Duration(milliseconds: 400), () {
-      showMap.value = true;
+      if (!isClosed) {
+        showMap.value = true;
+      }
     });
   }
 
-  /// Optional helpers
-  void hideMap() => showMap.value = false;
-  void showMapNow() => showMap.value = true;
+  // /// Optional helpers
+  // void hideMap() => showMap.value = false;
+  // void showMapNow() => showMap.value = true;
 
 
   // TextField

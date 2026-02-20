@@ -3,6 +3,7 @@ import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Controller/Ride/RideController.dart';
 import '../Deshboard/dashboard.dart';
 import '../Widgets/all_text.dart';
 import '../Widgets/elevat_button.dart';
@@ -10,7 +11,11 @@ import '../Widgets/text_button.dart';
 import 'DriverDetailscreen.dart';
 
 class RideSearchScreen extends StatelessWidget {
-  const RideSearchScreen({super.key});
+   RideSearchScreen({super.key});
+
+  final rideController = Get.isRegistered<RideController>()
+      ? Get.find<RideController>()
+      : Get.put(RideController());
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +153,7 @@ class RideSearchScreen extends StatelessWidget {
                   child: MyElevatedButton(
                     text: '',
                     onPressed: () {
+                      print(rideController.bookingId);
                       Get.dialog(
                         Dialog(
                           backgroundColor: CustomColor.Container_Colors,
@@ -181,7 +187,8 @@ class RideSearchScreen extends StatelessWidget {
                                     CustomTextButton(
                                       text: 'Yes',
                                       onPressed: () {
-                                        Get.to(DeshBoard_Screen());
+                                        rideController.rideCancelApi();
+                                        // Get.to(DeshBoard_Screen());
                                       },
                                       backgroundColor: Colors.red,
                                       textColor: CustomColor.Button_Text_Color,

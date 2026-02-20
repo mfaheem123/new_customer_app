@@ -9,6 +9,10 @@ import '../../api_servies/session.dart';
 
 class changePasswordController extends GetxController{
 
+  final profileController = Get.isRegistered<profileModelController>()
+      ? Get.find<profileModelController>()
+      :  Get.put(profileModelController());
+
   var isCurrentPasswordVisible = false.obs;
   var isnewPasswordVisible = false.obs;
   var isConfirmPasswordVisible = false.obs;
@@ -63,21 +67,22 @@ var data = FormData.fromMap({
   Future<void> changeNumberApi() async {
 
     var data = FormData.fromMap({
-      "phone_number": chnagePhoneNoController.text,
+      "mobile": chnagePhoneNoController.text,
+      "telephone": chnagePhoneNoController.text,
 
     });
 
 
-    var response = await ApiService.put(
+    var response = await ApiService.post(
       data,
-      "auth/update-phone/${TokenManager.userId}",
+      "customers/edit/${TokenManager.userId}",
       auth: true,
     );
 
     if (response!.statusCode == 200) {
       BotToast.showText(text: "Phone Number Updated Successfully");
       Get.back(); // profile screen pe wapas
-      Get.find<profileModelController>().getuserProfile();
+      profileController.getuserProfile();
       return;
     }
 

@@ -158,7 +158,7 @@ class DeshBoard_Screen extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          deshboard_controller.profileController.profileData!.customer!.name ?? "User name ",
+                          deshboard_controller.profileController.profileData?.customer?.name ?? "User name ",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.medium(weight: FontWeight.bold),

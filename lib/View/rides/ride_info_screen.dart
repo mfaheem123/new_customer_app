@@ -17,7 +17,11 @@ class RideInfoScreen extends StatefulWidget {
 }
 
 class _RideInfoScreenState extends State<RideInfoScreen> {
-   final rideController = Get.put(RideController());
+   //final rideController = Get.put(RideController());
+
+   final rideController = Get.isRegistered<RideController>()
+       ? Get.find<RideController>()
+       : Get.put(RideController());
 
 @override
 void initState() {

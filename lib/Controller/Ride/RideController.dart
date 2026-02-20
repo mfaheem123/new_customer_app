@@ -28,6 +28,7 @@ class RideController extends GetxController {
   RxInt selectedIndex = (-1).obs;
   RxInt selectedVehicleId = 0.obs;
   RxInt selectedPassengers = 0.obs;
+    String bookingId = "0" ;
 
   /// Item select (index + ID + passengers)
   void selectItem(int index) {
@@ -237,10 +238,10 @@ class RideController extends GetxController {
   void prepareViaPoints() {
     viaPointsList.clear();
 
-   // final profileName = "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}";
-    final profileName = "Mark";
-    //final profileMobile = profileController.profileData!.phoneNumber;
-    final profileMobile ="123467839";
+   final profileName = "${profileController.profileData!.customer!.name}";
+   //  final profileName = "Mark";
+    final profileMobile = profileController.profileData!.customer!.mobile;
+    // final profileMobile ="123467839";
 
     // VIA 1
     if (swapController.viaController1.text.isNotEmpty) {
@@ -291,15 +292,15 @@ class RideController extends GetxController {
       // "dropoff_door_number": "dropoff notes",
 
       // ---------------- Customer ----------------
-      // "name": "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}" ,
-      // "email": profileController.profileData!.email,
-      // "mobile": profileController.profileData!.phoneNumber,
-      // "telephone": profileController.profileData!.phoneNumber,
+      "name": "${profileController.profileData!.customer!.name}" ,
+      "email": profileController.profileData!.customer!.email,
+      "mobile": profileController.profileData!.customer!.mobile,
+      "telephone": profileController.profileData!.customer!.mobile,
 
-      "name": "customer1",
-      "email": "tests@mail.com",
-      "mobile": "123467839",
-      "telephone": "1234536798",
+      // "name": "customer1",
+      // "email": "tests@mail.com",
+      // "mobile": "123467839",
+      // "telephone": "1234536798",
 
       // ---------------- Journey ----------------
       "pickup_date": getDate,
@@ -326,17 +327,17 @@ class RideController extends GetxController {
       // ---------------- Customer Array ----------------
       "customer": [
         {
-          // "name": "${profileController.profileData!.firstName} ${profileController.profileData!.lastName}" ,
-          // "email": profileController.profileData!.email,
-          // "mobile": profileController.profileData!.phoneNumber,
-          // "telephone": profileController.profileData!.phoneNumber,
-          // "blacklist": false,
-
-          "name": "customer1",
-          "email": "tests@mail.com",
-          "mobile": "123467839",
-          "telephone": "1234536798",
+          "name": "${profileController.profileData!.customer!.name}" ,
+          "email": profileController.profileData!.customer!.email,
+          "mobile": profileController.profileData!.customer!.mobile,
+          "telephone": profileController.profileData!.customer!.mobile,
           "blacklist": false,
+
+          // "name": "customer1",
+          // "email": "tests@mail.com",
+          // "mobile": "123467839",
+          // "telephone": "1234536798",
+          // "blacklist": false,
         }
       ],
 
@@ -385,15 +386,48 @@ class RideController extends GetxController {
       auth: true,
     );
 
-    if (response != null && response.statusCode == 200) {
+    if ( response!.statusCode == 200) {
+      final data = response.data;
+      // bookings list
+      final List bookings = data['bookings'];
+
+       bookingId = bookings[0]['id'].toString();
+
+      print("BOOKING ID ✅ => $bookingId");
+
       print("SUCCESS ✅ => ${response.data}");
       Get.to(RideSearchScreen());
       //Get.toNamed("/RideSearchScreen ");
       BotToast.showText(text: "Booking Created");
     } else {
-      print("FAILED ❌ => ${response?.data}");
+      print("FAILED ❌ => ${response.data}");
       BotToast.showText(text: "Booking Failed");
     }
+  }
+
+
+
+  Future<void> rideCancelApi() async {
+    FormData formData = FormData.fromMap({
+      "booking_status_id": 12,
+
+    });
+
+    var response = await ApiService.post(
+      formData,
+      "bookings/status/$bookingId",
+      multiPart: false,
+      auth: false,
+    );
+
+    if (response!.statusCode == 200) {
+
+      BotToast.showText(text: "Booking Cancel Success");
+      Get.toNamed('/DeshBoard_Screen');
+      return;
+    }
+
+
   }
 
 

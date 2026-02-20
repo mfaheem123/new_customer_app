@@ -20,7 +20,7 @@ class SwapController extends GetxController {
 
   @override
   void onClose() {
-    mapC.dispose();
+   // mapC.dispose();
     super.onClose();
   }
 
