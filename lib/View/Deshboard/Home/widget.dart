@@ -202,7 +202,7 @@ class _containerWidgetState extends State<containerWidget> {
                   children: [
                     controller.selectedIndex.value == 0
                         ? SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.19,
+                            height: MediaQuery.of(context).size.height * 0.2,
 
                             //color: Colors.grey,
                             child: SingleChildScrollView(

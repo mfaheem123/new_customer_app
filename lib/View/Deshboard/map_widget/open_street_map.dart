@@ -2,92 +2,204 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'map_controller.dart';
-import 'map_polyLine.dart'; // next screen
 
-class PickupLocationScreen extends StatelessWidget {
-  PickupLocationScreen({super.key});
 
+
+class PickupLocationScreen extends StatefulWidget {
+  const PickupLocationScreen({super.key});
+
+  @override
+  State<PickupLocationScreen> createState() =>
+      _PickupLocationScreenState();
+}
+
+class _PickupLocationScreenState extends State<PickupLocationScreen> {
   final c = Get.put(PickLocationController());
+  late final MapController mapController;
+
+  @override
+  void initState() {
+    super.initState();
+    mapController = MapController();
+
+    /// map move build ke baad
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (c.selectedLocation.value != null) {
+        mapController.move(c.selectedLocation.value!, 14);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Obx(() {
-        if (c.selectedLocation.value == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return  Obx(() {
+      final latLng = c.selectedLocation.value;
+      if (latLng == null) {
+        return const Center(child: CircularProgressIndicator());
+      }
 
-        return Stack(
-          children: [
-            /// MAP
-            FlutterMap(
-              mapController: c.mapController,
-              options: MapOptions(
-                initialCenter: c.selectedLocation.value!,
-                initialZoom: 14,
-                onPositionChanged: c.onMapMove,
+      return Stack(
+        children: [
+          /// MAP
+          FlutterMap(
+            mapController: mapController,
+            options: MapOptions(
+              initialCenter: latLng,
+              initialZoom: 14,
+              onPositionChanged: (pos, hasGesture) {
+                if (!hasGesture) return;
+                c.updateLocation(pos.center);
+              },
+            ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                userAgentPackageName: 'com.example.customer',
               ),
+            ],
+          ),
+
+          /// CENTER PIN + ADDRESS
+          Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TileLayer(
-                  urlTemplate:
-                  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  userAgentPackageName: 'com.example.customer',
+                Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Obx(() => Text(
+                      c.address.value,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 12),
+                    )),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Icon(
+                  Icons.location_pin,
+                  size: 30,
+                  color: Colors.red,
                 ),
               ],
             ),
+          ),
 
-            /// CENTER ADDRESS + PIN
-            Align(
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Obx(() => Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Text(
-                        c.address.value,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  )),
-                  const SizedBox(height: 10),
-                  const Icon(
-                    Icons.location_pin,
-                    size: 30,
-                    color: Colors.red,
-                  ),
-                ],
-              ),
-            ),
-
-            ///   CONFIRM PICKUP BUTTON
-            // Positioned(
-            //   bottom: 30,
-            //   left: 20,
-            //   right: 20,
-            //   child: ElevatedButton(
-            //     onPressed: () {
-            //       if (c.selectedLocation.value == null) return;
-            //
-            //       Get.to(
-            //             () => DropLocationScreen(
-            //           pickupLatLng: c.selectedLocation.value!,
-            //           pickupAddress: c.address.value,
-            //         ),
-            //       );
-            //     },
-            //     child: const Text("Confirm Pickup Location"),
-            //   ),
-            // ),
-          ],
-        );
-      }),
-    );
+          /// CONFIRM BUTTON
+          // Positioned(
+          //   bottom: 30,
+          //   left: 20,
+          //   right: 20,
+          //   child: ElevatedButton(
+          //     onPressed: () {
+          //       Get.to(
+          //           // //  () => DropLocationScreen(
+          //           // pickupLatLng: c.selectedLocation.value!,
+          //           // pickupAddress: c.address.value,
+          //         ),
+          //       );
+          //     },
+          //     child: const Text("Confirm Pickup Location"),
+          //   ),
+          // ),
+        ],
+      );
+    });
   }
 }
+
+
+// class PickupLocationScreen extends StatefulWidget {
+//   PickupLocationScreen({super.key});
+//
+//   @override
+//   State<PickupLocationScreen> createState() => _PickupLocationScreenState();
+// }
+//
+// class _PickupLocationScreenState extends State<PickupLocationScreen> {
+//   final c = Get.put(PickLocationController());
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Obx(() {
+//         if (c.selectedLocation.value == null) {
+//           return const Center(child: CircularProgressIndicator());
+//         }
+//
+//         return Stack(
+//           children: [
+//             /// MAP
+//             FlutterMap(
+//               mapController: c.mapController,
+//               options: MapOptions(
+//                 initialCenter: c.selectedLocation.value!,
+//                 initialZoom: 14,
+//                 onPositionChanged: c.onMapMove,
+//               ),
+//               children: [
+//                 TileLayer(
+//                   urlTemplate:
+//                   "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+//                   userAgentPackageName: 'com.example.customer',
+//                 ),
+//               ],
+//             ),
+//
+//             /// CENTER ADDRESS + PIN
+//             Align(
+//               alignment: Alignment.center,
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   Obx(() => Card(
+//                     elevation: 4,
+//                     child: Padding(
+//                       padding: const EdgeInsets.all(8),
+//                       child: Text(
+//                         c.address.value,
+//                         textAlign: TextAlign.center,
+//                         style: const TextStyle(fontSize: 12),
+//                       ),
+//                     ),
+//                   )),
+//                   const SizedBox(height: 10),
+//                   const Icon(
+//                     Icons.location_pin,
+//                     size: 30,
+//                     color: Colors.red,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//
+//             ///   CONFIRM PICKUP BUTTON
+//             // Positioned(
+//             //   bottom: 30,
+//             //   left: 20,
+//             //   right: 20,
+//             //   child: ElevatedButton(
+//             //     onPressed: () {
+//             //       if (c.selectedLocation.value == null) return;
+//             //
+//             //       Get.to(
+//             //             () => DropLocationScreen(
+//             //           pickupLatLng: c.selectedLocation.value!,
+//             //           pickupAddress: c.address.value,
+//             //         ),
+//             //       );
+//             //     },
+//             //     child: const Text("Confirm Pickup Location"),
+//             //   ),
+//             // ),
+//           ],
+//         );
+//       }),
+//     );
+//   }
+// }
 
 
 

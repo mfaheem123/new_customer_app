@@ -1,4 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:customer/View/Deshboard/dashboard.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/src/response.dart'  ;
 import 'package:get/get.dart' hide FormData, Response;
@@ -423,6 +424,7 @@ class RideController extends GetxController {
     if (response!.statusCode == 200) {
 
       BotToast.showText(text: "Booking Cancel Success");
+      //Get.toNamed('/DeshBLoard_Screen');
       Get.toNamed('/DeshBoard_Screen');
       return;
     }
