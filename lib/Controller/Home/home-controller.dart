@@ -553,19 +553,37 @@ Future<void> pickupLocation(String text) async {
 
   double totalRouteDistanceMiles = 0.0; // miles
   LatLng? routeCenterPoint;
+
+
+  // estimate time working
   double estimatedTimeMinutes = 0.0; // minutes
+  String estimatedTimeText = "";     // 2 hours 3 minutes
 
+  String formatDuration(double totalMinutes) {
+    int hours = totalMinutes ~/ 60;
+    int minutes = totalMinutes.round() % 60;
 
-  void calculateRouteCenter() {
-    if (routePoints.isEmpty) {
-      routeCenterPoint = null;
-      update(["distance"]);
-      return;
+    String h = hours == 1 ? "hour" : "hours";
+    String m = minutes == 1 ? "minute" : "minutes";
+
+    if (hours > 0) {
+      return "$hours $h $minutes $m";
+    } else {
+      return "$minutes $m";
     }
-
-    routeCenterPoint = routePoints[routePoints.length ~/ 2];
-    update(["distance"]);
   }
+
+
+  // void calculateRouteCenter() {
+  //   if (routePoints.isEmpty) {
+  //     routeCenterPoint = null;
+  //     update(["distance"]);
+  //     return;
+  //   }
+  //
+  //   routeCenterPoint = routePoints[routePoints.length ~/ 2];
+  //   update(["distance"]);
+  // }
 
 
 
@@ -637,8 +655,13 @@ Future<void> pickupLocation(String text) async {
         totalRouteDistanceMiles = distanceMeters * 0.000621371;
 
         /// DURATION (milliseconds → minutes)
+        // double durationMs = (route['time'] as num).toDouble();
+        // estimatedTimeMinutes = durationMs / 1000 / 60;
+
         double durationMs = (route['time'] as num).toDouble();
         estimatedTimeMinutes = durationMs / 1000 / 60;
+        estimatedTimeText = formatDuration(estimatedTimeMinutes);
+
 
         /// CENTER POINT FOR DISTANCE LABEL
         if (routePoints.isNotEmpty) {

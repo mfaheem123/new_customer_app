@@ -1,4 +1,3 @@
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:customer/View/profile/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
@@ -7,30 +6,33 @@ import 'package:dio/dio.dart';
 import '../../api_servies/api_servies.dart';
 import '../../api_servies/session.dart';
 
-class changePasswordController extends GetxController{
-
+class changePasswordController extends GetxController {
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
-      :  Get.put(profileModelController());
+      : Get.put(profileModelController());
 
   var isCurrentPasswordVisible = false.obs;
   var isnewPasswordVisible = false.obs;
   var isConfirmPasswordVisible = false.obs;
-  final TextEditingController  CurrentpasswordtlController= TextEditingController();
-  final TextEditingController  newpasswordController= TextEditingController();
-  final TextEditingController  ConfirmpasswordController= TextEditingController();
-  final TextEditingController  chnagePhoneNoController= TextEditingController();
 
-  clearField(){
+
+  final TextEditingController CurrentpasswordtlController = TextEditingController();
+  final TextEditingController newpasswordController = TextEditingController();
+  final TextEditingController ConfirmpasswordController =   TextEditingController();
+
+  final TextEditingController chnagePhoneNoController = TextEditingController();
+
+  clearField() {
     CurrentpasswordtlController.clear();
     CurrentpasswordtlController.clear();
     ConfirmpasswordController.clear();
   }
 
-/// ====================================================================  change password
+  /// ====================================================================  change password
   Future<void> changePasswordApi() async {
     if (CurrentpasswordtlController.text.isEmpty ||
-        newpasswordController.text.isEmpty || ConfirmpasswordController.text.isEmpty) {
+        newpasswordController.text.isEmpty ||
+        ConfirmpasswordController.text.isEmpty) {
       BotToast.showText(text: "Please fill all fields");
       return;
     }
@@ -40,38 +42,32 @@ class changePasswordController extends GetxController{
       return;
     }
 
-
-var data = FormData.fromMap({
-  "current_password": CurrentpasswordtlController.text,
-  "password": newpasswordController.text,
-  "confirm_password": ConfirmpasswordController.text,
-});
-
+    var data = FormData.fromMap({
+      "current_password": CurrentpasswordtlController.text,
+      "password": newpasswordController.text,
+      "confirm_password": ConfirmpasswordController.text,
+    });
 
     var response = await ApiService.put(
       data,
-      "auth/update-password/${TokenManager.userId}",
+      "customers/edit/${TokenManager.userId}",
       auth: true,
     );
 
     if (response!.statusCode == 200) {
       BotToast.showText(text: "Password Updated Successfully");
-      Get.back();   // profile screen pe wapas
+      Get.back();
       return;
     }
+  }
 
-   }
-
-///= ================================================================  change phone number
+  ///= ================================================================  change phone number
 
   Future<void> changeNumberApi() async {
-
     var data = FormData.fromMap({
       "mobile": chnagePhoneNoController.text,
       "telephone": chnagePhoneNoController.text,
-
     });
-
 
     var response = await ApiService.post(
       data,
@@ -85,9 +81,5 @@ var data = FormData.fromMap({
       profileController.getuserProfile();
       return;
     }
-
   }
-
-
-
 }

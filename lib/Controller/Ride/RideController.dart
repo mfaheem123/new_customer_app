@@ -230,7 +230,7 @@ class RideController extends GetxController {
       selectedTime.value.minute,
     );
 
-    return DateFormat('HH:mm:ss').format(dt); // 24-hour time
+    return DateFormat('HH:mm').format(dt); // 24-hour time
   }
 
 
@@ -319,7 +319,7 @@ class RideController extends GetxController {
       "vehicle_type_id": selectedVehicleId,
 
       // ---------------- Ride Info ----------------
-      "eta": swapController.estimatedTimeMinutes,
+      "eta": swapController.estimatedTimeText,
       "miles": swapController.totalRouteDistanceMiles,
       "booking_status_id": 1,
       "booking_type_id": 1,

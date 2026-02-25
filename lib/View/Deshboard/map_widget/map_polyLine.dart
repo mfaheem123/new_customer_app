@@ -224,7 +224,7 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                         child: Text(
                           "${c.totalRouteDistanceMiles.toStringAsFixed(2)} miles "
-                              "\n ${c.estimatedTimeMinutes.toStringAsFixed(0)} min"
+                              "\n ${c.estimatedTimeText}"
                           ,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.small(),
