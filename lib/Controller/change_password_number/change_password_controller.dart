@@ -43,14 +43,14 @@ class changePasswordController extends GetxController {
     }
 
     var data = FormData.fromMap({
-      "current_password": CurrentpasswordtlController.text,
-      "password": newpasswordController.text,
-      "confirm_password": ConfirmpasswordController.text,
+      "currentPassword": CurrentpasswordtlController.text,
+      "newPassword": newpasswordController.text,
+      "confirmPassword": ConfirmpasswordController.text,
     });
 
-    var response = await ApiService.put(
+    var response = await ApiService.post(
       data,
-      "customers/edit/${TokenManager.userId}",
+      "customers/change-password/${TokenManager.userId}",
       auth: true,
     );
 

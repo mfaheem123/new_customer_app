@@ -89,7 +89,7 @@ class forgetOtpController extends GetxController {
 
     final response = await ApiService.post(
       data,
-      "auth/verify-otp",
+      "customers/verify-otp",
       multiPart: false,
       auth: false,
     );
@@ -120,7 +120,7 @@ class forgetOtpController extends GetxController {
 
     final response = await ApiService.post(
       data,
-      "auth/resend-otp",
+      "customers/resend-otp",
       multiPart: false,
       auth: false,
     );

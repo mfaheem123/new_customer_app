@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import '../../../api_servies/api_servies.dart';
 
 class ForgotPasswordController extends GetxController {
+
   final TextEditingController emailController = TextEditingController();
 
 
@@ -36,9 +37,9 @@ class ForgotPasswordController extends GetxController {
       });
 
       final response = await ApiService.post(
-        formData,                  // 👈 FormData
-        "auth/forgot-password",    // 👈 API endpoint
-        multiPart: true,           // 👈 FormData ke liye true
+        formData,
+        "customers/forgot-password",
+        multiPart: true,
         auth: false,
       );
 
@@ -94,8 +95,7 @@ class ForgotPasswordController extends GetxController {
   // }
 
 
-  void submitResetPassword() async{
-
+  void submitResetPassword() async {
     if (passwordController.text.isEmpty ||
         confirmPasswordController.text.isEmpty) {
       BotToast.showText(text: "Please fill all fields");
@@ -109,40 +109,64 @@ class ForgotPasswordController extends GetxController {
 
     // ✅ Password match ho gaya
     print("============================= ========================== password sahi sahi  ======================= ======================= ========  ");
-    BotToast.showText(text: "Password has been submitted successfully");
+   // BotToast.showText(text: "Password has been submitted successfully");
 
     // 👉 API CALL YAHAN LAGAO
 
-    try {
-      FormData formData = FormData.fromMap({
-        "email": email,
-        "password": passwordController.text,
-        "confirm_password":confirmPasswordController.text,
+    FormData formData = FormData.fromMap({
+      "email": email,
+      "password": passwordController.text,
+      "confirmPassword": confirmPasswordController.text,
 
-      });
+    });
 
-      final response = await ApiService.post(
-        formData,
-        "auth/reset-password",
-        multiPart: false,
-        auth: false,
-      );
+    final response = await ApiService.post(
+      formData,
+      "customers/reset-password",
+      multiPart: false,
+      auth: false,
+    );
 
-      BotToast.closeAllLoading();
+    BotToast.closeAllLoading();
 
-      if (response!.statusCode == 200) {
-        BotToast.showText(text: "Password reset successfully");
-        Get.offAllNamed("/SigIn_Screen");
-      } else {
-        BotToast.showText(text: "Reset failed");
-      }
-
-    } catch (e) {
-      BotToast.closeAllLoading();
-      BotToast.showText(text: "Server error");
+    if (response!.statusCode == 200) {
+      BotToast.showText(text: "Password reset successfully");
+      Get.offAllNamed("/SigIn_Screen");
+    } else {
+      BotToast.showText(text: "Reset failed");
     }
-    // Get.offAllNamed("/SigIn_Screen");
   }
+
+  //   try {
+  //     FormData formData = FormData.fromMap({
+  //       "email": email,
+  //       "password": passwordController.text,
+  //       "confirmPassword":confirmPasswordController.text,
+  //
+  //     });
+  //
+  //     final response = await ApiService.post(
+  //       formData,
+  //       "customers/reset-password ",
+  //       multiPart: false,
+  //       auth: false,
+  //     );
+  //
+  //     BotToast.closeAllLoading();
+  //
+  //     if (response!.statusCode == 200) {
+  //       BotToast.showText(text: "Password reset successfully");
+  //       Get.offAllNamed("/SigIn_Screen");
+  //     } else {
+  //       BotToast.showText(text: "Reset failed");
+  //     }
+  //
+  //   } catch (e) {
+  //     BotToast.closeAllLoading();
+  //     BotToast.showText(text: "Server error");
+  //   }
+  //   // Get.offAllNamed("/SigIn_Screen");
+  // }
 
 
 

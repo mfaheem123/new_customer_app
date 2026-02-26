@@ -87,7 +87,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ()=> CustomTextField(
 
                       suffixIcon: GestureDetector(
-
                           onTap: (){
                             controller.isConfirmPasswordVisible.value = !controller.isConfirmPasswordVisible.value;
                           },
@@ -95,7 +94,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       ),
                       controller: controller.confirmPasswordController,
                       obscureText: !controller.isConfirmPasswordVisible.value,
-                      hintText: CustomText.hint_password,
+                      hintText: CustomText.Chng_Confirm_pass,
 
 
                       prefixIcon: const Icon(Icons.lock),
