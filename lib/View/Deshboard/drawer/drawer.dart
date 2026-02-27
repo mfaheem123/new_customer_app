@@ -57,16 +57,16 @@ class appDrawer extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Center(
-                          //   child: CircleAvatar(
-                          //     radius: 50,
-                          //     // backgroundImage: controller.selectedImage.value != null
-                          //     //     ? FileImage(controller.selectedImage.value!) // use .value and null check
-                          //     //     : (user.profilePicture != null && user.profilePicture!.isNotEmpty
-                          //     //     ? NetworkImage(user.profilePicture!) as ImageProvider
-                          //     //     : const AssetImage("assets/images/profileimage.png")),
-                          //   ),
-                          // ),
+                          Center(
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: controller.selectedImage.value != null
+                                  ? FileImage(controller.selectedImage.value!) // use .value and null check
+                                  : (user.profileImage != null && user.profileImage!.isNotEmpty
+                                  ? NetworkImage(user.profileImage!) as ImageProvider
+                                  : const AssetImage("assets/images/profileimage.png")),
+                            ),
+                          ),
 
                           const SizedBox(height: 10),
                           Padding(

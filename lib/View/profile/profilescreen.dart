@@ -121,6 +121,48 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Profile Picture with Obx ONLY for selectedImage
+                    Stack(
+                      children: [
+                        Obx(() {
+                          return CircleAvatar(
+                            radius: 55,
+                            backgroundColor: Colors.green,
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: controller.selectedImage.value != null
+                                  ? FileImage(controller.selectedImage.value!)
+                                  : (user.profileImage != null && user.profileImage!.isNotEmpty
+                                  ? NetworkImage(user.profileImage!)
+                                  : const AssetImage("assets/images/profileimage.png")
+                              as ImageProvider),
+                            ),
+                          );
+                        }),
+
+                        Positioned(
+                          bottom: 5,
+                          right: 5,
+                          child: GestureDetector(
+                            onTap: () {
+                              controller.changeProfilePicture(TokenManager.userId);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: CustomColor.Button_background_Color,
+                                border: Border.all(color: CustomColor.Icon_Color, width: 2),
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(
+                                Icons.camera_alt_rounded,
+                                size: 20,
+                                color: CustomColor.Icon_Color,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                 // Stack(
                 //   children: [
                 //     Center(
@@ -131,29 +173,51 @@ class ProfileScreen extends StatelessWidget {
                 //           backgroundColor: Colors.green,
                 //           child: CircleAvatar(
                 //             radius: 50,
-                //           //  backgroundImage: controller.selectedImage.value != null
-                //                 // ? FileImage(controller.selectedImage.value!)
-                //                 // : (user.profilePicture != null && user.profilePicture!.isNotEmpty
-                //                 // ? NetworkImage(user.profilePicture!)
-                //                 // : const AssetImage("assets/images/profileimage.png") as ImageProvider),
+                //            backgroundImage: controller.selectedImage.value != null
+                //                 ? FileImage(controller.selectedImage.value!)
+                //                 : (user.profileImage != null && user.profileImage!.isNotEmpty
+                //                 ? NetworkImage(user.profileImage!)
+                //                 : const AssetImage("assets/images/profileimage.png") as ImageProvider),
                 //           ),
                 //         );
                 //       }),
                 //     ),
                 //     Positioned(
-                //       right: 130,
                 //       bottom: 0,
+                //       right: MediaQuery.of(context).size.width * 0.4,
                 //       child: GestureDetector(
                 //         onTap: () {
                 //           controller.changeProfilePicture(TokenManager.userId);
                 //         },
-                //         child: Icon(
-                //           Icons.camera_alt_rounded,
-                //           size: 30,
-                //           color: CustomColor.Icon_Color,
+                //         child: Container(
+                //           padding: const EdgeInsets.all(6),
+                //           decoration: BoxDecoration(
+                //             shape: BoxShape.circle,
+                //             color: CustomColor.Button_background_Color,
+                //           ),
+                //           child: Icon(
+                //             Icons.camera_alt_rounded,
+                //             size: 25,
+                //             // MediaQuery.of(context).size.width * 0.048,
+                //             color: CustomColor.Icon_Color,
+                //           ),
                 //         ),
                 //       ),
                 //     ),
+                //     // Positioned(
+                //     //   right: 130,
+                //     //   bottom: 0,
+                //     //   child: GestureDetector(
+                //     //     onTap: () {
+                //     //       controller.changeProfilePicture(TokenManager.userId);
+                //     //     },
+                //     //     child: Icon(
+                //     //       Icons.camera_alt_rounded,
+                //     //       size: 30,
+                //     //       color: CustomColor.Icon_Color,
+                //     //     ),
+                //     //   ),
+                //     // ),
                 //   ],
                 // ),
 
@@ -187,11 +251,9 @@ class ProfileScreen extends StatelessWidget {
                       trailing: const Icon(Icons.edit, size: 25, color: Colors.white),
                       onTap: () => Get.to(Changepassword()),
                     ),
-             ListTile(
+                    ListTile(
                         leading: Icon(Icons.delete, size: 25, color: Colors.white),
-                        title: Text(
-                          CustomText.Delete_Account,
-                          style: AppTextStyles.medium(),
+                        title: Text(CustomText.Delete_Account, style: AppTextStyles.medium(),
                         ),
                         onTap: () {
                           Get.dialog(

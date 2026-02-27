@@ -91,10 +91,10 @@ class profileModelController extends GetxController {
       ),
     });
 
-    var response = await ApiService.put(
+    var response = await ApiService.post(
       formData,
       '',
-      fullUrl: "http://192.168.18.16:5000/api/auth/upload-profile-image/${TokenManager.userId}",
+      fullUrl: "http://192.168.110.5:5000/api/customers/profile-image/${TokenManager.userId}",
       multiPart: true,
       auth: true,
     );

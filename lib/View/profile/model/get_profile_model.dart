@@ -54,6 +54,7 @@ class Customer {
   bool? smsFlag;
   String? createdAt;
   dynamic otpCreatedAt;
+  String? profileImage;
   List<RestrictedDriver>? restrictedDrivers;
 
   Customer({
@@ -82,6 +83,7 @@ class Customer {
     this.smsFlag,
     this.createdAt,
     this.otpCreatedAt,
+    this.profileImage,
     this.restrictedDrivers,
   });
 
@@ -111,6 +113,7 @@ class Customer {
     smsFlag: json["sms_flag"],
     createdAt: json["created_at"],
     otpCreatedAt: json["otp_created_at"],
+    profileImage: json["profile_image"],
     restrictedDrivers: json["restricted_drivers"] == null ? [] : List<RestrictedDriver>.from(json["restricted_drivers"]!.map((x) => RestrictedDriver.fromJson(x))),
   );
 
