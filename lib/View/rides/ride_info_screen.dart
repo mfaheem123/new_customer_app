@@ -573,7 +573,8 @@ void initState() {
                                         print( rideController.getTime);
                                         rideController.getDate;
                                          rideController.getTime;*/
-                                        rideController.getBookingApi();
+                                        rideController.
+                                        getBookingApi();
                                       },
                                       textWidget:
                                       FittedBox(
