@@ -27,7 +27,7 @@ class RideController extends GetxController {
   GetVehicleModel? vehicleData;
   bool loading = false;
 
-  RxInt selectedIndex = (-1).obs;
+  RxInt selectedIndex = (0).obs;
   RxInt selectedVehicleId = 0.obs;
   RxInt selectedPassengers = 0.obs;
     String bookingId = "0" ;
@@ -346,20 +346,21 @@ class RideController extends GetxController {
       auth: true,
     );
 
-    if (response != null && response.statusCode == 200) {
+    if (response!.statusCode == 200) {
       final data = response.data;
-      if (data['status'] == true) {
-        final List bookings = data['bookings'];
-        String bookingId = bookings[0]['id'].toString();
-        print("BOOKING ID ✅ => $bookingId");
-        print(data);
+      // bookings list
+      final List bookings = data['bookings'];
 
+      bookingId = bookings[0]['id'].toString();
 
-        Get.off(() => RideSearchScreen());
-        BotToast.showText(text: "Booking Created");
-      }
+      print("BOOKING ID ✅ => $bookingId");
+
+      print("SUCCESS ✅ => ${response.data}");
+      Get.off(RideSearchScreen());
+      //Get.toNamed("/RideSearchScreen ");
+      BotToast.showText(text: "Booking Created");
     } else {
-      print("FAILED ❌ => ${response?.data}");
+      print("FAILED ❌ => ${response.data}");
       BotToast.showText(text: "Booking Failed");
     }
   }
@@ -657,6 +658,7 @@ class RideController extends GetxController {
 
 
   Future<void> rideCancelApi() async {
+    print(bookingId);
     FormData formData = FormData.fromMap({
       "booking_status_id": 12,
 
@@ -665,6 +667,7 @@ class RideController extends GetxController {
     var response = await ApiService.post(
       formData,
       "bookings/status/$bookingId",
+
       multiPart: false,
       auth: false,
     );
@@ -672,7 +675,8 @@ class RideController extends GetxController {
     if (response!.statusCode == 200) {
 
       BotToast.showText(text: "Booking Cancel Success");
-      //Get.toNamed('/DeshBLoard_Screen');
+      print(bookingId);
+
       Get.toNamed('/DeshBoard_Screen');
       return;
     }

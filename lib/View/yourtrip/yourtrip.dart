@@ -2,6 +2,7 @@ import 'package:customer/View/Widgets/all_text.dart';
 import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:customer/View/yourtrip/widget/card%20widget.dart';
+import 'package:customer/View/yourtrip/widget/schedule_booking_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,7 +24,7 @@ class _YourtripState extends State<Yourtrip> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    tripControl.getBookingScheduleApi();
+    tripControl.ChangeIndex(0);
   }
 
   @override
@@ -251,7 +252,7 @@ class _YourtripState extends State<Yourtrip> {
                           var trip =
                           controller.bookingScheduleModel!.bookings![index];
 
-                          return bookingCardwidget(
+                          return ScheduleBookingCard(
                             referenceNo: trip.referenceNumber ?? "",
                             date: trip.pickupDate ?? "",
                             time: trip.pickupTime ?? "",
