@@ -27,7 +27,9 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
 void initState() {
     // TODO: implement initState
     super.initState();
-    rideController.getVehicleTypes();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.find<RideController>().getVehicleTypes();
+    });
   }
 
   @override
@@ -203,7 +205,7 @@ void initState() {
                                           Row(
                                             children: [
                                               const SizedBox(width: 20),
-                                              Icon(Icons.car_repair,
+                                              Icon(Icons.directions_car,
                                                   size: 30,
                                                   color: CustomColor.Icon_Color),
                                               const SizedBox(width: 5),
@@ -573,8 +575,8 @@ void initState() {
                                         print( rideController.getTime);
                                         rideController.getDate;
                                          rideController.getTime;*/
-                                        rideController.
-                                        getBookingApi();
+
+                                        rideController.getBookingApi();
                                       },
                                       textWidget:
                                       FittedBox(

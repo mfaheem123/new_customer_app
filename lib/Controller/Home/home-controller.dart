@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import '../../View/yourtrip/booking_history_model/bookingHistorymodel.dart';
 import 'model/Airportl_ist_model.dart';
 import '../../View/Deshboard/map_widget/map_controller.dart';
 
@@ -563,8 +564,8 @@ Future<void> pickupLocation(String text) async {
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes.round() % 60;
 
-    String h = hours == 1 ? "hour" : "hours";
-    String m = minutes == 1 ? "minute" : "minutes";
+    String h = hours == 1 ? "h" : "h";
+    String m = minutes == 1 ? "min" : "min";
 
     if (hours > 0) {
       return "$hours $h $minutes $m";
@@ -690,88 +691,87 @@ Future<void> pickupLocation(String text) async {
     }
   }
 
+  void setRouteFromBooking(dynamic trip) {
 
+    /// Pickup
+    selectedPickUPLat = double.tryParse(trip.pickupLatitude ?? "0") ?? 0.0;
+    selectedPickUPLon = double.tryParse(trip.pickupLongitude ?? "0") ?? 0.0;
 
-   // Future<void> fetchRoute() async {
-  //   if (selectedPickUPLat == 0.0 ||
-  //       selectedPickUPLon == 0.0 ||
-  //       selectedDropLat == 0.0 ||
-  //       selectedDropLon == 0.0) return;
+    /// Drop
+    selectedDropLat = double.tryParse(trip.dropoffLatitude ?? "0") ?? 0.0;
+    selectedDropLon = double.tryParse(trip.dropoffLongitude ?? "0") ?? 0.0;
+
+    /// Reset via
+    via1Lat = 0.0;
+    via1Lon = 0.0;
+    via2Lat = 0.0;
+    via2Lon = 0.0;
+    showVia1.value = false;
+    showVia2.value = false;
+
+    /// VIA points
+    if (trip.viapoints != null && trip.viapoints!.isNotEmpty) {
+
+      /// 👉 VIA 1
+      if (trip.viapoints!.length >= 1) {
+        var v1 = trip.viapoints![0];
+
+        via1Lat = double.tryParse(v1['lat']?.toString() ?? "0") ?? 0.0;
+        via1Lon = double.tryParse(v1['lng']?.toString() ?? "0") ?? 0.0;
+
+        showVia1.value = true;
+      }
+
+      /// 👉 VIA 2
+      if (trip.viapoints!.length >= 2) {
+        var v2 = trip.viapoints![1];
+
+        via2Lat = double.tryParse(v2['lat']?.toString() ?? "0") ?? 0.0;
+        via2Lon = double.tryParse(v2['lng']?.toString() ?? "0") ?? 0.0;
+
+        showVia2.value = true;
+      }
+    }
+
+    fetchRoute(); // 🔥 API call
+    update(["map"]);
+  }
+
+  // void setRouteFromBooking(dynamic  trip) {
   //
-  //   // Track latest API call
-  //   final requestId = ++_routeRequestId;
   //
-  //   String coordinates = "${selectedPickUPLon},${selectedPickUPLat}";
+  //   /// Pickup
+  //   selectedPickUPLat = double.tryParse(trip.pickupLatitude ?? "0") ?? 0.0;
+  //   selectedPickUPLon = double.tryParse(trip.pickupLongitude ?? "0") ?? 0.0;
   //
-  //   // VIA 1
-  //   if (via1Lat != 0.0 && via1Lon != 0.0) {
-  //     coordinates += ";${via1Lon},${via1Lat}";
+  //   /// Drop
+  //   selectedDropLat = double.tryParse(trip.dropoffLatitude ?? "0") ?? 0.0;
+  //   selectedDropLon = double.tryParse(trip.dropoffLongitude ?? "0") ?? 0.0;
+  //
+  //   /// Reset via
+  //   via1Lat = 0.0;
+  //   via1Lon = 0.0;
+  //   via2Lat = 0.0;
+  //   via2Lon = 0.0;
+  //   showVia1.value = false;
+  //   showVia2.value = false;
+  //
+  //   /// VIA points (agar aaye)
+  //   if (trip.viapoints != null && trip.viapoints!.isNotEmpty) {
+  //     var v = trip.viapoints![0];
+  //
+  //     // ⚠️ API format check karo (ye generic handling hai)
+  //     via1Lat = double.tryParse(v['lat'].toString()) ?? 0.0;
+  //     via1Lon = double.tryParse(v['lng'].toString()) ?? 0.0;
+  //
+  //     showVia1.value = true;
   //   }
   //
-  //   // VIA 2
-  //   if (via2Lat != 0.0 && via2Lon != 0.0) {
-  //     coordinates += ";${via2Lon},${via2Lat}";
-  //   }
-  //
-  //   // DROP
-  //   coordinates += ";${selectedDropLon},${selectedDropLat}";
-  //
-  //   final url =
-  //       'https://router.project-osrm.org/route/v1/driving/$coordinates'
-  //       '?overview=full&geometries=geojson';
-  //
-  //   try {
-  //     final response = await Dio().get(url);
-  //
-  //     // Ignore old responses
-  //     if (requestId != _routeRequestId) return;
-  //
-  //     if (response.statusCode == 200) {
-  //       final route = response.data['routes'][0];
-  //
-  //       /// 🟣 POLYLINE POINTS
-  //       final coords = route['geometry']['coordinates'];
-  //       routePoints = coords.map<LatLng>((p) {
-  //         return LatLng(
-  //           (p[1] as num).toDouble(),
-  //           (p[0] as num).toDouble(),
-  //         );
-  //       }).toList();
-  //
-  //       /// DISTANCE (meters → miles)
-  //       double distanceMeters = (route['distance'] as num).toDouble();
-  //       totalRouteDistanceMiles = distanceMeters * 0.000621371;
-  //
-  //       ///  DURATION (seconds → minutes)
-  //       double durationSeconds = (route['duration'] as num).toDouble();
-  //       estimatedTimeMinutes = durationSeconds / 60;
-  //
-  //       ///  CENTER POINT FOR DISTANCE LABEL
-  //       if (routePoints.isNotEmpty) {
-  //         routeCenterPoint = routePoints[routePoints.length ~/ 2];
-  //       } else {
-  //         routeCenterPoint = null;
-  //       }
-  //
-  //       update(["map", "distance"]);
-  //
-  //       ///  AUTO FIT MAP TO ROUTE
-  //       if (isMapReady && mapController != null && routePoints.isNotEmpty) {
-  //         Future.delayed(const Duration(milliseconds: 100), () {
-  //           final bounds = LatLngBounds.fromPoints(routePoints);
-  //           mapController!.fitCamera(
-  //             CameraFit.bounds(
-  //               bounds: bounds,
-  //               padding: const EdgeInsets.all(60),
-  //             ),
-  //           );
-  //         });
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Route error: $e");
-  //   }
+  //   fetchRoute(); // 🔥 same API call
+  //   update(["map"]);
   // }
+
+
 
 
 

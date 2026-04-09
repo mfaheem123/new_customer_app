@@ -2,32 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 
+import '../../View/rides/model/ride_model/get_vehicle_model.dart';
+import '../../api_servies/api_servies.dart';
+
 class BookingController extends GetxController {
   var selectedVehicleIndex = 0.obs;
 
-  final  vehicleList = [
-    {
-      "name": "Any Vehicle",
-      "people": 4,
-      "bags": 2,
-      "cases": 2,
-      "price": 172.00,
-    },
-    {
-      "name": "Saloon Car",
-      "people": 4,
-      "bags": 2,
-      "cases": 2,
-      "price": 172.00,
-    },
-    {
-      "name": "Luxury Car",
-      "people": 4,
-      "bags": 3,
-      "cases": 2,
-      "price": 200.00,
-    },
-  ];
+  // final  vehicleList = [
+  //   {
+  //     "name": "Any Vehicle",
+  //     "people": 4,
+  //     "bags": 2,
+  //     "cases": 2,
+  //     "price": 172.00,
+  //   },
+  //   {
+  //     "name": "Saloon Car",
+  //     "people": 4,
+  //     "bags": 2,
+  //     "cases": 2,
+  //     "price": 172.00,
+  //   },
+  //   {
+  //     "name": "Luxury Car",
+  //     "people": 4,
+  //     "bags": 3,
+  //     "cases": 2,
+  //     "price": 200.00,
+  //   },
+  // ];
+  List<VehicleType> get vehicles => vehicleData?.vehicleTypes ?? [];
+
+  GetVehicleModel? vehicleData;
+   bool loading = false;
+
+
+  Future<void> getVehicleTypes() async {
+    loading = true;
+    update();
+
+    var response = await ApiService.get(
+        "vehicle-type/get",
+        auth: true,
+        isProgressShow: false
+    );
+
+    if (response != null && response.statusCode == 200) {
+      vehicleData = GetVehicleModel.fromJson(response.data);
+    }
+    print(response!.data);
+    loading = false;
+    update();
+  }
+
+
+
+
+
+
+
 // ----------------- Date & Time -----------------
 var selectedDate = DateTime.now().obs;
 var selectedTime = TimeOfDay.now().obs;
@@ -115,10 +148,6 @@ void setASAP() {
 String formattedTime(BuildContext context) {
   return selectedTime.value.format(context);
 }
-
-
-
-
 
 
 

@@ -13,15 +13,16 @@ class ApiService {
         bool multiPart = false,
         bool isProgressShow = false,
         bool noCloseLoading = false,
-        String? fullUrl}) async {
+        String? fullUrl}) async
+  {
     if (!isProgressShow) BotToast.showLoading();
 
     try {
       Response response = await Dio().post(fullUrl ?? apiUrl + url,
           data: data,
-          options: Options(
+          options: Options  (
             method: "POST",
-            contentType: multiPart ? 'multipart/form-data' : "application/x-www-form-urlencoded",
+            contentType: multiPart ? 'multipart/form-data' : "application/json",
             headers: {
               "Connection": "keep-alive",
               "accept": "application/json",

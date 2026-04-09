@@ -6,7 +6,8 @@ import 'package:get/get.dart' hide FormData, Response;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../View/profile/controller/profile_controller.dart';
-import '../../View/rides/ride_model/get_vehicle_model.dart';
+import '../../View/rides/model/ride_model/get_vehicle_model.dart';
+
 import '../../View/rides/ridesearchscreen.dart';
 import '../../api_servies/api_servies.dart';
 import '../Home/home-controller.dart';
@@ -177,7 +178,7 @@ class RideController extends GetxController {
     selectedTime.value = TimeOfDay.now();
     selectedTimeOption.value = "ASAP"; // highlight ASAP
 
-
+///
     // // time format for console
     // final hour = selectedTime.value.hourOfPeriod.toString().padLeft(2, '0');
     // final minute = selectedTime.value.minute.toString().padLeft(2, '0');
@@ -236,17 +237,18 @@ class RideController extends GetxController {
 
   List<Map<String, dynamic>> viaPointsList = [];
   /// ============================== VIA Points Handling ==============================
+
   void prepareViaPoints() {
     viaPointsList.clear();
 
-   final profileName = "${profileController.profileData!.customer!.name}";
-   //  final profileName = "Mark";
+    final profileName = "${profileController.profileData!.customer!.name}";
+    //  final profileName = "Mark";
     final profileMobile = profileController.profileData!.customer!.mobile;
     // final profileMobile ="123467839";
 
     // VIA 1
     if (swapController.viaController1.text.isNotEmpty) {
-      viaPointsList.add({
+      viaPointsList.add(<String, dynamic>{
         "viapoint": swapController.viaController1.text,
         "name": profileName,
         "mobile": profileMobile,
@@ -257,129 +259,86 @@ class RideController extends GetxController {
         "longitude": swapController.via1Lon,
       });
     }
-
-    // VIA 2
-    if (swapController.viaController2.text.isNotEmpty) {
-      viaPointsList.add({
-        "viapoint": swapController.viaController2.text,
-        "name": profileName,
-        "mobile": profileMobile,
-        "arrived": null,
-        "passenger_on_board": null,
-        "active": false,
-        "latitude": swapController.via2Lat,
-        "longitude": swapController.via2Lon,
-      });
-    }
-
-    // Add more VIA points here if needed
+   // VIA 2
+      if (swapController.viaController2.text.isNotEmpty) {
+        viaPointsList.add({
+          "viapoint": swapController.viaController2.text,
+          "name": profileName,
+          "mobile": profileMobile,
+          "arrived": null,
+          "passenger_on_board": null,
+          "active": false,
+          "latitude": swapController.via2Lat,
+          "longitude": swapController.via2Lon,
+        });
+      }
   }
+
 
 
   Future<void> getBookingApi() async {
     prepareViaPoints();
 
-    FormData formData = FormData.fromMap(<String, dynamic>{
-      // ---------------- Pickup ----------------
+    // 1. ViaPoints ka structure manually set karein taake nulls mehfooz rahein
+    List<Map<String, dynamic>> finalViaPoints = viaPointsList.map((via) {
+      return {
+        "viapoint": via["viapoint"],
+        "name": via["name"],
+        "mobile": via["mobile"],
+        "arrived": null, // Strict null
+        "passenger_on_board": null, // Strict null
+        "active": via["active"] ?? false,
+        "latitude": via["latitude"],
+        "longitude": via["longitude"],
+      };
+    }).toList();
+
+    // 2. FormData banayein
+    Map<String, dynamic> dataMap = {
       "pickup": swapController.pickUp.text,
       "pickup_latitude": swapController.selectedPickUPLat,
       "pickup_longitude": swapController.selectedPickUPLon,
-       "pickup_door_number": swapController.babyNote,
-
-      // ---------------- Dropoff ----------------
-      "dropoff":swapController.dropOff.text,
-      "dropoff_latitude":swapController.selectedDropLat,
+      "pickup_door_number": swapController.babyNote,
+      "dropoff": swapController.dropOff.text,
+      "dropoff_latitude": swapController.selectedDropLat,
       "dropoff_longitude": swapController.selectedDropLon,
-      // "dropoff_door_number": "dropoff notes",
-
-      // ---------------- Customer ----------------
-      "name": "${profileController.profileData!.customer!.name}" ,
+      "name": "${profileController.profileData!.customer!.name}",
       "email": profileController.profileData!.customer!.email,
       "mobile": profileController.profileData!.customer!.mobile,
       "telephone": profileController.profileData!.customer!.mobile,
-
-      // "name": "customer1",
-      // "email": "tests@mail.com",
-      // "mobile": "123467839",
-      // "telephone": "1234536798",
-
-      // ---------------- Journey ----------------
       "pickup_date": getDate,
       "pickup_time": getTime,
       "journey_type_id": 1,
       "sms": true,
-
-      // ---------------- Counts ----------------
       "passengers": selectedPassengers,
       "luggages": 1,
       "hand_luggages": 1,
-
-      // ---------------- Payment & Vehicle ----------------
       "payment_type_id": 1,
       "vehicle_type_id": selectedVehicleId,
-
-      // ---------------- Ride Info ----------------
       "eta": swapController.estimatedTimeText,
       "miles": swapController.totalRouteDistanceMiles,
       "booking_status_id": 1,
       "booking_type_id": 1,
       "booking_source": "app",
 
-      // ---------------- Customer Array ----------------
-      "customer": [
+      // Customer ko stringify kar dein agar indexing masla kar rahi hai
+      "customer": jsonEncode([
         {
-          "name": "${profileController.profileData!.customer!.name}" ,
+          "name": "${profileController.profileData!.customer!.name}",
           "email": profileController.profileData!.customer!.email,
           "mobile": profileController.profileData!.customer!.mobile,
           "telephone": profileController.profileData!.customer!.mobile,
           "blacklist": false,
-
-          // "name": "customer1",
-          // "email": "tests@mail.com",
-          // "mobile": "123467839",
-          // "telephone": "1234536798",
-          // "blacklist": false,
         }
-      ],
+      ]),
 
-      // ---------------- Via Points (Optional) ----------------
+      // VIAPOINTS ko jsonEncode karein - Yeh nulls ko preserve karega
+      "viapoints": jsonEncode(finalViaPoints),
+    };
 
+    FormData formData = FormData.fromMap(dataMap);
 
-       "viapoints": viaPointsList.isNotEmpty ? viaPointsList : [],
-
-      // if (viaPointsList.isNotEmpty)
-      //   "viapoints": viaPointsList,
-
-      // "viapoints": [
-      //   {
-      //     "viapoint": "elm park road london n3 1ed",
-      //     "name": "test",
-      //     "mobile": "1236547898",
-      //     "arrived": null,
-      //     "passenger_on_board": null,
-      //     "active": false,
-      //     "latitude": "51.60502870865506",
-      //     "longitude": "-0.19752048515577314",
-      //   },
-      //   {
-      //     "viapoint": "etchingham park road london n3 2ds",
-      //     "name": "test 2",
-      //     "mobile": "0123456879",
-      //     "arrived": null,
-      //     "passenger_on_board": null,
-      //     "active": false,
-      //     "latitude": "51.60435165870115",
-      //     "longitude": "-0.18285231654990017",
-      //   }
-      // ],
-    });
-
-    // DEBUG
-    print("FORM DATA ================================");
-    for (var field in formData.fields) {
-      print("${field.key} : ${field.value}");
-    }
-
+    // API Call
     Response<dynamic>? response = await ApiService.post(
       formData,
       "bookings/add",
@@ -387,24 +346,313 @@ class RideController extends GetxController {
       auth: true,
     );
 
-    if ( response!.statusCode == 200) {
+    if (response != null && response.statusCode == 200) {
       final data = response.data;
-      // bookings list
-      final List bookings = data['bookings'];
+      if (data['status'] == true) {
+        final List bookings = data['bookings'];
+        String bookingId = bookings[0]['id'].toString();
+        print("BOOKING ID ✅ => $bookingId");
+        print(data);
 
-       bookingId = bookings[0]['id'].toString();
 
-      print("BOOKING ID ✅ => $bookingId");
-
-      print("SUCCESS ✅ => ${response.data}");
-      Get.to(RideSearchScreen());
-      //Get.toNamed("/RideSearchScreen ");
-      BotToast.showText(text: "Booking Created");
+        Get.off(() => RideSearchScreen());
+        BotToast.showText(text: "Booking Created");
+      }
     } else {
-      print("FAILED ❌ => ${response.data}");
+      print("FAILED ❌ => ${response?.data}");
       BotToast.showText(text: "Booking Failed");
     }
   }
+  ///
+  // void prepareViaPoints() {
+  //   viaPointsList.clear();
+  //
+  //  final profileName = "${profileController.profileData!.customer!.name}";
+  //  //  final profileName = "Mark";
+  //   final profileMobile = profileController.profileData!.customer!.mobile;
+  //   // final profileMobile ="123467839";
+  //
+  //   // VIA 1
+  //   if (swapController.viaController1.text.isNotEmpty) {
+  //     viaPointsList.add(<String, dynamic>{
+  //       "viapoint": swapController.viaController1.text,
+  //       "name": profileName,
+  //       "mobile": profileMobile,
+  //       "arrived": null,
+  //       "passenger_on_board": null,
+  //       "active": false,
+  //       "latitude": swapController.via1Lat,
+  //       "longitude": swapController.via1Lon,
+  //     });
+  //   }
+  //
+  //   // VIA 2
+  //   if (swapController.viaController2.text.isNotEmpty) {
+  //     viaPointsList.add({
+  //       "viapoint": swapController.viaController2.text,
+  //       "name": profileName,
+  //       "mobile": profileMobile,
+  //       "arrived": null,
+  //       "passenger_on_board": null,
+  //       "active": false,
+  //       "latitude": swapController.via2Lat,
+  //       "longitude": swapController.via2Lon,
+  //     });
+  //   }
+  //
+  //   // Add more VIA points here if needed
+  // }
+  //
+  //
+  // Future<void> getBookingApi() async {
+  //   prepareViaPoints();
+  //
+  //   FormData formData = FormData.fromMap(<String, dynamic>{
+  //     // ---------------- Pickup ----------------
+  //     "pickup": swapController.pickUp.text,
+  //     "pickup_latitude": swapController.selectedPickUPLat,
+  //     "pickup_longitude": swapController.selectedPickUPLon,
+  //      "pickup_door_number": swapController.babyNote,
+  //
+  //     // ---------------- Dropoff ----------------
+  //     "dropoff":swapController.dropOff.text,
+  //     "dropoff_latitude":swapController.selectedDropLat,
+  //     "dropoff_longitude": swapController.selectedDropLon,
+  //     // "dropoff_door_number": "dropoff notes",
+  //
+  //     // ---------------- Customer ----------------
+  //     "name": "${profileController.profileData!.customer!.name}" ,
+  //     "email": profileController.profileData!.customer!.email,
+  //     "mobile": profileController.profileData!.customer!.mobile,
+  //     "telephone": profileController.profileData!.customer!.mobile,
+  //
+  //     // "name": "customer1",
+  //     // "email": "tests@mail.com",
+  //     // "mobile": "123467839",
+  //     // "telephone": "1234536798",
+  //
+  //     // ---------------- Journey ----------------
+  //     "pickup_date": getDate,
+  //     "pickup_time": getTime,
+  //     "journey_type_id": 1,
+  //     "sms": true,
+  //
+  //     // ---------------- Counts ----------------
+  //     "passengers": selectedPassengers,
+  //     "luggages": 1,
+  //     "hand_luggages": 1,
+  //
+  //     // ---------------- Payment & Vehicle ----------------
+  //     "payment_type_id": 1,
+  //     "vehicle_type_id": selectedVehicleId,
+  //
+  //     // ---------------- Ride Info ----------------
+  //     "eta": swapController.estimatedTimeText,
+  //     "miles": swapController.totalRouteDistanceMiles,
+  //     "booking_status_id": 1,
+  //     "booking_type_id": 1,
+  //     "booking_source": "app",
+  //
+  //     // ---------------- Customer Array ----------------
+  //     "customer": [
+  //       {
+  //         "name": "${profileController.profileData!.customer!.name}" ,
+  //         "email": profileController.profileData!.customer!.email,
+  //         "mobile": profileController.profileData!.customer!.mobile,
+  //         "telephone": profileController.profileData!.customer!.mobile,
+  //         "blacklist": false,
+  //
+  //         // "name": "customer1",
+  //         // "email": "tests@mail.com",
+  //         // "mobile": "123467839",
+  //         // "telephone": "1234536798",
+  //         // "blacklist": false,
+  //       }
+  //     ],
+  //
+  //     // ---------------- Via Points (Optional) ----------------
+  //
+  //
+  //      "viapoints": viaPointsList.isNotEmpty ? viaPointsList : [],
+  //
+  //     // if (viaPointsList.isNotEmpty)
+  //     //   "viapoints": viaPointsList,
+  //
+  //     // "viapoints": [
+  //     //   {
+  //     //     "viapoint": "elm park road london n3 1ed",
+  //     //     "name": "test",
+  //     //     "mobile": "1236547898",
+  //     //     "arrived": null,
+  //     //     "passenger_on_board": null,
+  //     //     "active": false,
+  //     //     "latitude": "51.60502870865506",
+  //     //     "longitude": "-0.19752048515577314",
+  //     //   },
+  //     //   {
+  //     //     "viapoint": "etchingham park road london n3 2ds",
+  //     //     "name": "test 2",
+  //     //     "mobile": "0123456879",
+  //     //     "arrived": null,
+  //     //     "passenger_on_board": null,
+  //     //     "active": false,
+  //     //     "latitude": "51.60435165870115",
+  //     //     "longitude": "-0.18285231654990017",
+  //     //   }
+  //     // ],
+  //   });
+  //
+  //   // DEBUG
+  //   print("FORM DATA ================================");
+  //   for (var field in formData.fields) {
+  //     print("${field.key} : ${field.value}");
+  //   }
+  //
+  //   Response<dynamic>? response = await ApiService.post(
+  //     formData,
+  //     "bookings/add",
+  //     multiPart: false,
+  //     auth: true,
+  //   );
+  //
+  //   if ( response!.statusCode == 200) {
+  //     final data = response.data;
+  //     // bookings list
+  //     final List bookings = data['bookings'];
+  //
+  //      bookingId = bookings[0]['id'].toString();
+  //
+  //     print("BOOKING ID ✅ => $bookingId");
+  //
+  //     print("SUCCESS ✅ => ${response.data}");
+  //     Get.off(RideSearchScreen());
+  //     //Get.toNamed("/RideSearchScreen ");
+  //     BotToast.showText(text: "Booking Created");
+  //   } else {
+  //     print("FAILED ❌ => ${response.data}");
+  //     BotToast.showText(text: "Booking Failed");
+  //   }
+  // }
+
+///
+  // void prepareViaPoints() {
+  //   viaPointsList.clear();
+  //
+  //   final profileName = "${profileController.profileData!.customer!.name}";
+  //   final profileMobile = profileController.profileData!.customer!.mobile;
+  //
+  //   // VIA 1
+  //   if (swapController.viaController1.text.isNotEmpty) {
+  //     viaPointsList.add({
+  //       "viapoint": swapController.viaController1.text,
+  //       "name": profileName,
+  //       "mobile": profileMobile,
+  //       "arrived": null,
+  //       "passenger_on_board": null,
+  //       "active": false,
+  //       "latitude": swapController.via1Lat,
+  //       "longitude": swapController.via1Lon,
+  //     });
+  //   }
+  //
+  //   // VIA 2
+  //   if (swapController.viaController2.text.isNotEmpty) {
+  //     viaPointsList.add({
+  //       "viapoint": swapController.viaController2.text,
+  //       "name": profileName,
+  //       "mobile": profileMobile,
+  //       "arrived": null,
+  //       "passenger_on_board": null,
+  //       "active": false,
+  //       "latitude": swapController.via2Lat,
+  //       "longitude": swapController.via2Lon,
+  //     });
+  //   }
+  // }
+  //
+  // Future<void> getBookingApi() async {
+  //   prepareViaPoints();
+  //
+  //   // JSON map
+  //   Map<String, dynamic> jsonBody = {
+  //     "pickup": swapController.pickUp.text,
+  //     "pickup_latitude": swapController.selectedPickUPLat,
+  //     "pickup_longitude": swapController.selectedPickUPLon,
+  //     "pickup_door_number": swapController.babyNote,
+  //
+  //     "dropoff": swapController.dropOff.text,
+  //     "dropoff_latitude": swapController.selectedDropLat,
+  //     "dropoff_longitude": swapController.selectedDropLon,
+  //
+  //     "name": profileController.profileData!.customer!.name,
+  //     "email": profileController.profileData!.customer!.email,
+  //     "mobile": profileController.profileData!.customer!.mobile,
+  //     "telephone": profileController.profileData!.customer!.mobile,
+  //
+  //     "pickup_date": getDate,
+  //     "pickup_time": getTime,
+  //     "journey_type_id": 1,
+  //     "sms": true,
+  //
+  //     "passengers": selectedPassengers.value,
+  //     "luggages": 1,
+  //     "hand_luggages": 1,
+  //
+  //     "payment_type_id": 1,
+  //     "vehicle_type_id": selectedVehicleId.value,
+  //
+  //     "eta": swapController.estimatedTimeText,
+  //     "miles": swapController.totalRouteDistanceMiles,
+  //     "booking_status_id": 1,
+  //     "booking_type_id": 1,
+  //     "booking_source": "app",
+  //
+  //     "customer": [
+  //       {
+  //         "name": profileController.profileData!.customer!.name,
+  //         "email": profileController.profileData!.customer!.email,
+  //         "mobile": profileController.profileData!.customer!.mobile,
+  //         "telephone": profileController.profileData!.customer!.mobile,
+  //         "blacklist": false,
+  //       }
+  //     ],
+  //
+  //     "viapoints": viaPointsList.isNotEmpty ? viaPointsList : [],
+  //   };
+  //
+  //   // FormData me convert karo JSON ke saath
+  //   FormData formData = FormData.fromMap({
+  //     "data": jsonEncode(jsonBody), // <-- ye important hai
+  //   });
+  //
+  //   // DEBUG
+  //   print("FORM DATA ================================");
+  //   print(formData.fields);
+  //
+  //   Response<dynamic>? response = await ApiService.post(
+  //     formData,
+  //     "bookings/add",
+  //     multiPart: true, // multipart ke saath
+  //     auth: true,
+  //   );
+  //
+  //   if (response != null && response.statusCode == 200) {
+  //     final data = response.data;
+  //     final List bookings = data['bookings'];
+  //     bookingId = bookings[0]['id'].toString();
+  //
+  //     print("BOOKING ID ✅ => $bookingId");
+  //     print(response.data);
+  //     Get.off(RideSearchScreen());
+  //     BotToast.showText(text: "Booking Created");
+  //   } else {
+  //     print("FAILED ❌ => ${response?.data}");
+  //     BotToast.showText(text: "Booking Failed");
+  //   }
+  // }
+
+
+
 
 
 

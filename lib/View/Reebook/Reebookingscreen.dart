@@ -1,9 +1,11 @@
 import 'package:customer/View/textstyle/apptextstyle.dart';
+import 'package:customer/View/yourtrip/widget/card%20widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../Controller/reebooking/reebookingcontroller.dart';
+import '../Deshboard/map_widget/map_polyLine.dart';
 import '../Deshboard/map_widget/open_street_map.dart';
 import '../Widgets/color.dart';
 import '../Widgets/elevat_button.dart';
@@ -12,10 +14,22 @@ import '../payments/paymentscreen.dart';
 import '../rides/ridesearchscreen.dart';
 import 'extras.dart';
 
-class ReebookingScreen extends StatelessWidget {
+class ReebookingScreen extends StatefulWidget {
   ReebookingScreen({super.key});
 
+  @override
+  State<ReebookingScreen> createState() => _ReebookingScreenState();
+}
+
+class _ReebookingScreenState extends State<ReebookingScreen> {
   final BookingController reebookingController = Get.put(BookingController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+   reebookingController.getVehicleTypes();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,58 +53,52 @@ class ReebookingScreen extends StatelessWidget {
 
             children: [
               Expanded(
-                child: Container(
-                  height: MediaQuery.of(context).size.height*0.8,
-                  child: Column(
-                    children: [
-                      // ============================================  Map
-                      Stack(
-                        children: [
-                          SizedBox(
-                            height: 400,
-                            //child: OpenStreetMapView(),
-                            // decoration:  BoxDecoration(
-                            //   image: DecorationImage(
-                            //     image: AssetImage("assets/images/map_image.png"),
-                            //     fit: BoxFit.cover,
-                            //   ),
-                            //),
-                          ),
+                child: Stack(
+                  children: [
+                    // ============================ Map
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: MapScreen(),
+                    ),
 
-
-                          Positioned(
-                            top: 40,
-                            left: 10,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: IconButton(
-                                icon:  Icon(
-                                    Icons.arrow_back,
-                                    color:CustomColor.Icon_Color
-                                ),
-                                onPressed: () {
-                                  Get.back();
-                                },
-                              ),
-                            ),
-                          ),
-
-                        ],
+                    // ============================ Back Button
+                    Positioned(
+                      top: 40,
+                      left: 10,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back, color: CustomColor.Icon_Color),
+                          onPressed: () {
+                            Get.back();
+                          },
+                        ),
                       ),
+                    ),
 
-                      // ================================================ Vehicle Select
-                      Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          decoration:  BoxDecoration(
-                            color: Colors.transparent,
+                    // ============================ Draggable Vehicle List
+                    DraggableScrollableSheet(
+                      initialChildSize: 0.3, // 50% of screen initially
+                      minChildSize: 0.3,     // can shrink to 30%
+                      maxChildSize: 0.8,     // can drag up to 80%
+                      builder: (context, scrollController) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color.fromARGB(255, 30, 1, 44).withOpacity(0.9),
+                                Color.fromARGB(255, 227, 194, 242)
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
                           ),
                           child: Column(
                             children: [
-                               SizedBox(height: 8),
+                              SizedBox(height: 8),
                               Container(
                                 height: 5,
                                 width: 40,
@@ -99,107 +107,174 @@ class ReebookingScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                               SizedBox(height: 10),
-
-                              // ==================================================       Vehicle List
+                              SizedBox(height: 10),
                               Expanded(
-                                child: ListView.builder(
-                                  itemCount: reebookingController.vehicleList.length,
-                                  itemBuilder: (context, index) {
-                                    var vehicle = reebookingController.vehicleList[index];
+                                child: GetBuilder<BookingController>(
+                                  builder: (controller) {
+                                    if (controller.loading) {
+                                      return Center(child: CircularProgressIndicator());
+                                    }
 
-                                    return Obx(() {
-                                      bool isSelected =
-                                          reebookingController.selectedVehicleIndex.value == index;
+                                    if (controller.vehicles.isEmpty) {
+                                      return Center(child: Text("No vehicles found"));
+                                    }
 
-                                      return GestureDetector(
-                                        onTap: () {
-                                          reebookingController.selectedVehicleIndex.value = index;
-                                        },
-                                        child: Container(
-                                          margin:  EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 8),
-                                          padding:  EdgeInsets.all(16),
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                               // ?Colors.white70.withOpacity(0.4)
-                                            ?CustomColor.Container_Colors.withOpacity(0.4)
-                                                : Colors.transparent,
-                                            borderRadius: BorderRadius.circular(15),
-                                            border: Border.all(
-                                              color: isSelected
-                                                  ? CustomColor.Button_background_Color
-                                                : Colors.grey.shade400,
-                                              width: 2
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              // Vehicle Info
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                    return ListView.builder(
+                                      controller: scrollController,
+                                      itemCount: controller.vehicles.length,
+                                      itemBuilder: (context, index) {
+                                        var vehicle = controller.vehicles[index];
+
+                                        return Obx(() {
+                                          bool isSelected =
+                                              controller.selectedVehicleIndex.value == index;
+
+                                          return GestureDetector(
+                                            onTap: () {
+                                              controller.selectedVehicleIndex.value = index;
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                              padding: EdgeInsets.all(16),
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? CustomColor.Container_Colors.withOpacity(0.4)
+                                                    : Colors.transparent,
+                                                borderRadius: BorderRadius.circular(15),
+                                                border: Border.all(
+                                                  color: isSelected
+                                                      ? CustomColor.Button_background_Color
+                                                      : Colors.grey.shade400,
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Text(
-                                                    "${vehicle["name"]}",
-                                                    style:  AppTextStyles.regular(),
+                                                  /// 🔹 Vehicle Info
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text("${vehicle.name ?? ""}",
+                                                          style: AppTextStyles.regular()),
+
+                                                      SizedBox(height: 5),
+
+                                                      Row(
+                                                        children: [
+                                                          Icon(Icons.person,
+                                                              color: CustomColor.Icon_Color, size: 18),
+                                                          Text(" x${vehicle.passengers ?? 0}",
+                                                              style: AppTextStyles.medium()),
+
+                                                          SizedBox(width: 10),
+
+                                                          Icon(Icons.work,
+                                                              color: CustomColor.Icon_Color, size: 18),
+                                                          Text(" x${vehicle.luggages ?? 0}",
+                                                              style: AppTextStyles.regular(
+                                                                  color: CustomColor.Text_Color)),
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
-                                                   SizedBox(height: 5),
+
+                                                  /// 🔹 Icon + Price
                                                   Row(
                                                     children: [
-                                                       Icon(Icons.person,
-                                                          color: CustomColor.Icon_Color, size: 18),
-                                                      Text(" x${vehicle["people"]}",
-                                                          style:
-                                                           AppTextStyles.medium()),
-                                                       Icon(Icons.work,
-                                                          color: CustomColor.Icon_Color, size: 18),
-                                                      Text(" x${vehicle["cases"]}",
-                                                          style:
-                                                           AppTextStyles.regular(color: CustomColor.Text_Color)),
+                                                      Icon(Icons.directions_car,
+                                                          color: CustomColor.Icon_Color, size: 32),
+
+                                                      SizedBox(width: 10),
+                                                      //
+                                                      // Text(
+                                                      //   "${vehicle.minimumFares ?? 0}£",
+                                                      //   style: AppTextStyles.regular(),
+                                                      // ),
                                                     ],
                                                   ),
                                                 ],
                                               ),
-
-                                              // ===========================================       vehicle Icon & Price
-                                              Row(
-                                                children: [
-                                                   Icon(Icons.directions_car,
-                                                      color: CustomColor.Icon_Color, size: 32),
-                                                   SizedBox(width: 10),
-                                                  Text(
-                                                    "£${vehicle["price"]}",
-                                                    style:  AppTextStyles.regular(),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    });
+                                            ),
+                                          );
+                                        });
+                                      },
+                                    );
                                   },
-                                ),
+                                )
+                                // ListView.builder(
+                                //   controller: scrollController,
+                                //   itemCount: reebookingController.vehicleList.length,
+                                //   itemBuilder: (context, index) {
+                                //     var vehicle = reebookingController.vehicleList[index];
+                                //     return Obx(() {
+                                //       bool isSelected = reebookingController.selectedVehicleIndex.value == index;
+                                //       return GestureDetector(
+                                //         onTap: () {
+                                //           reebookingController.selectedVehicleIndex.value = index;
+                                //         },
+                                //         child: Container(
+                                //           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                //           padding: EdgeInsets.all(16),
+                                //           decoration: BoxDecoration(
+                                //             color: isSelected
+                                //                 ? CustomColor.Container_Colors.withOpacity(0.4)
+                                //                 : Colors.transparent,
+                                //             borderRadius: BorderRadius.circular(15),
+                                //             border: Border.all(
+                                //               color: isSelected
+                                //                   ? CustomColor.Button_background_Color
+                                //                   : Colors.grey.shade400,
+                                //               width: 2,
+                                //             ),
+                                //           ),
+                                //           child: Row(
+                                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //             children: [
+                                //               // Vehicle Info
+                                //               Column(
+                                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                                //                 children: [
+                                //                   Text("${vehicle["name"]}", style: AppTextStyles.regular()),
+                                //                   SizedBox(height: 5),
+                                //                   Row(
+                                //                     children: [
+                                //                       Icon(Icons.person, color: CustomColor.Icon_Color, size: 18),
+                                //                       Text(" x${vehicle["people"]}", style: AppTextStyles.medium()),
+                                //                       Icon(Icons.work, color: CustomColor.Icon_Color, size: 18),
+                                //                       Text(" x${vehicle["cases"]}",
+                                //                           style: AppTextStyles.regular(color: CustomColor.Text_Color)),
+                                //                     ],
+                                //                   ),
+                                //                 ],
+                                //               ),
+                                //
+                                //               // Vehicle Icon & Price
+                                //               Row(
+                                //                 children: [
+                                //                   Icon(Icons.directions_car, color: CustomColor.Icon_Color, size: 32),
+                                //                   SizedBox(width: 10),
+                                //                   // Text("${vehicle["price"]}£", style: AppTextStyles.regular()),
+                                //                 ],
+                                //               ),
+                                //             ],
+                                //           ),
+                                //         ),
+                                //       );
+                                //     });
+                                //   },
+                                // ),
                               ),
-
-
-                              // ==================================================    Bottom Tab
-                              //const Divider(color: Colors.white24),
-
-                               SizedBox(height: 10),
-                              //==========================================      Confirm Button
-
-
+                              SizedBox(height: 10),
                             ],
                           ),
-                        ),
-                      ),
-                    ],
-
-                  ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
+
 
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10),
@@ -562,20 +637,20 @@ class ReebookingScreen extends StatelessWidget {
                                             ),
                                           ),
                                           SizedBox(height: 10),
-                                      
-                                      
+
+
                                           Row(
                                               children: [
-                                      
+
                                                 SizedBox(width: 20,),
-                                      
+
                                                 IconButton(
                                                   icon: Icon(Icons.cancel_outlined, color: Colors.red),
                                                   iconSize: 35,
                                                   onPressed: () => Get.back(),
                                                 ),
-                                       
-                                      
+
+
                                                 Expanded(
                                                   child: Center(
                                                     child: Text(
@@ -587,15 +662,15 @@ class ReebookingScreen extends StatelessWidget {
                                                     ),
                                                   ),
                                                 ),
-                                      
-                                      
+
+
                                                 const SizedBox(width: 48),
                                               ]
                                           ),
-                                      
+
                                           SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                                      
-                                      
+
+
                                           const Text(
                                             "Order Number",
                                             style: TextStyle(
@@ -610,7 +685,7 @@ class ReebookingScreen extends StatelessWidget {
                                             borderRadius: 15,
                                             fillColor: CustomColor.textfield_fill,
                                           ),
-                                      
+
                                           SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                                            Text(
                                             "Name on order",
@@ -622,10 +697,10 @@ class ReebookingScreen extends StatelessWidget {
                                             borderRadius: 15,
                                             fillColor: CustomColor.textfield_fill,
                                           ),
-                                      
+
                                           SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-                                      
-                                      
+
+
                                           Center(
                                             child: SizedBox(
                                               height:55,

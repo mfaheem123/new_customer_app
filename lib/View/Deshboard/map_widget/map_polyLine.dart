@@ -35,22 +35,6 @@ class _MapScreenState extends State<MapScreen> {
                 style: AppTextStyles.heading(),),
             );
 
-            // Container(
-            //   // decoration: BoxDecoration(
-            //   //     gradient: LinearGradient(colors: [
-            //   //       Color.fromARGB(255, 30, 1, 44),
-            //   //       Color.fromARGB(255, 227, 194, 242),
-            //   //     ],
-            //   //       begin: Alignment.topCenter,
-            //   //       end: Alignment.bottomCenter,)
-            //   // ),
-            //   child: Center(
-            //     child: Text("Select Pickup and Drop to view map",
-            //       textAlign: TextAlign.center,
-            //       maxLines: 2,
-            //       style: AppTextStyles.heading(),),
-            //   ),
-            // );
           }
 
           // final pickupLatLng =  LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
@@ -140,10 +124,6 @@ class _MapScreenState extends State<MapScreen> {
                 maxZoom: 19,
               ),
 
-              // TileLayer(
-              //   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-              //   userAgentPackageName: 'com.example.customer',
-              // ),
 
               // Polyline
               if (c.routePoints.isNotEmpty)
@@ -178,33 +158,7 @@ class _MapScreenState extends State<MapScreen> {
                       width: 80,
                       height: 70,
                       child:  const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                      // Column(
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   children: [
-                      //     Card(
-                      //       color: Colors.black,
-                      //       elevation: 3,
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(6),
-                      //       ),
-                      //       child: const Padding(
-                      //         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      //         child: Text(
-                      //           "Via 1",
-                      //           style: TextStyle(
-                      //             color: Colors.white,
-                      //             fontSize: 11,
-                      //             fontWeight: FontWeight.w600,
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     const SizedBox(height: 0.5),
-                      //     const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                      //   ],
-                      // ),
                     ),
-
 
                   ///                                                       DISTANCE LABEL ON POLYLINE
                   if (c.routeCenterPoint != null)
@@ -214,7 +168,7 @@ class _MapScreenState extends State<MapScreen> {
                       height: 50,
                       child: Container(
                         alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(20),
@@ -227,7 +181,7 @@ class _MapScreenState extends State<MapScreen> {
                               "\n ${c.estimatedTimeText}"
                           ,
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.small(),
+                          style: AppTextStyles.small(size: 10),
                         ),
                       ),
                     ),
@@ -242,99 +196,9 @@ class _MapScreenState extends State<MapScreen> {
                       width: 80,
                       height: 70,
                       child: const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                      // Column(
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   children: [
-                      //     Card(
-                      //       color: Colors.black,
-                      //       elevation: 3,
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(6),
-                      //       ),
-                      //       child: const Padding(
-                      //         padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      //         child: Text(
-                      //           "Via 2",
-                      //           style: TextStyle(
-                      //             color: Colors.white,
-                      //             fontSize: 11,
-                      //             fontWeight: FontWeight.w600,
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     const SizedBox(height: 0.5),
-                      //     const Icon(Icons.location_pin, color: Colors.blue, size: 30),
-                      //   ],
-                      // ),
                     ),
 
-                  // // VIA 1
-                  // if (c.via1Lat != 0.0)
-                  //   Marker(
-                  //     point: LatLng(c.via1Lat, c.via1Lon),
-                  //     width: 80,
-                  //     height: 70,
-                  //     child: Column(
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: [
-                  //         Card(
-                  //           color: Colors.black,
-                  //           elevation: 3,
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(6),
-                  //           ),
-                  //           child: const Padding(
-                  //             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  //             child: Text(
-                  //               "Via 1",
-                  //               style: TextStyle(
-                  //                 color: Colors.white,
-                  //                 fontSize: 11,
-                  //                 fontWeight: FontWeight.w600,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         const SizedBox(height: 0.5),
-                  //         const Icon(Icons.location_pin, color: Colors.blue, size:30),
-                  //       ],
-                  //     ),
-                  //   ),
-                  //
-                  //
-                  // // VIA 2
-                  // if (c.via2Lat != 0.0)
-                  //   Marker(
-                  //     point: LatLng(c.via2Lat, c.via2Lon),
-                  //     width: 80,
-                  //     height: 70,
-                  //     child: Column(
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: [
-                  //         Card(
-                  //           color: Colors.black,
-                  //           elevation: 3,
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(6),
-                  //           ),
-                  //           child: const Padding(
-                  //             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  //             child: Text(
-                  //               "Via 2",
-                  //               style: TextStyle(
-                  //                 color: Colors.white,
-                  //                 fontSize: 11,
-                  //                 fontWeight: FontWeight.w600,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         const SizedBox(height: 0.5),
-                  //         const Icon(Icons.location_pin, color: Colors.blue, size: 30),
-                  //       ],
-                  //     ),
-                  //   ),
+
 
 
                   ///                                                            Drop Off marker
@@ -348,30 +212,7 @@ class _MapScreenState extends State<MapScreen> {
               ),
 
 
-              // MarkerLayer(
-              //   markers: [
-              //     Marker(
-              //       point: pickupLatLng,
-              //       width: 40,
-              //       height: 40,
-              //       child: const Icon(
-              //         Icons.location_on,
-              //         color: Colors.green,
-              //         size: 40,
-              //       ),
-              //     ),
-              //     Marker(
-              //       point: dropLatLng,
-              //       width: 40,
-              //       height: 40,
-              //       child: const Icon(
-              //         Icons.location_on,
-              //         color: Colors.red,
-              //         size: 40,
-              //       ),
-              //     ),
-              //   ],
-              // ),
+
             ],
           );
         },
