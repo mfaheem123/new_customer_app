@@ -295,8 +295,7 @@ class _YourtripState extends State<Yourtrip> {
                         controller.bookingHistoryModel!.bookings!.length,
                         itemBuilder: (context, index) {
 
-                          var trip =
-                          controller.bookingHistoryModel!.bookings![index];
+                          var trip = controller.bookingHistoryModel!.bookings![index];
 
                           return bookingCardwidget(
                             referenceNo: trip.referenceNumber ?? "",

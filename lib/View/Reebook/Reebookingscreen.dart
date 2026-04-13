@@ -1,4 +1,5 @@
 import 'package:customer/View/textstyle/apptextstyle.dart';
+import 'package:customer/View/yourtrip/booking_history_model/bookingHistorymodel.dart';
 import 'package:customer/View/yourtrip/widget/card%20widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,11 +24,12 @@ class ReebookingScreen extends StatefulWidget {
 
 class _ReebookingScreenState extends State<ReebookingScreen> {
   final BookingController reebookingController = Get.put(BookingController());
-
+  late Booking trip;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    trip = Get.arguments;
    reebookingController.getVehicleTypes();
   }
 
@@ -52,6 +54,8 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
           child: Column(
 
             children: [
+
+              ///
               Expanded(
                 child: Stack(
                   children: [
@@ -131,7 +135,8 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
 
                                           return GestureDetector(
                                             onTap: () {
-                                              controller.selectedVehicleIndex.value = index;
+                                              //controller.selectedVehicleIndex.value = index;
+                                              controller.selectItem(index);
                                             },
                                             child: Container(
                                               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -303,6 +308,9 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                               child: BottomButton(icon: Icons.add_circle_outline, button_name: "Extras")),
                           InkWell(
                               onTap:(){
+
+                                print("======================================================================${reebookingController.selectedVehicleId}");
+                                print("======================================================================${reebookingController.selectedPassengers}");
 
                                 Get.bottomSheet(
                                   Container(
@@ -586,7 +594,9 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                           child: MyElevatedButton(
                                             text: '',
                                             onPressed: () {
-                                              Get.to(RideSearchScreen());
+                                             // Get.to(RideSearchScreen());
+
+                                              reebookingController.historyBookingApi(trip);
                                             },
                                             textWidget:
                                             FittedBox(

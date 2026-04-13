@@ -178,28 +178,7 @@ class RideController extends GetxController {
     selectedTime.value = TimeOfDay.now();
     selectedTimeOption.value = "ASAP"; // highlight ASAP
 
-///
-    // // time format for console
-    // final hour = selectedTime.value.hourOfPeriod.toString().padLeft(2, '0');
-    // final minute = selectedTime.value.minute.toString().padLeft(2, '0');
-    // final period =
-    // selectedTime.value.period == DayPeriod.am ? "AM" : "PM";
 
-    // print("ASAP Time: ${selectedTimeOption.value}");
-    // print("ASAP Time: $hour:$minute $period");
-
-    // print("pickup   ${swapController.pickUp.text}");
-    // print("pickup_latitude    ${swapController.selectedPickUPLat}");
-    // print("pickup_latitude    ${swapController.selectedPickUPLon}");
-    // print("dropoff            ${swapController.dropOff.text}");
-    // print("dropoff_latitude   ${swapController.selectedDropLat}");
-    // print("dropoff_longitude  ${swapController.selectedDropLon}");
-    // print("eta                ${swapController.totalRouteDistanceMiles}");
-    // print("miles              ${swapController.estimatedTimeMinutes}");
-    // print("passengers              ${selectedPassengers}");
-    // print("vehicle_type_id              ${selectedVehicleId}");
-    // print("pickup_date              ${getDate}");
-    // print("pickup_time              ${getTime}");
   }
 
 // ----------------- Format for Display -----------------

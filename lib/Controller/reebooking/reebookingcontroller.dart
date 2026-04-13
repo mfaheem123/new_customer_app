@@ -1,12 +1,47 @@
+import 'dart:convert';
+
+import 'package:bot_toast/bot_toast.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData, Response;
 
+import '../../View/profile/controller/profile_controller.dart';
 import '../../View/rides/model/ride_model/get_vehicle_model.dart';
+import '../../View/yourtrip/booking_history_model/bookingHistorymodel.dart' hide VehicleType;
 import '../../api_servies/api_servies.dart';
 
 class BookingController extends GetxController {
-  var selectedVehicleIndex = 0.obs;
+
+  final profileController = Get.isRegistered<profileModelController>()
+      ? Get.find<profileModelController>()
+      :  Get.put(profileModelController());
+
+
+  RxInt selectedVehicleIndex = (0).obs;
+  RxInt selectedVehicleId = 0.obs;
+  RxInt selectedPassengers = 0.obs;
+  String bookingId = "0" ;
+
+  /// Item select (index + ID + passengers)
+  void selectItem(int index) {
+    selectedVehicleIndex.value = index;
+    setSelectedVehicleId(index);
+    update(); // UI refresh
+  }
+
+  /// Vehicle ID & passengers get function
+  void setSelectedVehicleId(int index) {
+    final vehicle = vehicleData?.vehicleTypes?[index];
+
+    if (vehicle != null) {
+      if (vehicle.id != null) selectedVehicleId.value = vehicle.id!;
+      if (vehicle.passengers != null) {
+        selectedPassengers.value = vehicle.passengers!;
+      }
+    }
+  }
+
 
   // final  vehicleList = [
   //   {
@@ -104,27 +139,35 @@ Future<void> pickDate(BuildContext context) async {
     }
   }
 // ----------------- Add Minutes (15 / 30) -----------------
-void addMinutes(int minutesToAdd) {
-  final now = DateTime.now();
-  final dateTime = DateTime(
-    now.year,
-    now.month,
-    now.day,
-    selectedTime.value.hour,
-    selectedTime.value.minute,
-  );
+  void addMinutes(int minutesToAdd) {
+    final now = DateTime.now(); // 👈 ALWAYS current time
 
-  final newTime = dateTime.add(Duration(minutes: minutesToAdd));
-  selectedTime.value = TimeOfDay(hour: newTime.hour, minute: newTime.minute);
+    final newTime = now.add(Duration(minutes: minutesToAdd));
 
-  selectedTimeOption.value = "$minutesToAdd min"; // highlight selected
-}
+    selectedDate.value = DateTime(
+      newTime.year,
+      newTime.month,
+      newTime.day,
+    );
+
+    selectedTime.value = TimeOfDay(
+      hour: newTime.hour,
+      minute: newTime.minute,
+    );
+
+    selectedTimeOption.value = "$minutesToAdd min"; // highlight selected
+
+    print("CURRENT TIME: ${DateFormat('HH:mm').format(now)}");
+    print("UPDATED TIME: ${DateFormat('HH:mm').format(newTime)}");
+  }
 
 // ----------------- Set ASAP (Current Time) -----------------
-void setASAP() {
-  selectedTime.value = TimeOfDay.now();
-  selectedTimeOption.value = "ASAP"; // highlight ASAP
-}
+  void setASAP() {
+    selectedTime.value = TimeOfDay.now();
+    selectedTimeOption.value = "ASAP"; // highlight ASAP
+
+
+  }
 
 // ----------------- Format for Display -----------------
   String formattedTime24() {
@@ -140,14 +183,180 @@ void setASAP() {
   }
 
 
+  String get getDate {
+    return DateFormat('yyyy-MM-dd').format(selectedDate.value);
+  }
 
-// String get formattedDate {
-//   return DateFormat('yyyy-MM-dd').format(selectedDate.value);
-// }
+  String get getTime {
+    final now = DateTime.now();
+    final dt = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedTime.value.hour,
+      selectedTime.value.minute,
+    );
 
-String formattedTime(BuildContext context) {
-  return selectedTime.value.format(context);
-}
+    return DateFormat('HH:mm').format(dt); // 24-hour time
+  }
+
+
+  /// ============================== VIA Points Handling ==============================
+  List<Map<String, dynamic>> viaPointsList = [];
+  void prepareViaPoints({Booking? trip}) {
+    viaPointsList.clear();
+
+    final profileName = "${profileController.profileData!.customer!.name}";
+    //  final profileName = "Mark";
+    final profileMobile = profileController.profileData!.customer!.mobile;
+    // final profileMobile ="123467839";
+
+    /// ================= 🔥 FROM HISTORY =================
+    if (trip != null && trip.viapoints != null) {
+
+      for (int i = 0; i < trip.viapoints!.length; i++) {
+
+        if (i >= 2) break; // ✅ only 2 via allowed
+
+        var via = trip.viapoints![i];
+
+        /// ⚠️ because it's dynamic
+        if (via != null) {
+          viaPointsList.add({
+            "viapoint": via["viapoint"] ?? "",
+            "name": via["name"] ?? profileName,
+            "mobile": via["mobile"] ?? profileMobile,
+            "arrived": null,
+            "passenger_on_board": null,
+            "active": via["active"] ?? false,
+            "latitude": via["latitude"],
+            "longitude": via["longitude"],
+          });
+        }
+      }
+    }
+
+
+    // // VIA 1
+    // if (swapController.viaController1.text.isNotEmpty) {
+    //   viaPointsList.add(<String, dynamic>{
+    //     "viapoint": swapController.viaController1.text,
+    //     "name": profileName,
+    //     "mobile": profileMobile,
+    //     "arrived": null,
+    //     "passenger_on_board": null,
+    //     "active": false,
+    //     "latitude": swapController.via1Lat,
+    //     "longitude": swapController.via1Lon,
+    //   });
+    // }
+    // // VIA 2
+    // if (swapController.viaController2.text.isNotEmpty) {
+    //   viaPointsList.add({
+    //     "viapoint": swapController.viaController2.text,
+    //     "name": profileName,
+    //     "mobile": profileMobile,
+    //     "arrived": null,
+    //     "passenger_on_board": null,
+    //     "active": false,
+    //     "latitude": swapController.via2Lat,
+    //     "longitude": swapController.via2Lon,
+    //   });
+    // }
+  }
+
+
+
+  Future<void> historyBookingApi(Booking trip) async {
+    prepareViaPoints(trip: trip);
+
+    // 1. ViaPoints ka structure manually set karein taake nulls mehfooz rahein
+    List<Map<String, dynamic>> finalViaPoints = viaPointsList.map((via) {
+      return {
+        "viapoint": via["viapoint"],
+        "name": via["name"],
+        "mobile": via["mobile"],
+        "arrived": null, // Strict null
+        "passenger_on_board": null, // Strict null
+        "active": via["active"] ?? false,
+        "latitude": via["latitude"],
+        "longitude": via["longitude"],
+      };
+    }).toList();
+
+    // 2. FormData banayein
+    Map<String, dynamic> dataMap = {
+      "pickup": trip.pickup,
+      "pickup_latitude": trip.pickupLatitude,
+      "pickup_longitude": trip.pickupLongitude,
+      "dropoff": trip.dropoff,
+      "dropoff_latitude": trip.dropoffLatitude,
+      "dropoff_longitude": trip.dropoffLongitude,
+
+
+
+      "name": "${profileController.profileData!.customer!.name}",
+      "email": profileController.profileData!.customer!.email,
+      "mobile": profileController.profileData!.customer!.mobile,
+      "telephone": profileController.profileData!.customer!.mobile,
+      "pickup_date": getDate,
+      "pickup_time": getTime,
+      "journey_type_id": 1,
+      "sms": true,
+      "passengers": selectedPassengers,
+      "luggages": 1,
+      "hand_luggages": 1,
+      "payment_type_id": 1,
+      "vehicle_type_id": selectedVehicleId,
+      "eta": trip.eta,
+      "miles": trip.miles,
+      "booking_status_id": 1,
+      "booking_type_id": 1,
+      "booking_source": "app",
+
+      // Customer ko stringify kar dein agar indexing masla kar rahi hai
+      "customer": jsonEncode([
+        {
+          "name": "${profileController.profileData!.customer!.name}",
+          "email": profileController.profileData!.customer!.email,
+          "mobile": profileController.profileData!.customer!.mobile,
+          "telephone": profileController.profileData!.customer!.mobile,
+          "blacklist": false,
+        }
+      ]),
+
+      // VIAPOINTS ko jsonEncode karein - Yeh nulls ko preserve karega
+      "viapoints": jsonEncode(finalViaPoints),
+    };
+
+    FormData formData = FormData.fromMap(dataMap);
+
+    // API Call
+    Response<dynamic>? response = (await ApiService.post(
+      formData,
+      "bookings/add",
+      multiPart: true,
+      auth: true,
+    ));
+
+    if (response!.statusCode == 200) {
+      final data = response.data;
+      // bookings list
+      final List bookings = data['bookings'];
+
+      bookingId = bookings[0]['id'].toString();
+
+      print("BOOKING ID ✅ => $bookingId");
+
+      print("SUCCESS ✅ => ${response.data}");
+      //Get.off(RideSearchScreen());
+      //Get.toNamed("/RideSearchScreen ");
+      BotToast.showText(text: "Booking Created");
+    } else {
+      print("FAILED ❌ => ${response.data}");
+      BotToast.showText(text: "Booking Failed");
+    }
+  }
 
 
 

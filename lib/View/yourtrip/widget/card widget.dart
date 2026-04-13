@@ -228,7 +228,7 @@ class bookingCardwidget extends StatelessWidget {
 
 
 
-                        Get.to(ReebookingScreen());
+                        Get.to(ReebookingScreen(),arguments: trip);
                       },
 
                       child:  Text(
