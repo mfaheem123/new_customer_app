@@ -14,11 +14,14 @@ import 'Home/homedriver.dart';
 import 'drawer/drawer.dart';
 import 'map_widget/open_street_map.dart';
 
-class DeshBoard_Screen extends StatelessWidget {
+class DeshBoard_Screen extends StatefulWidget {
   DeshBoard_Screen({super.key});
 
+  @override
+  State<DeshBoard_Screen> createState() => _DeshBoard_ScreenState();
+}
 
-
+class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
   final homeC = Get.isRegistered<SwapController>()
       ? Get.find<SwapController>()
       : Get.put(SwapController());
@@ -34,9 +37,7 @@ class DeshBoard_Screen extends StatelessWidget {
 
 
     /// Keyboard check (NON-reactive → Obx se bahar)
-    final bool isKeyboardOpen =
-        MediaQuery.of(context).viewInsets.bottom > 0;
-
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return SafeArea(
       child: Scaffold(

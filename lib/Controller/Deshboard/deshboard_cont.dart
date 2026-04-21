@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../View/Deshboard/map_widget/map_controller.dart';
 import '../../View/profile/controller/profile_controller.dart';
 import '../../api_servies/api_servies.dart';
@@ -9,15 +10,43 @@ import '../Home/model/pickuplocationmodel.dart';
 
 class DeshBoardAddHome_Controller extends GetxController {
 
+  Future<void> sendEmail() async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: 'example@gmail.com',
+      queryParameters: {
+        'subject': 'Ride Inquiry',
+        'body': 'Hello, I need help regarding my ride',
+      },
+    );
+
+    try {
+      await launchUrl(
+        emailUri,
+        mode: LaunchMode.externalApplication, // 👈 IMPORTANT
+      );
+    } catch (e) {
+      print("Email launch error: $e");
+      Get.snackbar("Error", "No email app found");
+    }
+  }
+
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
       :  Get.put(profileModelController());
+
 
 
   // final mapWedgit =OpenStreetMapWidget();
   final mapC = Get.isRegistered<PickLocationController>()
       ? Get.find<PickLocationController>()
       : Get.put(PickLocationController());
+
+  @override
+  void onInit() {
+    super.onInit();
+    profileController.getuserProfile();
+  }
 
   @override
   void onClose() {

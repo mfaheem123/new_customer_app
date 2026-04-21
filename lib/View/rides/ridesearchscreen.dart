@@ -4,7 +4,7 @@ import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Controller/Ride/RideController.dart';
-import '../Deshboard/dashboard.dart';
+import '../../Controller/reebooking/reebookingcontroller.dart';
 import '../Widgets/all_text.dart';
 import '../Widgets/elevat_button.dart';
 import '../Widgets/text_button.dart';
@@ -16,6 +16,9 @@ class RideSearchScreen extends StatelessWidget {
   final rideController = Get.isRegistered<RideController>()
       ? Get.find<RideController>()
       : Get.put(RideController());
+  final reebookingController = Get.isRegistered<BookingController>()
+      ? Get.find<BookingController>()
+      : Get.put(BookingController());
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +190,16 @@ class RideSearchScreen extends StatelessWidget {
                                     CustomTextButton(
                                       text: 'Yes',
                                       onPressed: () {
-                                        rideController.rideCancelApi();
+
+                                          if (rideController.isFromHistory) {
+                                            // 👉 History wali cancel API
+                                            reebookingController.cancelHistoryRideApi();
+                                          } else {
+                                            // 👉 Normal cancel API
+                                            rideController.rideCancelApi();
+                                          }
+
+                                      //  rideController.rideCancelApi();
                                         // Get.to(DeshBoard_Screen());
                                       },
                                       backgroundColor: Colors.red,

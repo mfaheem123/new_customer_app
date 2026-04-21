@@ -144,7 +144,7 @@ class ProfileScreen extends StatelessWidget {
                           right: 5,
                           child: GestureDetector(
                             onTap: () {
-                              controller.changeProfilePicture(TokenManager.userId);
+                              controller.showImageSourceDialog(user.id!);
                             },
                             child: Container(
                               decoration: BoxDecoration(

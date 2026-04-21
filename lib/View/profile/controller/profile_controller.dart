@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:customer/View/profile/model/get_profile_model.dart';
+import 'package:flutter/material.dart';
+
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,45 +10,24 @@ import '../../../api_servies/api_servies.dart';
 import '../../../api_servies/session.dart';
 import 'package:dio/dio.dart';
 
+
 class profileModelController extends GetxController {
   RxBool loading = true.obs; // Remove Rx, will call update()
   GetProfileModel? profileData;
 
-
-  @override
-  void onInit() {
-    super.onInit();
-    getuserProfile();
-  }
+  //
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   getuserProfile();
+  // }
 
   ///--------------------------------------------------------------  user get profile api
 
 
 
 
-  // Future<void> getuserProfile() async {
-  //   loading.value = true;
-  //   update();
-  //
-  //   try {
-  //     var response = await ApiService.get(
-  //      // "auth/customer-profile/${TokenManager.userId}",
-  //       "auth/customer-profile/49",
-  //       auth: true,
-  //     );
-  //
-  //     if (response != null && response.statusCode == 200) {
-  //       profileData = GetProfileModel.fromJson(response.data);
-  //     } else {
-  //       profileData = null;
-  //     }
-  //   } catch (e) {
-  //     profileData = null;
-  //   }
-  //
-  //   loading.value = false;
-  //   update();
-  // }
+
 
 
   ///===================================================================
@@ -75,9 +56,41 @@ class profileModelController extends GetxController {
 
   Rx<File?> selectedImage = Rx<File?>(null);
   RxBool loader = false.obs;
+  void showImageSourceDialog(int userId) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("Camera"),
+              onTap: () {
+                Get.back();
+                changeProfilePicture(userId, ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: const Text("Gallery"),
+              onTap: () {
+                Get.back();
+                changeProfilePicture(userId, ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  Future<void> changeProfilePicture(int userId) async {
-    final XFile? img = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+  Future<void> changeProfilePicture(int userId, ImageSource source) async {
+    final XFile? img = await ImagePicker().pickImage(source: source);
     if (img == null) return;
 
     selectedImage.value = File(img.path); //  instant preview
@@ -94,7 +107,7 @@ class profileModelController extends GetxController {
     var response = await ApiService.post(
       formData,
       '',
-      fullUrl: "http://192.168.110.5:5000/api/customers/profile-image/${TokenManager.userId}",
+      fullUrl: "http://158.220.92.206:5000/api/customers/profile-image/${TokenManager.userId}",
       multiPart: true,
       auth: true,
     );

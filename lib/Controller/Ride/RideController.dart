@@ -24,6 +24,8 @@ class RideController extends GetxController {
       ? Get.find<profileModelController>()
       :  Get.put(profileModelController());
 
+  bool isFromHistory = false;
+
   GetVehicleModel? vehicleData;
   bool loading = false;
 
@@ -50,7 +52,7 @@ class RideController extends GetxController {
       }
     }
   }
-
+  List<VehicleType> get vehicles => vehicleData?.vehicleTypes ?? [];
   ///  API call
   Future<void> getVehicleTypes() async {
     loading = true;
@@ -64,6 +66,12 @@ class RideController extends GetxController {
 
     if (response != null && response.statusCode == 200) {
       vehicleData = GetVehicleModel.fromJson(response.data);
+      // ✅ DIRECT DATA CHECK (best way)
+      if (vehicleData?.vehicleTypes != null &&
+          vehicleData!.vehicleTypes!.isNotEmpty) {
+        selectItem(0); // 👉 auto select first item
+      }
+
     }
 
     loading = false;
@@ -335,7 +343,7 @@ class RideController extends GetxController {
       print("BOOKING ID ✅ => $bookingId");
 
       print("SUCCESS ✅ => ${response.data}");
-      Get.off(RideSearchScreen());
+      //Get.off(RideSearchScreen());
       //Get.toNamed("/RideSearchScreen ");
       BotToast.showText(text: "Booking Created");
     } else {
@@ -655,8 +663,8 @@ class RideController extends GetxController {
 
       BotToast.showText(text: "Booking Cancel Success");
       print(bookingId);
-
-      Get.toNamed('/DeshBoard_Screen');
+     isFromHistory = false;
+      Get.offAllNamed('/DeshBoard_Screen');
       return;
     }
 

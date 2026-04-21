@@ -4,7 +4,9 @@ import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import '../../../Controller/Home/home-controller.dart';
 import '../../../Controller/yourtrip/yourtrip_Controller.dart';
+import '../../Widgets/all_text.dart';
 import '../../Widgets/color.dart';
+import '../../Widgets/text_button.dart';
 import '../../textstyle/apptextstyle.dart';
 
 class ScheduleBookingCard extends StatelessWidget {
@@ -225,8 +227,97 @@ class ScheduleBookingCard extends StatelessWidget {
                         if (trip.id != null) {
                           tripController.saveBookingId(trip.id!);
 
-                          // 3. Phir direct cancel API call karein
-                          tripController.rideCancelApi();
+                          Get.dialog(
+                              Dialog(
+                                backgroundColor: CustomColor.Container_Colors,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                                  ),
+                                  height: 220,
+                                  width: 100,
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: 15),
+
+                                      Text(
+                                        // CustomText.Delete_address,
+                                        "Delete Ride",
+                                        style: AppTextStyles.heading(
+
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Icon(
+                                        Icons.warning_amber,
+                                        color: Colors.amberAccent,
+                                        size: 40,
+                                      ),
+                                      SizedBox(height: 5),
+                                      Center(
+                                        child:  Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          child: Text(
+                                            CustomText.Delete_home_address_Alert,
+                                            textAlign: TextAlign.center,
+
+                                            style: AppTextStyles.small(),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 15,),
+
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CustomTextButton(
+                                            text: 'Yes',
+                                            onPressed: () async {
+                                              tripController.rideCancelApi();
+                                              Get.back();
+
+
+
+                                            },
+                                            backgroundColor: Colors.red,
+                                            textColor: Colors.white,
+                                            borderRadius: 8,
+                                            elevation: 2,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 10,
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+
+                                          CustomTextButton(
+                                            text: '  No  ',
+                                            onPressed: () {
+                                              Get.back();
+                                            },
+                                            backgroundColor: CustomColor.Button_background_Color,
+                                            textColor: Colors.white,
+                                            borderRadius: 8,
+                                            elevation: 2,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 10,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                          );
+
+                          // tripController.rideCancelApi();
                         } else {
                           print("Error: Booking ID is null");
                         }
@@ -235,7 +326,7 @@ class ScheduleBookingCard extends StatelessWidget {
 
                       child:  Text(
                         "Cancel Booking",
-                        style: AppTextStyles.regular(),
+                        style: AppTextStyles.regular(weight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -269,7 +360,7 @@ class ScheduleBookingCard extends StatelessWidget {
                       },
                       child:  Text(
                         "Track Driver",
-                        style: AppTextStyles.regular(),
+                        style: AppTextStyles.regular(weight: FontWeight.bold),
                       ),
                     ),
                   ),

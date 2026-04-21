@@ -84,6 +84,9 @@ class BookingController extends GetxController {
 
     if (response != null && response.statusCode == 200) {
       vehicleData = GetVehicleModel.fromJson(response.data);
+      if (vehicles.isNotEmpty) {
+        selectItem(0); // ✅ auto select
+      }
     }
     print(response!.data);
     loading = false;
@@ -265,8 +268,6 @@ Future<void> pickDate(BuildContext context) async {
     // }
   }
 
-
-
   Future<void> historyBookingApi(Booking trip) async {
     prepareViaPoints(trip: trip);
 
@@ -349,6 +350,7 @@ Future<void> pickDate(BuildContext context) async {
       print("BOOKING ID ✅ => $bookingId");
 
       print("SUCCESS ✅ => ${response.data}");
+      Get.back();
       //Get.off(RideSearchScreen());
       //Get.toNamed("/RideSearchScreen ");
       BotToast.showText(text: "Booking Created");
@@ -358,6 +360,30 @@ Future<void> pickDate(BuildContext context) async {
     }
   }
 
+  Future<void> cancelHistoryRideApi() async {
+    print(bookingId);
+    FormData formData = FormData.fromMap({
+      "booking_status_id": 12,
 
+    });
+
+    var response = await ApiService.post(
+      formData,
+      "bookings/status/$bookingId",
+
+      multiPart: false,
+      auth: false,
+    );
+
+    if (response!.statusCode == 200) {
+
+      BotToast.showText(text: "Booking Cancel Success");
+      print(bookingId);
+      Get.offAllNamed('/DeshBoard_Screen');
+      return;
+    }
+
+
+  }
 
 }

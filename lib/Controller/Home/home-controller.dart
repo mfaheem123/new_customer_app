@@ -284,6 +284,17 @@ class SwapController extends GetxController {
       return;
     }
 
+    /// 🔥 NEW: Lat/Lng validation
+    if (selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) {
+      showAppSnackBar("Please select valid pickup location from map");
+      return;
+    }
+
+    if (selectedDropLat == 0.0 || selectedDropLon == 0.0) {
+      showAppSnackBar("Please select valid drop-off location from map");
+      return;
+    }
+
     Get.toNamed('/RideInfoScreen');
   }
 

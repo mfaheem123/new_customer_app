@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../Controller/Ride/RideController.dart';
 import '../../Controller/reebooking/reebookingcontroller.dart';
+import '../../Routing/routes_name.dart';
 import '../Deshboard/map_widget/map_polyLine.dart';
 import '../Deshboard/map_widget/open_street_map.dart';
 import '../Widgets/color.dart';
@@ -24,6 +26,10 @@ class ReebookingScreen extends StatefulWidget {
 
 class _ReebookingScreenState extends State<ReebookingScreen> {
   final BookingController reebookingController = Get.put(BookingController());
+
+  final rideController = Get.isRegistered<RideController>()
+      ? Get.find<RideController>()
+      : Get.put(RideController());
   late Booking trip;
   @override
   void initState() {
@@ -31,6 +37,8 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
     super.initState();
     trip = Get.arguments;
    reebookingController.getVehicleTypes();
+
+
   }
 
   @override
@@ -597,6 +605,16 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                              // Get.to(RideSearchScreen());
 
                                               reebookingController.historyBookingApi(trip);
+
+                                              if (reebookingController.selectedTimeOption.value == "ASAP") {
+                                                // 👉 ASAP → Search Screen
+                                                rideController.isFromHistory = true;
+                                                Get.offAllNamed(routesName.RideSearchScreen);
+                                              } else {
+                                                // 👉 Scheduled → Dashboard
+                                                Get.offAllNamed(routesName.DeshBoard_Screen);
+                                              }
+
                                             },
                                             textWidget:
                                             FittedBox(

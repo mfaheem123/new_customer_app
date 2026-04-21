@@ -3,13 +3,25 @@ import 'package:customer/View/Widgets/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../Controller/Deshboard/deshboard_cont.dart';
+import '../../textstyle/apptextstyle.dart';
+import '../map_widget/map_controller.dart';
+import '../map_widget/open_street_map.dart';
 
-import '../textstyle/apptextstyle.dart';
 
 
 class Aboutscreen extends StatelessWidget {
    Aboutscreen({super.key});
   // final mapWedgit =OpenStreetMapWidget();
+
+
+   final controller = Get.isRegistered<PickLocationController>()
+       ? Get.find<PickLocationController>()
+       : Get.put(PickLocationController());
+   final deshboardcontroller = Get.isRegistered<DeshBoardAddHome_Controller>()
+       ? Get.find<DeshBoardAddHome_Controller>()
+       : Get.put(DeshBoardAddHome_Controller());
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -139,14 +151,13 @@ class Aboutscreen extends StatelessWidget {
                             ),
                             SizedBox(width: 5),
                             Expanded(
-                              child: Text(
-                                "1 MANSOR ROAD, HASTINGSEAST SECESSEX TN34 3LL",
+                              child: Obx(() => Text(
+                                controller.address.value, // ✅ correct
                                 softWrap: true,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: AppTextStyles.medium(
-                                ),
-                              ),
+                                style: AppTextStyles.medium(),
+                              )),
                             ),
                           ],
                         ),
@@ -166,7 +177,23 @@ class Aboutscreen extends StatelessWidget {
                               radius: 20,
                               backgroundColor: Colors.white,
                               child: IconButton(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  const phone = "tel://03001234567";
+                                  final Uri phoneUri = Uri.parse(phone);
+
+                                  try {
+                                    bool launched = await launchUrl(
+                                      phoneUri,
+                                      mode: LaunchMode.externalApplication,
+                                    );
+
+                                    if (!launched) {
+                                      print("Dialer app not found");
+                                    }
+                                  } catch (e) {
+                                    print("Error: $e");
+                                  }
+                                },
                                 icon:  Icon(Icons.call, size: 20, color: Colors.black),
                               ),
                             ),
@@ -178,7 +205,9 @@ class Aboutscreen extends StatelessWidget {
                               radius: 20,
                               backgroundColor: Colors.white,
                               child: IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  deshboardcontroller.sendEmail();
+                                },
                                 icon:  Icon(Icons.email, size: 20, color: Colors.black),
                               ),
                             ),
@@ -194,9 +223,22 @@ class Aboutscreen extends StatelessWidget {
 
                 //============================================   map
                 Container(
-                  height: 600,
-                  child: Image(image: AssetImage("assets/images/map2.png"),fit: BoxFit.cover,),
-                  //         child: OpenStreetMapWidget(),
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey, width: 2),
+                    image: const DecorationImage(
+                      image: AssetImage("assets/images/map_image.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  height: 500,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                    child: PickupLocationScreen(),
+                  ),
+                 // child: Image(image: AssetImage("assets/images/map2.png"),fit: BoxFit.cover,),
+
                 ),
 
 

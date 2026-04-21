@@ -1,5 +1,6 @@
 
 import 'package:customer/Controller/Ride/RideController.dart';
+import 'package:customer/Routing/routes_name.dart';
 import 'package:customer/View/Widgets/all_text.dart';
 import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
@@ -481,6 +482,14 @@ void initState() {
                                          rideController.getTime;*/
 
                                         rideController.getBookingApi();
+
+                                        if (rideController.selectedTimeOption.value == "ASAP") {
+                                          // 👉 ASAP → Search Screen
+                                          Get.offAllNamed(routesName.RideSearchScreen);
+                                        } else {
+                                          // 👉 Scheduled → Dashboard
+                                          Get.offAllNamed(routesName.DeshBoard_Screen);
+                                        }
                                       },
                                       textWidget:
                                       FittedBox(
