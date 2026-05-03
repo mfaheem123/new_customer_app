@@ -382,6 +382,7 @@ class HomeDriver extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
+                              // Get.toNamed('/RideInfoScreen');
                               homeC.validateLocations();
                               //Get.to(MapScreen());
                               // Get.dialog(

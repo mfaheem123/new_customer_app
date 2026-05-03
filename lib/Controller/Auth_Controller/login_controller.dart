@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/src/response.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response, FormData;
 import '../../api_servies/api_servies.dart' hide TokenManager;
@@ -32,9 +33,15 @@ class LoginController extends GetxController {
   }
 
     Future<void> userLoginApi() async {
+
+      // 1. FCM Token nikalen
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      debugPrint("Sending FCM Token: $fcmToken");
+      
       FormData formData = FormData.fromMap({
         "email": emailController.text,
         "password": passwordController.text,
+        "fcm_token": fcmToken,
       });
 
       var response = await ApiService.post(
@@ -43,10 +50,9 @@ class LoginController extends GetxController {
         multiPart: false,
         auth: false,
       );
-
       if (response!.statusCode == 200) {
-
         final data = response.data;
+   debugPrint("print response with FCM ------: $response");
 
         /// 🔐 Save token & id in GetStorage
         TokenManager.saveSession(

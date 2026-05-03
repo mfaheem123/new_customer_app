@@ -286,12 +286,12 @@ class SwapController extends GetxController {
 
     /// 🔥 NEW: Lat/Lng validation
     if (selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) {
-      showAppSnackBar("Please select valid pickup location from map");
+      showAppSnackBar("Please select valid pickup location ");
       return;
     }
 
     if (selectedDropLat == 0.0 || selectedDropLon == 0.0) {
-      showAppSnackBar("Please select valid drop-off location from map");
+      showAppSnackBar("Please select valid drop-off location ");
       return;
     }
 
@@ -307,7 +307,7 @@ class SwapController extends GetxController {
         margin: const EdgeInsets.symmetric(horizontal: 20),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.red.shade600,
+          color: Colors.white12.withOpacity(0.3),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -515,6 +515,8 @@ Future<void> pickupLocation(String text) async {
   void setPickup(double lat, double lon) {
     selectedPickUPLat = lat;
     selectedPickUPLon = lon;
+    print("====================================${selectedPickUPLat }   , ${selectedPickUPLon }");
+
     fetchRoute();
     update();
   }
@@ -522,6 +524,7 @@ Future<void> pickupLocation(String text) async {
   void setDrop(double lat, double lon) {
     selectedDropLat = lat;
     selectedDropLon = lon;
+    print("Dropoff================================================${selectedDropLat }   , ${selectedDropLon }");
     fetchRoute();
     update();
   }
@@ -539,6 +542,7 @@ Future<void> pickupLocation(String text) async {
     via2Lat = lat;
     via2Lon = lon;
     showVia2.value = true;
+
     fetchRoute();
     update(["map"]);
   }
@@ -701,7 +705,7 @@ Future<void> pickupLocation(String text) async {
       print("Route error: $e");
     }
   }
-
+/// ==============================================  History booking
   void setRouteFromBooking(dynamic trip) {
 
     /// Pickup

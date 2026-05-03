@@ -85,7 +85,8 @@ class ApiService {
         bool isProgressShow = false,
         bool noCloseLoading = false,
         Map<String, dynamic>? queryParameters,
-        String? fullUrl}) async {
+        String? fullUrl}) async
+  {
 
     if (isProgressShow) BotToast.showLoading();
 

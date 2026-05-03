@@ -1,13 +1,53 @@
+
+
+
+
+
 import 'package:customer/View/Deshboard/map_widget/map_polyLine.dart';
 import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/rides/ridecomplete.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Controller/Home/home-controller.dart';
+import '../../Controller/Ride/RideController.dart';
 import '../Widgets/all_text.dart';
+import 'model/get_booking_by id.dart';
 
-class Driverdetailscreen extends StatelessWidget {
+class Driverdetailscreen extends StatefulWidget {
   const Driverdetailscreen({super.key});
+
+  @override
+  State<Driverdetailscreen> createState() => _DriverdetailscreenState();
+}
+
+class _DriverdetailscreenState extends State<Driverdetailscreen> {
+  final controller = Get.isRegistered<RideController>()
+      ? Get.find<RideController>()
+      : Get.put(RideController());
+
+  final swapController = Get.isRegistered<SwapController>()
+      ? Get.find<SwapController>()
+      : Get.put(SwapController());
+
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 🔥 driverId arguments se lo
+    final driverId = Get.arguments['id'];
+
+    controller.startPolling(driverId.toString());
+  }
+
+
+  @override
+  void dispose() {
+    controller.stopPolling();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +101,19 @@ class Driverdetailscreen extends StatelessWidget {
               ),
 
               // ================= Map Section
+              // Expanded(
+              //   flex: 6,
+              //   child: Container(
+              //     margin: const EdgeInsets.symmetric(horizontal: 10),
+              //     decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(18),
+              //     ),
+              //     child: const ClipRRect(
+              //       borderRadius: BorderRadius.all(Radius.circular(18)),
+              //       child: MapScreen(),
+              //     ),
+              //   ),
+              // ),
               Expanded(
                 flex: 6,
                 child: Container(
@@ -80,145 +133,307 @@ class Driverdetailscreen extends StatelessWidget {
                 ),
               ),
 
-              // ================= Bottom Driver Info Section
+             // ================= Bottom Driver Info Section
+              ///
               Expanded(
                 flex: 4,
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    color: CustomColor.Container_Colors,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(40),
-                      topLeft: Radius.circular(40),
+                child: Obx(() {
+                  // 🔥 FULL LOADING STATE
+                  if (controller.isLoading.value) {
+                    return Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: CustomColor.Container_Colors,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(40),
+                          topLeft: Radius.circular(40),
+                        ),
+                      ),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  // 🔥 DATA UI (same as your UI)
+                  return Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
+                    decoration: BoxDecoration(
+                      color: CustomColor.Container_Colors,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(40),
+                        topLeft: Radius.circular(40),
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Container(
-                          height: 5,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            color: CustomColor.Icon_Color,
-                            borderRadius: BorderRadius.circular(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            height: 5,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: CustomColor.Icon_Color,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 10),
+                        SizedBox(height: 15),
 
-                      // Driver Name
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          children: [
-                            CircleAvatar(backgroundColor: Colors.blue, radius: 25),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                "Muhammad Ibad Ullah Qureshi",
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                        // 🔹 Driver Name
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              CircleAvatar(backgroundColor: Colors.blue, radius: 25),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  controller.driverName.value,
+                                  textAlign: TextAlign.start,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTextStyles.heading(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 15),
+
+                        // 🔹 Status
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                CustomText.Status + "  :  ",
                                 style: AppTextStyles.medium(),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 5),
-
-                      // Status
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              CustomText.Status + "  :  ",
-                              style: AppTextStyles.medium(),
-                            ),
-                            SizedBox(width: 5),
-                            Container(
-                              height: 30,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Ride Accepted",
-                                  textAlign: TextAlign.center,
-                                  style: AppTextStyles.small(),
+                              SizedBox(width: 5),
+                              Container(
+                                height: 30,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                  color: controller.bookingStatus.value == "Available"
+                                      ? Colors.green
+                                      : Colors.red,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    controller.bookingStatus.value,
+                                    textAlign: TextAlign.center,
+                                    style: AppTextStyles.small(),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 10),
+                        SizedBox(height: 15),
 
-                      // Vehicle info + image
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(CustomText.Vehicle_Color + "  :  ",
-                                        style: AppTextStyles.medium()),
-                                    Text(
-                                      "White",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: CustomColor.Text_Color,
+                        // 🔹 Vehicle info + image
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(CustomText.Vehicle_Color + "  :  ",
+                                          style: AppTextStyles.medium()),
+                                      Text(
+                                        controller.vehicleColor.value,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: CustomColor.Text_Color,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Text(CustomText.Vehicle_number + "  :  ",
-                                        style: AppTextStyles.medium()),
-                                    Text(
-                                      "ABC-1234",
-                                      style: AppTextStyles.medium(),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Spacer(),
-                            Container(
-                              height: 60,
-                              width: 100,
-                              child: Image.asset(
-                                "assets/images/carimage.jpg",
-                                fit: BoxFit.contain,
+                                    ],
+                                  ),
+                                  SizedBox(height: 15),
+                                  Row(
+                                    children: [
+                                      Text(CustomText.Vehicle_number + "  :  ",
+                                          style: AppTextStyles.medium()),
+                                      Text(
+                                        controller.vehicleNumber.value,
+                                        style: AppTextStyles.medium(),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              Spacer(),
+                              Container(
+                                margin: EdgeInsets.only(right: 20),
+                                height: 60,
+                                width: 100,
+                                child: Image.asset(
+                                  "assets/images/carimage.jpg",
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 15),
+                        SizedBox(height: 15),
 
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Get.to(RideCompleteScreen());
-                          },
-                          child: Text("Move to feedback screen"),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                        // Center(
+                        //   child: ElevatedButton(
+                        //     onPressed: () {
+                        //       Get.to(RideCompleteScreen());
+                        //     },
+                        //     child: Text("Move to feedback screen"),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  );
+                }),
               ),
+              // Expanded(
+              //   flex: 4,
+              //   child: Container(
+              //     width: double.infinity,
+              //     padding: EdgeInsets.symmetric(vertical: 10),
+              //     decoration: BoxDecoration(
+              //       color: CustomColor.Container_Colors,
+              //       borderRadius: BorderRadius.only(
+              //         topRight: Radius.circular(40),
+              //         topLeft: Radius.circular(40),
+              //       ),
+              //     ),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Center(
+              //           child: Container(
+              //             height: 5,
+              //             width: 40,
+              //             decoration: BoxDecoration(
+              //               color: CustomColor.Icon_Color,
+              //               borderRadius: BorderRadius.circular(10),
+              //             ),
+              //           ),
+              //         ),
+              //         SizedBox(height: 10),
+              //
+              //         // Driver Name
+              //         Padding(
+              //           padding: const EdgeInsets.symmetric(horizontal: 10),
+              //           child: Row(
+              //             children: [
+              //               CircleAvatar(backgroundColor: Colors.blue, radius: 25),
+              //               SizedBox(width: 10),
+              //               Expanded(
+              //                 child: Text(
+              //                   "Muhammad Ibad Ullah Qureshi",
+              //                   textAlign: TextAlign.center,
+              //                   maxLines: 1,
+              //                   overflow: TextOverflow.ellipsis,
+              //                   style: AppTextStyles.medium(),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //         SizedBox(height: 5),
+              //
+              //         // Status
+              //         Padding(
+              //           padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              //           child: Row(
+              //             children: [
+              //               Text(
+              //                 CustomText.Status + "  :  ",
+              //                 style: AppTextStyles.medium(),
+              //               ),
+              //               SizedBox(width: 5),
+              //               Container(
+              //                 height: 30,
+              //                 width: 120,
+              //                 decoration: BoxDecoration(
+              //                   color: Colors.red,
+              //                   borderRadius: BorderRadius.circular(25),
+              //                 ),
+              //                 child: Center(
+              //                   child: Text(
+              //                     "Ride Accepted",
+              //                     textAlign: TextAlign.center,
+              //                     style: AppTextStyles.small(),
+              //                   ),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //         SizedBox(height: 10),
+              //
+              //         // Vehicle info + image
+              //         Padding(
+              //           padding: const EdgeInsets.symmetric(horizontal: 10),
+              //           child: Row(
+              //             children: [
+              //               Column(
+              //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //                 children: [
+              //                   Row(
+              //                     children: [
+              //                       Text(CustomText.Vehicle_Color + "  :  ",
+              //                           style: AppTextStyles.medium()),
+              //                       Text(
+              //                         "White",
+              //                         style: TextStyle(
+              //                           fontSize: 18,
+              //                           color: CustomColor.Text_Color,
+              //                         ),
+              //                       ),
+              //                     ],
+              //                   ),
+              //                   SizedBox(height: 8),
+              //                   Row(
+              //                     children: [
+              //                       Text(CustomText.Vehicle_number + "  :  ",
+              //                           style: AppTextStyles.medium()),
+              //                       Text(
+              //                         "ABC-1234",
+              //                         style: AppTextStyles.medium(),
+              //                       ),
+              //                     ],
+              //                   ),
+              //                 ],
+              //               ),
+              //               Spacer(),
+              //               Container(
+              //                 height: 60,
+              //                 width: 100,
+              //                 child: Image.asset(
+              //                   "assets/images/carimage.jpg",
+              //                   fit: BoxFit.contain,
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //         SizedBox(height: 15),
+              //
+              //         Center(
+              //           child: ElevatedButton(
+              //             onPressed: () {
+              //               Get.to(RideCompleteScreen());
+              //             },
+              //             child: Text("Move to feedback screen"),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -230,6 +445,11 @@ class Driverdetailscreen extends StatelessWidget {
 
 
 
+
+///////////////////////////////////////////////////////////////
+
+
+///
 //
 //
 // class Driverdetailscreen extends StatelessWidget {

@@ -1,16 +1,12 @@
 import 'package:customer/View/Auth/Sign_Up_Screen/sign_up.dart';
-import 'package:customer/View/Deshboard/dashboard.dart';
 import 'package:customer/View/Widgets/all_text.dart';
 import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/Widgets/elevat_button.dart';
 import 'package:customer/View/Widgets/textformfield.dart';
-import 'package:customer/View/Widgets/textstyle.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:get/get_core/src/get_main.dart';
-
 import '../../../Controller/Auth_Controller/login_controller.dart';
 
 class SigIn_Screen extends StatefulWidget {

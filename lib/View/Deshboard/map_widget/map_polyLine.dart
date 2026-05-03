@@ -14,7 +14,11 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final SwapController c = Get.put(SwapController());
+  // final SwapController c = Get.put(SwapController());
+  final c = Get.isRegistered<SwapController>()
+      ? Get.find<SwapController>()
+      : Get.put(SwapController());
+
 
   final MapController mapController = MapController();
 

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:bot_toast/bot_toast.dart';
+import 'package:customer/Routing/routes_name.dart';
 import 'package:customer/View/Deshboard/dashboard.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/src/response.dart'  ;
@@ -6,6 +9,7 @@ import 'package:get/get.dart' hide FormData, Response;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../View/profile/controller/profile_controller.dart';
+import '../../View/rides/model/get_driver_by_id/driver_detail_model.dart' hide VehicleType;
 import '../../View/rides/model/ride_model/get_vehicle_model.dart';
 
 import '../../View/rides/ridesearchscreen.dart';
@@ -16,9 +20,14 @@ import 'dart:convert';
 
 class RideController extends GetxController {
 
+
+
+
+
+
   final swapController = Get.isRegistered<SwapController>()
-      ? Get.find<SwapController>()
-      : Get.put(SwapController());
+        ? Get.find<SwapController>()
+        : Get.put(SwapController());
 
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
@@ -641,7 +650,7 @@ class RideController extends GetxController {
 
 
 
-
+///================================================   booking cancel api
 
 
   Future<void> rideCancelApi() async {
@@ -671,8 +680,85 @@ class RideController extends GetxController {
 
   }
 
+///================================================   Driver detail  Api
+
+  Timer? _timer;
+
+  String? currentDriverId;
+
+  // 🔥 Reactive variables
+  var isLoading = true.obs;
+  var bookingStatus = "".obs;
+  var driverName = "".obs;
+  var vehicleColor = "".obs;
+  var vehicleNumber = "".obs;
+
+  late DriverGetbyId driverGetbyId;
+
+  // 🔥 START POLLING
+  void startPolling(String driverId) {
+    currentDriverId = driverId;
+
+    // pehle agar koi timer chal raha ho to stop karo
+    stopPolling();
+
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      _hitDriverApi(driverId);
+    });
+  }
+
+  // 🔥 STOP POLLING
+  void stopPolling() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  // 🔥 API CALL
+  Future<void> _hitDriverApi(String driverId) async {
+    try {
+      var response = await ApiService.get(
+        "drivers/getbyid/$driverId",
+        auth: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        driverGetbyId = DriverGetbyId.fromJson(response.data);
+
+       // String status = driverGetbyId.driver.bookingStatus;
 
 
+
+
+        // 🔥 Update UI
+        driverName.value = driverGetbyId.driver.name;
+        bookingStatus.value = driverGetbyId.driver.bookingStatus;
+        vehicleColor.value = driverGetbyId.driver.vehicle.color;
+        vehicleNumber.value = driverGetbyId.driver.vehicle.vehicleNumber;
+
+        isLoading.value = false;
+
+        debugPrint("=======       =====  5 sec hit       ======>>>>>>   lBooking Status: $bookingStatus");
+
+        // 🔥 CONDITION
+        if (bookingStatus == "Available") {
+          stopPolling(); // ❗ important
+
+          // 👉 Payment Screen
+          Get.offAllNamed(routesName.RideCompleteScreen); // apna route lagao
+        }
+
+      }
+
+    } catch (e) {
+      debugPrint("Polling API error: $e");
+    }
+  }
+
+  @override
+  void onClose() {
+    stopPolling(); // memory leak se bachne ke liye
+    super.onClose();
+  }
 
 }
 
