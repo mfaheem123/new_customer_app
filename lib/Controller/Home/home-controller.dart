@@ -70,9 +70,6 @@ class SwapController extends GetxController {
   var selectedItem = (0).obs;
   RxInt selectedIndex = 0.obs;
 
-
-
-
   List<Map<String, dynamic>> iconItems = [
     {"name": "Home", "icon": Icons.home},
     {"name": "Bus", "icon": Icons.airplanemode_active_rounded},
@@ -106,11 +103,11 @@ class SwapController extends GetxController {
     update();
 
     var response = await ApiService.get(
-      "airports/get",   //  base url ApiService me hoga
+      "airports/get?company_id=1",   //  base url ApiService me hoga
       auth: true,
     );
 
-    if (response != null && response.statusCode == 200) {
+    if ( response!.statusCode == 200) {
       final data = AirportList.fromJson(response.data);
 
       airportLocations = data.locations ?? [];
@@ -750,6 +747,83 @@ Future<void> pickupLocation(String text) async {
 
     fetchRoute(); // 🔥 API call
     update(["map"]);
+  }
+
+
+
+
+
+  ///============================================================  map funtion driver detail screen
+
+
+  void setBookingRoute(booking) {
+
+    /// 🔵 PICKUP
+    selectedPickUPLat =
+        double.tryParse(booking.pickupLatitude ?? "0") ?? 0.0;
+
+    selectedPickUPLon =
+        double.tryParse(booking.pickupLongitude ?? "0") ?? 0.0;
+
+    pickUp.text = booking.pickup ?? "";
+
+    /// 🔴 DROP
+    selectedDropLat =
+        double.tryParse(booking.dropoffLatitude ?? "0") ?? 0.0;
+
+    selectedDropLon =
+        double.tryParse(booking.dropoffLongitude ?? "0") ?? 0.0;
+
+    dropOff.text = booking.dropoff ?? "";
+
+    /// RESET VIA
+    via1Lat = 0;
+    via1Lon = 0;
+    via2Lat = 0;
+    via2Lon = 0;
+
+    showVia1.value = false;
+    showVia2.value = false;
+
+    /// 🟡 VIA POINTS
+    if (booking.viapoints != null && booking.viapoints.isNotEmpty) {
+
+      /// VIA 1
+      if (booking.viapoints.length >= 1) {
+        var v1 = booking.viapoints[0];
+
+        via1Lat =
+            double.tryParse(v1['latitude']?.toString() ?? "0") ?? 0.0;
+
+        via1Lon =
+            double.tryParse(v1['longitude']?.toString() ?? "0") ?? 0.0;
+
+        viaController1.text = v1['viapoint'] ?? "";
+
+        showVia1.value = true;
+      }
+
+      /// VIA 2
+      if (booking.viapoints.length >= 2) {
+        var v2 = booking.viapoints[1];
+
+        via2Lat =
+            double.tryParse(v2['latitude']?.toString() ?? "0") ?? 0.0;
+
+        via2Lon =
+            double.tryParse(v2['longitude']?.toString() ?? "0") ?? 0.0;
+
+        viaController2.text = v2['viapoint'] ?? "";
+
+        showVia2.value = true;
+      }
+    }
+
+    /// 🚀 ROUTE CALL
+    fetchRoute();
+
+    /// UI UPDATE
+    update(["map", "distance"]);
   }
 
   // void setRouteFromBooking(dynamic  trip) {

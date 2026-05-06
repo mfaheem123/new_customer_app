@@ -4,13 +4,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-
 import '../Controller/Home/home-controller.dart';
 import '../Controller/Ride/RideController.dart';
 import '../View/rides/DriverDetailscreen.dart';
-import '../View/rides/model/get_booking_by id.dart';
 import '../api_servies/api_servies.dart';
 import '../api_servies/session.dart';
+
 
 class PushNotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -113,6 +112,7 @@ class PushNotificationService {
   String? driverId;
   String? bookingId;
   String? type;
+
   Future<void> _handleData(Map data) async {
     try {
        bookingId = data['booking_id']?.toString();
@@ -142,12 +142,12 @@ class PushNotificationService {
             await _hitDriverApi(driverId!);
           }
 
-          // if (bookingId != null) {
-          //   await fetchBookingById(bookingId!); // 🔥 ADD THIS
-          // }
+          if (bookingId != null) {
+            await _getBookingById(bookingId!); // 🔥 ADD THIS
+          }
 
 
-          // // 👇 ADD THIS
+          // //  ADD THIS
           final rideController = Get.isRegistered<RideController>()
               ? Get.find<RideController>()
               : Get.put(RideController());
@@ -186,7 +186,7 @@ class PushNotificationService {
 
         // ✅ NAVIGATION
         // Get.offAllNamed(routesName.Driverdetailscreen, arguments: data);
-        Get.toNamed(routesName.Driverdetailscreen, arguments: {
+        Get.offAllNamed(routesName.Driverdetailscreen, arguments: {
           "id": driverId
         });
 
@@ -199,7 +199,35 @@ class PushNotificationService {
     }
   }
 
+  Future<void> _getBookingById(String bookingId) async {
+    try {
+      debugPrint("Calling Booking API: $bookingId");
 
+      var response = await ApiService.get(
+        "bookings/getbyid/$bookingId", // ✅ correct endpoint
+        auth: true,
+      );
+
+      if ( response!.statusCode == 200) {
+        var data = response.data;
+
+        debugPrint("Booking Data: $data");
+
+        // 👉 Controller me store karo
+        final rideController = Get.isRegistered<RideController>()
+            ? Get.find<RideController>()
+            : Get.put(RideController());
+
+        rideController.setBookingData(data);
+
+      } else {
+        debugPrint("Booking API Failed: ${response.statusCode}");
+      }
+
+    } catch (e) {
+      debugPrint("Booking API error: $e");
+    }
+  }
 
 
 

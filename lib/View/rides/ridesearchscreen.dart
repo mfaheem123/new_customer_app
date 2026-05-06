@@ -74,9 +74,7 @@ class RideSearchScreen extends StatelessWidget {
                         child: Center(
                           child: Text(
                             CustomText.Searching,
-                            style: AppTextStyles.heading(
-                              size: fontSizeHeading,
-                            ),
+                            style: AppTextStyles.heading(),
                           ),
                         ),
                       ),

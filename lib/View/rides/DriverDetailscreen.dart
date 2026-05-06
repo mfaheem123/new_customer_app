@@ -1,8 +1,4 @@
 
-
-
-
-
 import 'package:customer/View/Deshboard/map_widget/map_polyLine.dart';
 import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/rides/ridecomplete.dart';
@@ -12,7 +8,7 @@ import 'package:get/get.dart';
 import '../../Controller/Home/home-controller.dart';
 import '../../Controller/Ride/RideController.dart';
 import '../Widgets/all_text.dart';
-import 'model/get_booking_by id.dart';
+
 
 class Driverdetailscreen extends StatefulWidget {
   const Driverdetailscreen({super.key});
@@ -77,20 +73,20 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () => Get.back(),
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: screenWidth * 0.06,
-                        color: CustomColor.Icon_Color,
-                      ),
-                    ),
+                    // IconButton(
+                    //   onPressed: () => Get.back(),
+                    //   icon: Icon(
+                    //     Icons.arrow_back,
+                    //     size: screenWidth * 0.06,
+                    //     color: CustomColor.Icon_Color,
+                    //   ),
+                    // ),
+                    SizedBox(width: 20,),
                     Expanded(
                       child: Center(
                         child: Text(
                           CustomText.Driver_Info,
                           style: AppTextStyles.heading(
-                            size: screenWidth * 0.06,
                           ),
                         ),
                       ),
@@ -114,14 +110,16 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
               //     ),
               //   ),
               // ),
+              SizedBox(height: 20),
               Expanded(
                 flex: 6,
                 child: Container(
                   width: double.infinity,
                   margin: EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    image: DecorationImage(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey, width: 2),
+                    image: const DecorationImage(
                       image: AssetImage("assets/images/map_image.png"),
                       fit: BoxFit.cover,
                     ),
@@ -135,6 +133,7 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
 
              // ================= Bottom Driver Info Section
               ///
+              SizedBox(height: 50,),
               Expanded(
                 flex: 4,
                 child: Obx(() {
@@ -170,13 +169,27 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                          child: Container(
+                           child:
+
+                          Container(
                             height: 5,
                             width: 40,
                             decoration: BoxDecoration(
                               color: CustomColor.Icon_Color,
                               borderRadius: BorderRadius.circular(10),
                             ),
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundImage: (controller.driverGetbyId.driver.image.isNotEmpty)
+                                  ? NetworkImage(controller.driverGetbyId.driver.image)
+                                  : const AssetImage("assets/images/user.png") as ImageProvider,
+                            ),
+                            // child: CircleAvatar(
+                            //   radius: 20,
+                            //   backgroundImage: NetworkImage(
+                            //     controller.driverGetbyId.driver.image ,
+                            //   ),
+                            // ),
                           ),
                         ),
                         SizedBox(height: 15),
@@ -208,24 +221,24 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                           child: Row(
                             children: [
                               Text(
-                                CustomText.Status + "  :  ",
+                                CustomText.Status + " : ",
                                 style: AppTextStyles.medium(),
                               ),
                               SizedBox(width: 5),
                               Container(
                                 height: 30,
-                                width: 120,
+                                width: 130,
                                 decoration: BoxDecoration(
                                   color: controller.bookingStatus.value == "Available"
-                                      ? Colors.green
-                                      : Colors.red,
+                                      ? Colors.blueAccent
+                                      : Colors.green,
                                   borderRadius: BorderRadius.circular(25),
                                 ),
                                 child: Center(
                                   child: Text(
                                     controller.bookingStatus.value,
                                     textAlign: TextAlign.center,
-                                    style: AppTextStyles.small(),
+                                    style: AppTextStyles.medium(weight: FontWeight.bold),
                                   ),
                                 ),
                               ),
@@ -244,40 +257,37 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      Text(CustomText.Vehicle_Color + "  :  ",
+                                      Text("${CustomText.Vehicle_Color} : ",
                                           style: AppTextStyles.medium()),
                                       Text(
                                         controller.vehicleColor.value,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: CustomColor.Text_Color,
-                                        ),
+                                        style:  AppTextStyles.medium(weight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
                                   SizedBox(height: 15),
                                   Row(
                                     children: [
-                                      Text(CustomText.Vehicle_number + "  :  ",
+                                      Text("${CustomText.Vehicle_number} : ",
                                           style: AppTextStyles.medium()),
                                       Text(
                                         controller.vehicleNumber.value,
-                                        style: AppTextStyles.medium(),
+                                        style: AppTextStyles.medium(weight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
                               Spacer(),
-                              Container(
-                                margin: EdgeInsets.only(right: 20),
-                                height: 60,
-                                width: 100,
-                                child: Image.asset(
-                                  "assets/images/carimage.jpg",
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
+                              // Container(
+                              //   margin: EdgeInsets.only(right: 10),
+                              //   height: 60,
+                              //   width: 100,
+                              //   child: Image.asset(
+                              //     "assets/images/carimage.jpg",
+                              //     fit: BoxFit.contain,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -296,6 +306,7 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                   );
                 }),
               ),
+
               // Expanded(
               //   flex: 4,
               //   child: Container(

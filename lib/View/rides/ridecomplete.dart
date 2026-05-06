@@ -58,16 +58,16 @@ class RideCompleteScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              IconButton(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                icon: Icon(
-                                  Icons.arrow_back,
-                                  size: MediaQuery.of(context).size.width * 0.06,
-                                  color: CustomColor.Icon_Color,
-                                ),
-                              ),
+                              // IconButton(
+                              //   onPressed: () {
+                              //     Get.back();
+                              //   },
+                              //   icon: Icon(
+                              //     Icons.arrow_back,
+                              //     size: MediaQuery.of(context).size.width * 0.06,
+                              //     color: CustomColor.Icon_Color,
+                              //   ),
+                              // ),
 
                               SizedBox(width: 5),
 
@@ -83,16 +83,16 @@ class RideCompleteScreen extends StatelessWidget {
                                 ),
                               ),
 
-                              IconButton(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                icon: Icon(
-                                  Icons.edit_notifications_sharp,
-                                  size: MediaQuery.of(context).size.width * 0.06,
-                                  color: Colors.yellow,
-                                ),
-                              ),
+                              // IconButton(
+                              //   onPressed: () {
+                              //     Get.back();
+                              //   },
+                              //   icon: Icon(
+                              //     Icons.edit_notifications_sharp,
+                              //     size: MediaQuery.of(context).size.width * 0.06,
+                              //     color: Colors.yellow,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
