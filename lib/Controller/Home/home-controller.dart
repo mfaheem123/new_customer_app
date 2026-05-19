@@ -304,7 +304,7 @@ class SwapController extends GetxController {
         margin: const EdgeInsets.symmetric(horizontal: 20),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white12.withOpacity(0.3),
+          color: Colors.black54.withOpacity(0.6),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -508,23 +508,29 @@ Future<void> pickupLocation(String text) async {
   double via2Lat = 0.0;
   double via2Lon = 0.0;
 
-
-  void setPickup(double lat, double lon) {
+  // void setPickup(double lat, double lon) {
+  //   selectedPickUPLat = lat;
+  //   selectedPickUPLon = lon;
+  //   print("====================================${selectedPickUPLat }   , ${selectedPickUPLon }");
+  //
+  //   fetchRoute();
+  //   update();
+  // }
+  Future<void> setPickup(double lat, double lon) async {
     selectedPickUPLat = lat;
     selectedPickUPLon = lon;
     print("====================================${selectedPickUPLat }   , ${selectedPickUPLon }");
-
-    fetchRoute();
+    await fetchRoute();
     update();
   }
-
-  void setDrop(double lat, double lon) {
-    selectedDropLat = lat;
-    selectedDropLon = lon;
-    print("Dropoff================================================${selectedDropLat }   , ${selectedDropLon }");
-    fetchRoute();
-    update();
-  }
+  
+    void setDrop(double lat, double lon) {
+      selectedDropLat = lat;
+      selectedDropLon = lon;
+      print("Dropoff================================================${selectedDropLat }   , ${selectedDropLon }");
+      fetchRoute();
+      update();
+    }
 
 
   void setVia1(double lat, double lon) {
@@ -543,15 +549,16 @@ Future<void> pickupLocation(String text) async {
     fetchRoute();
     update(["map"]);
   }
-
+  RxBool isPickupEmpty = true.obs;
   void removePickUpField() {
     pickUp.clear();
     selectedPickUPLat = 0.0;
     selectedPickUPLon = 0.0;
 
+    isPickupEmpty.value = true;
 
     fetchRoute();
-    update(["map"]);
+    // update();
   }
 
   void removeDropOff() {
@@ -825,45 +832,6 @@ Future<void> pickupLocation(String text) async {
     /// UI UPDATE
     update(["map", "distance"]);
   }
-
-  // void setRouteFromBooking(dynamic  trip) {
-  //
-  //
-  //   /// Pickup
-  //   selectedPickUPLat = double.tryParse(trip.pickupLatitude ?? "0") ?? 0.0;
-  //   selectedPickUPLon = double.tryParse(trip.pickupLongitude ?? "0") ?? 0.0;
-  //
-  //   /// Drop
-  //   selectedDropLat = double.tryParse(trip.dropoffLatitude ?? "0") ?? 0.0;
-  //   selectedDropLon = double.tryParse(trip.dropoffLongitude ?? "0") ?? 0.0;
-  //
-  //   /// Reset via
-  //   via1Lat = 0.0;
-  //   via1Lon = 0.0;
-  //   via2Lat = 0.0;
-  //   via2Lon = 0.0;
-  //   showVia1.value = false;
-  //   showVia2.value = false;
-  //
-  //   /// VIA points (agar aaye)
-  //   if (trip.viapoints != null && trip.viapoints!.isNotEmpty) {
-  //     var v = trip.viapoints![0];
-  //
-  //     // ⚠️ API format check karo (ye generic handling hai)
-  //     via1Lat = double.tryParse(v['lat'].toString()) ?? 0.0;
-  //     via1Lon = double.tryParse(v['lng'].toString()) ?? 0.0;
-  //
-  //     showVia1.value = true;
-  //   }
-  //
-  //   fetchRoute(); // 🔥 same API call
-  //   update(["map"]);
-  // }
-
-
-
-
-
 
 
 }

@@ -79,7 +79,7 @@ class TripDetail extends StatelessWidget {
           
                         Text("Booking Status",
                           style: AppTextStyles.regular(
-                            color: Colors.blueGrey
+                            color: CustomColor.textColor
                         ),
                         ),
                         Text(
@@ -92,7 +92,7 @@ class TripDetail extends StatelessWidget {
                         Text(
                           "Booking REF : ${data["referenceNo"] ?? ""}",
                           style: AppTextStyles.regular(
-                            color: CustomColor.blueGrey,
+                            color: CustomColor.textColor
                           ),
                         ),
           
@@ -109,7 +109,7 @@ class TripDetail extends StatelessWidget {
                       children: [
                         Text("CASH",
                           style: AppTextStyles.regular(
-                              color: Colors.blueGrey
+                              color: CustomColor.textColor
                           ),
                         ),
                         Text(
@@ -137,7 +137,7 @@ class TripDetail extends StatelessWidget {
                       child: Text(
                         "${data["date"] ?? ""}  ${data["time"] ?? ""}",
                         style: AppTextStyles.regular(
-                          color: Colors.blueGrey,
+                          color:CustomColor.textColor
                         ),
                       ),
                     ),
@@ -146,7 +146,7 @@ class TripDetail extends StatelessWidget {
                     Text(
                       data["vehicle"] ?? "",
                       style: AppTextStyles.regular(
-                        color: Colors.blueGrey,
+                        color: CustomColor.textColor
                       ),
                     ),
                   ],

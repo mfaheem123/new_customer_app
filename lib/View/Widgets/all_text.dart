@@ -50,6 +50,7 @@ class CustomText {
   static const String Select_Suitable_Ride =  "Select Suitable Ride";
   static const String Schedule_Ride =  "Schedule Ride";
   static const String Ride_Cancel_alert =  "Are you sure, Do you want to cancel ride ? ";
+  static const String Ride_book_ride_alert =  "Are you sure you want to book the ride?";
   static const String Searching =  "Searching....";
   static const String Seaching_Text =  "Your Ride Is Being Searched";
   static const String Seaching_Thnks_Note =  "Thanks for your patience please wait";

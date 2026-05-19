@@ -15,6 +15,17 @@ class SignUp_Controller extends GetxController {
   TextEditingController phoneNoController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  @override
+  void onInit() {
+    super.onInit();
+
+    firstNameController.addListener(() => update());
+    lastNameController.addListener(() => update());
+    emailController.addListener(() => update());
+    phoneNoController.addListener(() => update());
+    passwordController.addListener(() => update());
+  }
+
 
   RxBool isCheckedBox = false.obs;
 
@@ -146,51 +157,13 @@ class SignUp_Controller extends GetxController {
       return;
     }
 
-    // //  ERROR (SAFE HANDLING)
-    // String errorMessage = "Register Failed ";
-    //
-    // if (response.data is Map) {
-    //   errorMessage = response.data['message']?.toString() ?? errorMessage;
-    // } else if (response.data is String) {
-    //   errorMessage = response.data;
-    // }
-    //
-    // BotToast.showText(text: errorMessage);
-    // print("FAILED => ${response.data}");
+
   }
 
 
 
 
-////////////////////////////////////////////////////////////////////////////  without response on ui
 
-
-  // Future<void> registerUser() async {
-  //   FormData formData = FormData.fromMap({
-  //     "first_name": firstNameController.text,
-  //     "last_name": lastNameController.text,
-  //     "email": emailController.text,
-  //     "phone_number": phoneNoControllre.text,
-  //     "password": passwordController.text,
-  //   });
-  //
-  //   // Debug
-  //   print("///////////////////////////////////////////////////////////////// nnn   ${formData.fields}");
-  //
-  //   Response? response = await ApiService.post(
-  //     formData,
-  //     "auth/register",
-  //     multiPart: true,
-  //     auth: false,
-  //   );
-  //
-  //   if (response != null && response.statusCode == 200) {
-  //     print("SUCCESS ================================================================================================   => ${response.data}");
-  //   } else {
-  //     print("FAILED => ${response?.data}");
-  //     BotToast.showText(text: "Register Failed ");
-  //   }
-  // }
 
 
 

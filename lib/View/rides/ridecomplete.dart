@@ -262,7 +262,7 @@ class RideCompleteScreen extends StatelessWidget {
                       Center(
                         child: TextButton(
                           onPressed: () async {
-                            const phone = "tel://03001234567";
+                            const phone = "tel://01424202020";
                             final Uri phoneUri = Uri.parse(phone);
 
                             try {

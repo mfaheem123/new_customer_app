@@ -87,6 +87,17 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                         color: CustomColor.textField_Icon_Color,
                       ),
                       borderRadius: 15,
+                      suffixIcon: Obx(() {
+                        return signupController.firstNameController.text.isNotEmpty
+                            ? GestureDetector(
+                          onTap: () {
+                            signupController.firstNameController.clear();
+                            signupController.update();
+                          },
+                          child: const Icon(Icons.close, size: 18),
+                        )
+                            : const SizedBox();
+                      }),
                     ),
 
                     SizedBox(height: 25),
@@ -102,6 +113,17 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                         color: CustomColor.textField_Icon_Color,
                       ),
                       borderRadius: 15,
+                      suffixIcon: Obx(() {
+                        return signupController.lastNameController.text.isNotEmpty
+                            ? GestureDetector(
+                          onTap: () {
+                            signupController.lastNameController.clear();
+                            signupController.update();
+                          },
+                          child: const Icon(Icons.close, size: 18),
+                        )
+                            : const SizedBox();
+                      }),
                     ),
 
                     SizedBox(height: 25),
@@ -118,6 +140,18 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                       ),
                       borderRadius: 15,
                       // fillColor: CustomColor.textfield_fill,
+                      suffixIcon: Obx(() {
+                        return signupController.emailController.text.isNotEmpty
+                            ? GestureDetector(
+                          onTap: () {
+                            signupController.emailController.clear();
+                            signupController.update();
+                          },
+                          child: const Icon(Icons.close, size: 18),
+                        )
+                            : const SizedBox();
+                      }),
+
                     ),
 
                     SizedBox(height: 25),
@@ -129,6 +163,7 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                       child: PhoneNumber_TextField(
                         hintText: CustomText.hint_text_phone_number,
                         controller: signupController.phoneNoController,
+
                       ),
                     ),
                     SizedBox(height: 25),
@@ -137,17 +172,31 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                     Obx(
                       () => CustomTextField(
                         maxlength: 15,
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            signupController.isPasswordVisible.value =
-                                !signupController.isPasswordVisible.value;
-                            // signupController.togglePasswordVisibility();
-                          },
-                          child: Icon(
-                            signupController.isPasswordVisible.value
-                                ? Icons.remove_red_eye
-                                : Icons.visibility_off,
-                          ),
+                        suffixIcon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [    if (signupController.passwordController.text.isNotEmpty)
+                            GestureDetector(
+                              onTap: () {
+                                signupController.passwordController.clear();
+                                signupController.update();
+                              },
+                              child: const Icon(Icons.close, size: 18),
+                            ),
+
+                            const SizedBox(width: 10),
+                            GestureDetector(
+                              onTap: () {
+                                signupController.isPasswordVisible.value =
+                                    !signupController.isPasswordVisible.value;
+                                // signupController.togglePasswordVisibility();
+                              },
+                              child: Icon(
+                                signupController.isPasswordVisible.value
+                                    ? Icons.remove_red_eye
+                                    : Icons.visibility_off,
+                              ),
+                            ),
+                          ],
                         ),
                         controller: signupController.passwordController,
                         obscureText: !signupController.isPasswordVisible.value,
