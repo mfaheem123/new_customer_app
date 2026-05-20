@@ -86,11 +86,11 @@ class SwapController extends GetxController {
 
   /// 🔹 Train static data
   List<String> trainStops = [
-    "Karachi Cantt Station",
-    "Lahore Railway Station",
-    "Islamabad Railway Station",
-    "Rawalpindi Railway Station",
-    "Faisalabad Station",
+    // "Karachi Cantt Station",
+    // "Lahore Railway Station",
+    // "Islamabad Railway Station",
+    // "Rawalpindi Railway Station",
+    // "Faisalabad Station",
   ];
 
 

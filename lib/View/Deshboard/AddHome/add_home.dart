@@ -45,210 +45,207 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
               end: Alignment.bottomCenter,
             ),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 30),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: Get.back,
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+          child:  Column(
+            children: [
+              const SizedBox(height: 30),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: Get.back,
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  ),
+                  const Spacer(),
+                  const Text(
+                    "Home Address",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const Spacer(),
-                    const Text(
-                      "Home Address",
-                      style: TextStyle(
+                  ),
+                  const Spacer(),
+                ],
+              ),
+
+              const SizedBox(height: 40),
+
+              /// 🔍 SEARCH FIELD
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      controller: mydeshcontroller.HomeController,
+                      hintText: "Search Home Address",
+                      borderRadius: 15,
+                      onChanged: mydeshcontroller.addhomeLocation,
+                    ),
+                  ),
+                  Obx(() {
+                    return IconButton(
+                      icon: Icon(
+                        mydeshcontroller.editingIndex.value != null
+                            ? Icons.check
+                            : Icons.add,
                         color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    const Spacer(),
-                  ],
-                ),
-            
-                const SizedBox(height: 40),
-            
-                /// 🔍 SEARCH FIELD
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomTextField(
-                        controller: mydeshcontroller.HomeController,
-                        hintText: "Search Home Address",
-                        borderRadius: 15,
-                        onChanged: mydeshcontroller.addhomeLocation,
-                      ),
-                    ),
-                    Obx(() {
-                      return IconButton(
-                        icon: Icon(
-                          mydeshcontroller.editingIndex.value != null
-                              ? Icons.check
-                              : Icons.add,
-                          color: Colors.white,
-                        ),
-                        onPressed: mydeshcontroller.AddhomeApi,
-                      );
-                    }),
-                  ],
-                ),
-            
-                /// 🔍 LIVE SEARCH RESULTS
-                Obx(() {
-                  if (mydeshcontroller.homeSearchloading.value) {
-                    return const Padding(
-                      padding: EdgeInsets.all(15),
-                      child: LinearProgressIndicator(
-                        minHeight: 3,
-                        color: CustomColor.Icon_Color,
-                        backgroundColor: Colors.white24,
-                      ),
+                      onPressed: mydeshcontroller.AddhomeApi,
                     );
-                  }
-            
-                  if (mydeshcontroller.homeSearchList.isNotEmpty) {
-                    // return ListView.builder(
-                    //   shrinkWrap: true,
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   itemCount: mydeshcontroller.homeSearchList.length,
-                    //   itemBuilder: (context, index) {
-                    //     final item = mydeshcontroller.homeSearchList[index];
-                    //
-                    //     return ListTile(
-                    //       title: Text(item.name ?? '',style: AppTextStyles.regular(),),
-                    //       subtitle: Text(item.postcode ?? '',style: AppTextStyles.regular(),),
-                    //       onTap: () {
-                    //         mydeshcontroller.selectHomeLocation(item);
-                    //         mydeshcontroller.HomeController.text = "${item.name} ${item.postcode}";
-                    //       },
-                    //     );
-                    //   },
-                    // );
-                    return  commonSearchContainer(
-                      context: context,
-                      list: mydeshcontroller.homeSearchList,
-                      onTap: (item) {
-                        mydeshcontroller.HomeController.text = "${item.name} ${item.postcode}";
+                  }),
+                ],
+              ),
+
+              /// 🔍 LIVE SEARCH RESULTS
+              Obx(() {
+                if (mydeshcontroller.homeSearchloading.value) {
+                  return const Padding(
+                    padding: EdgeInsets.all(15),
+                    child: LinearProgressIndicator(
+                      minHeight: 3,
+                      color: CustomColor.Icon_Color,
+                      backgroundColor: Colors.white24,
+                    ),
+                  );
+                }
+
+                if (mydeshcontroller.homeSearchList.isNotEmpty) {
+                  // return ListView.builder(
+                  //   shrinkWrap: true,
+                  //   physics: const NeverScrollableScrollPhysics(),
+                  //   itemCount: mydeshcontroller.homeSearchList.length,
+                  //   itemBuilder: (context, index) {
+                  //     final item = mydeshcontroller.homeSearchList[index];
+                  //
+                  //     return ListTile(
+                  //       title: Text(item.name ?? '',style: AppTextStyles.regular(),),
+                  //       subtitle: Text(item.postcode ?? '',style: AppTextStyles.regular(),),
+                  //       onTap: () {
+                  //         mydeshcontroller.selectHomeLocation(item);
+                  //         mydeshcontroller.HomeController.text = "${item.name} ${item.postcode}";
+                  //       },
+                  //     );
+                  //   },
+                  // );
+                  return  commonSearchContainer(
+                    context: context,
+                    list: mydeshcontroller.homeSearchList,
+                    onTap: (item) {
+                      mydeshcontroller.HomeController.text = "${item.name} ${item.postcode}";
                       mydeshcontroller.selectHomeLocation(item);
 
-                      },
-                    );
-                  }
-            
+                    },
+                  );
+                }
+
+                return const SizedBox();
+              }),
+
+              /// 🏠 SAVED HOME CARD
+              Obx(() {
+                if (mydeshcontroller.homeSearchList.isNotEmpty || mydeshcontroller.homeSearchloading.value) {
                   return const SizedBox();
-                }),
-            
-                /// 🏠 SAVED HOME CARD
-                Obx(() {
-                  if (mydeshcontroller.homeSearchList.isNotEmpty ||
-                      mydeshcontroller.homeSearchloading.value) {
-                    return const SizedBox();
-                  }
-            
-                  return GetBuilder<profileModelController>(
-                    builder: (controller) {
-                      final address = controller.profileData?.customer?.address1;
-            
-                      if (address == null ||
-                          address.isEmpty ||
-                          address == " ") {
-                        return Padding(
-                          padding: const EdgeInsets.all(40),
-                          child: Text(
-                            "No data",
-                            style: AppTextStyles.heading(),
-                          ),
-                        );
-                      }
-            
-                      return Card(
-                        margin: EdgeInsets.only(top: 50),
-                        color: CustomColor.Container_Colors,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                }
+
+                return GetBuilder<profileModelController>(
+                  builder: (controller) {
+                    final address = controller.profileData?.customer?.address1;
+
+                    if (address == null ||address.isEmpty || address == " ") {
+                      return Padding(
+                        padding: const EdgeInsets.all(40),
+                        child: Text(
+                          "No data",
+                          style: AppTextStyles.heading(),
                         ),
-                        child: ListTile(
-                          leading: const Icon(Icons.home),
-                          title: Text(address, style: AppTextStyles.small()),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () async {
-                                  Get.dialog(
-                                    Center(
-                                      child: CircularProgressIndicator(
-                                        color: CustomColor.Icon_Color,
-                                        backgroundColor: Colors.white24,
-                                      ),
+                      );
+                    }
+
+                    return Card(
+                      margin: EdgeInsets.only(top: 50),
+                      color: CustomColor.Container_Colors,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: ListTile(
+                        leading: const Icon(Icons.home),
+                        title: Text(address, style: AppTextStyles.small()),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () async {
+                                Get.dialog(
+                                  Center(
+                                    child: CircularProgressIndicator(
+                                      color: CustomColor.Icon_Color,
+                                      backgroundColor: Colors.white24,
                                     ),
-                                    barrierDismissible: false,
-                                  );
-                                  await Future.delayed(Duration(seconds: 1));
-                                  Get.back();
-                                  mydeshcontroller.editItem();
-                                },
+                                  ),
+                                  barrierDismissible: false,
+                                );
+                                await Future.delayed(Duration(seconds: 1));
+                                Get.back();
+                                mydeshcontroller.editItem();
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
                               ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () {
-                                  Get.dialog(
-                                    Dialog(
-                                      backgroundColor: CustomColor.Container_Colors,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                                        ),
-                                        height: 220,
-                                        width: 100,
+                              onPressed: () {
+                                Get.dialog(
+                                  Dialog(
+                                    backgroundColor: CustomColor.Container_Colors,
+                                    insetPadding: const EdgeInsets.symmetric(horizontal: 30),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: ConstrainedBox(
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 320,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                                         child: Column(
+                                          mainAxisSize: MainAxisSize.min, // ⭐ IMPORTANT FIX
                                           children: [
-                                            SizedBox(height: 15),
-            
+                                            const SizedBox(height: 10),
+
                                             Text(
                                               CustomText.Delete_address,
-                                              style: AppTextStyles.heading(
-            
-                                              ),
+                                              style: AppTextStyles.heading(),
                                             ),
-                                            SizedBox(height: 5),
-                                            Icon(
+
+                                            const SizedBox(height: 8),
+
+                                            const Icon(
                                               Icons.warning_amber,
                                               color: Colors.amberAccent,
                                               size: 40,
                                             ),
-                                            SizedBox(height: 5),
-                                            Center(
-                                              child:  Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                                child: Text(
-                                                  CustomText.Delete_home_address_Alert,
-                                                  textAlign: TextAlign.center,
-            
-                                                  style: AppTextStyles.small(),
-                                                ),
+
+                                            const SizedBox(height: 8),
+
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                              child: Text(
+                                                CustomText.Delete_home_address_Alert,
+                                                textAlign: TextAlign.center,
+                                                style: AppTextStyles.small(),
                                               ),
                                             ),
-                                            SizedBox(height: 15,),
-            
+
+                                            const SizedBox(height: 15),
+
                                             Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
                                                 CustomTextButton(
                                                   text: 'Yes',
-                                                  onPressed: () async {
+                                                  onPressed: () {
                                                     mydeshcontroller.deleteHomeApi();
                                                     Get.back();
-            
-            
-            
                                                   },
                                                   backgroundColor: Colors.red,
                                                   textColor: Colors.white,
@@ -256,25 +253,22 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                                                   elevation: 2,
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets.symmetric(
                                                     horizontal: 16,
                                                     vertical: 10,
                                                   ),
                                                 ),
-                                                SizedBox(width: 20),
-            
+                                                const SizedBox(width: 20),
                                                 CustomTextButton(
-                                                  text: '  No  ',
-                                                  onPressed: () {
-                                                    Get.back();
-                                                  },
+                                                  text: 'No',
+                                                  onPressed: () => Get.back(),
                                                   backgroundColor: CustomColor.Button_background_Color,
                                                   textColor: Colors.white,
                                                   borderRadius: 8,
                                                   elevation: 2,
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets.symmetric(
                                                     horizontal: 16,
                                                     vertical: 10,
                                                   ),
@@ -285,18 +279,18 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  );
-                }),
-              ],
-            ),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ],
           ),
         ),
       ),

@@ -81,6 +81,12 @@ class DeshBoardAddHome_Controller extends GetxController {
    // //HomeController.text =gethomeaddress ?? homeAddress.value;
   HomeController.text =profileController.profileData!.customer!.address1!;
     editingIndex.value = 0;
+
+  selectedLat.value =
+      profileController.profileData!.customer!.address1Latitude ?? 0.0;
+
+  selectedLng.value =
+      profileController.profileData!.customer!.address1Longitude ?? 0.0;
   }
 
   void clearfield(){
@@ -127,8 +133,8 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     var data = {
       "address1": " ",
-      "address1_latitude": selectedLat.value,
-      "address1_longitude":selectedLng.value
+      "address1_latitude":null,
+      "address1_longitude":null,
 
     };
 
@@ -205,9 +211,16 @@ class DeshBoardAddHome_Controller extends GetxController {
 
 ///======================================= ================================= =================================    add work  ================================  ============================
 
-
   void editWorkAddress() {
-    WorkAdressController.text =profileController.profileData!.customer!.address2!;
+    WorkAdressController.text =
+    profileController.profileData!.customer!.address2!;
+
+    selectedLat2.value =
+        profileController.profileData!.customer!.address2Latitude ?? 0.0;
+
+    selectedLng2.value =
+        profileController.profileData!.customer!.address2Longitude ?? 0.0;
+
     editingIndex.value = 0;
   }
 
@@ -228,6 +241,8 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     var data = {
       "address2": WorkAdressController.text,
+      "address2_latitude": selectedLat2.value,
+      "address2_longitude":selectedLng2.value
     };
 
     var response = await ApiService.post(
@@ -253,6 +268,8 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     var data = {
       "address2": " ",
+      "address2_latitude": null,
+      "address2_longitude":null
     };
 
     var response = await ApiService.post(
@@ -278,6 +295,22 @@ class DeshBoardAddHome_Controller extends GetxController {
 
   RxBool workSearchloading = false.obs;
   RxList<Result> workSearchList = <Result>[].obs;
+
+  RxDouble selectedLat2 = 0.0.obs;
+  RxDouble selectedLng2 = 0.0.obs;
+
+  RxString selectedWorkLocationName = ''.obs;
+
+  void selectWorkLocation(Result data) {
+    selectedLat2.value = data.lat ?? 0.0;
+    selectedLng2.value = data.lon ?? 0.0;
+    selectedWorkLocationName.value = data.name ?? '';
+    print(" work address   ${selectedLat2}  ${selectedLng2}");
+
+    workSearchList.clear(); // optional: search hide after select
+  }
+
+
 
 
   Future<void> addworkLocation(String text) async {
