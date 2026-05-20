@@ -35,9 +35,6 @@ class DeshBoardAddHome_Controller extends GetxController {
       ? Get.find<profileModelController>()
       :  Get.put(profileModelController());
 
-
-
-  // final mapWedgit =OpenStreetMapWidget();
   final mapC = Get.isRegistered<PickLocationController>()
       ? Get.find<PickLocationController>()
       : Get.put(PickLocationController());
@@ -48,35 +45,16 @@ class DeshBoardAddHome_Controller extends GetxController {
     profileController.getuserProfile();
   }
 
-  @override
-  void onClose() {
-   // mapC.dispose();
-    super.onClose();
-  }
+
 
   final RxnInt editingIndex = RxnInt();
 
-  // RxBool showMap = false.obs;
-  // @override
-  // void onReady() {
-  //   super.onReady();
-  //   Future.delayed(const Duration(milliseconds: 400), () {
-  //     showMap.value = true;     // ⏳ Delay mount
-  //   });
-  // }
+
 
   /// Map visibility
   RxBool showMap = false.obs;
 
-  // @override
-  // void onReady() {
-  //   super.onReady();
-  //
-  //   /// Delay taake map smooth mount ho (crash / black screen avoid)
-  //   Future.delayed(const Duration(milliseconds: 400), () {
-  //     showMap.value = true;
-  //   });
-  // }
+
   @override
   void onReady() {
     super.onReady();
@@ -89,16 +67,12 @@ class DeshBoardAddHome_Controller extends GetxController {
     });
   }
 
-  // /// Optional helpers
-  // void hideMap() => showMap.value = false;
-  // void showMapNow() => showMap.value = true;
-
 
   // TextField
   final TextEditingController HomeController = TextEditingController();
   final TextEditingController WorkAdressController = TextEditingController();
 
-  //var workAddress = ''.obs;
+
 
  ///=====================================  ===========  =============================================== add Home address
 
@@ -125,6 +99,8 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     var data = {
       "address1": HomeController.text,
+       "address1_latitude": selectedLat.value,
+       "address1_longitude":selectedLng.value
     };
 
     var response = await ApiService.post(
@@ -151,6 +127,9 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     var data = {
       "address1": " ",
+      "address1_latitude": selectedLat.value,
+      "address1_longitude":selectedLng.value
+
     };
 
     var response = await ApiService.post(
@@ -178,7 +157,19 @@ class DeshBoardAddHome_Controller extends GetxController {
 
   RxBool homeSearchloading = false.obs;
   RxList<Result> homeSearchList = <Result>[].obs;
+  RxDouble selectedLat = 0.0.obs;
+  RxDouble selectedLng = 0.0.obs;
 
+  RxString selectedLocationName = ''.obs;
+
+  void selectHomeLocation(Result data) {
+    selectedLat.value = data.lat ?? 0.0;
+    selectedLng.value = data.lon ?? 0.0;
+    selectedLocationName.value = data.name ?? '';
+    print("${selectedLat}  ${selectedLng}");
+
+    homeSearchList.clear(); // optional: search hide after select
+  }
 
   Future<void> addhomeLocation(String text) async {
     if (text.isEmpty) {
@@ -188,6 +179,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
 
     homeSearchloading.value = true;
+
 
     var response = await ApiService.get(
       'services/search',

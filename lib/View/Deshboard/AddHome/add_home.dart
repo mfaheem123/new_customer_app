@@ -16,11 +16,12 @@ class AddHomeScreen extends StatefulWidget {
 }
 
 class _AddHomeScreenState extends State<AddHomeScreen> {
-  //final mydeshcontroller = Get.put(DeshBoardAddHome_Controller());
+
   final mydeshcontroller = Get.isRegistered<DeshBoardAddHome_Controller>()
       ? Get.find<DeshBoardAddHome_Controller>()
       :  Get.put(DeshBoardAddHome_Controller());
-  // final profileC = Get.put(profileModelController());
+
+
   final profileC = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
       :  Get.put(profileModelController());
@@ -66,9 +67,9 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                     const Spacer(),
                   ],
                 ),
-
+            
                 const SizedBox(height: 40),
-
+            
                 /// 🔍 SEARCH FIELD
                 Row(
                   children: [
@@ -93,7 +94,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                     }),
                   ],
                 ),
-
+            
                 /// 🔍 LIVE SEARCH RESULTS
                 Obx(() {
                   if (mydeshcontroller.homeSearchloading.value) {
@@ -106,33 +107,50 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                       ),
                     );
                   }
-
+            
                   if (mydeshcontroller.homeSearchList.isNotEmpty) {
-                    return commonSearchContainer(
+                    // return ListView.builder(
+                    //   shrinkWrap: true,
+                    //   physics: const NeverScrollableScrollPhysics(),
+                    //   itemCount: mydeshcontroller.homeSearchList.length,
+                    //   itemBuilder: (context, index) {
+                    //     final item = mydeshcontroller.homeSearchList[index];
+                    //
+                    //     return ListTile(
+                    //       title: Text(item.name ?? '',style: AppTextStyles.regular(),),
+                    //       subtitle: Text(item.postcode ?? '',style: AppTextStyles.regular(),),
+                    //       onTap: () {
+                    //         mydeshcontroller.selectHomeLocation(item);
+                    //         mydeshcontroller.HomeController.text = "${item.name} ${item.postcode}";
+                    //       },
+                    //     );
+                    //   },
+                    // );
+                    return  commonSearchContainer(
                       context: context,
                       list: mydeshcontroller.homeSearchList,
                       onTap: (item) {
-                        mydeshcontroller.HomeController.text =
-                            "${item.name} ${item.postcode}";
-                        mydeshcontroller.homeSearchList.clear();
+                        mydeshcontroller.HomeController.text = "${item.name} ${item.postcode}";
+                      mydeshcontroller.selectHomeLocation(item);
+
                       },
                     );
                   }
-
+            
                   return const SizedBox();
                 }),
-
+            
                 /// 🏠 SAVED HOME CARD
                 Obx(() {
                   if (mydeshcontroller.homeSearchList.isNotEmpty ||
                       mydeshcontroller.homeSearchloading.value) {
                     return const SizedBox();
                   }
-
+            
                   return GetBuilder<profileModelController>(
                     builder: (controller) {
-                     final address = controller.profileData?.customer?.address1;
-
+                      final address = controller.profileData?.customer?.address1;
+            
                       if (address == null ||
                           address.isEmpty ||
                           address == " ") {
@@ -144,7 +162,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                           ),
                         );
                       }
-
+            
                       return Card(
                         margin: EdgeInsets.only(top: 50),
                         color: CustomColor.Container_Colors,
@@ -153,7 +171,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                         ),
                         child: ListTile(
                           leading: const Icon(Icons.home),
-                         title: Text(address, style: AppTextStyles.small()),
+                          title: Text(address, style: AppTextStyles.small()),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -192,11 +210,11 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                                         child: Column(
                                           children: [
                                             SizedBox(height: 15),
-
+            
                                             Text(
                                               CustomText.Delete_address,
                                               style: AppTextStyles.heading(
-
+            
                                               ),
                                             ),
                                             SizedBox(height: 5),
@@ -212,13 +230,13 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                                                 child: Text(
                                                   CustomText.Delete_home_address_Alert,
                                                   textAlign: TextAlign.center,
-
+            
                                                   style: AppTextStyles.small(),
                                                 ),
                                               ),
                                             ),
                                             SizedBox(height: 15,),
-
+            
                                             Row(
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -228,9 +246,9 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                                                   onPressed: () async {
                                                     mydeshcontroller.deleteHomeApi();
                                                     Get.back();
-
-
-
+            
+            
+            
                                                   },
                                                   backgroundColor: Colors.red,
                                                   textColor: Colors.white,
@@ -244,7 +262,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                                                   ),
                                                 ),
                                                 SizedBox(width: 20),
-
+            
                                                 CustomTextButton(
                                                   text: '  No  ',
                                                   onPressed: () {
@@ -285,19 +303,24 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
     );
   }
 
-  //======================================================   list widget
+  //======================================================   list
+
   Widget commonSearchContainer({
     required BuildContext context,
     required List list,
     required Function(dynamic) onTap,
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-      height: MediaQuery.of(context).size.height * 0.8,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+
+      // ❌ REMOVE FIXED HEIGHT
       child: ListView.builder(
+        shrinkWrap: true,   // ✅ IMPORTANT
+        physics: const NeverScrollableScrollPhysics(), // ✅ IMPORTANT
         itemCount: list.length,
         itemBuilder: (context, index) {
           final item = list[index];
+
           return ListTile(
             leading: const Icon(
               Icons.location_on,
@@ -313,6 +336,33 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
       ),
     );
   }
+  // Widget commonSearchContainer({
+  //   required BuildContext context,
+  //   required List list,
+  //   required Function(dynamic) onTap,
+  // }) {
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+  //     height: MediaQuery.of(context).size.height * 0.8,
+  //     child: ListView.builder(
+  //       itemCount: list.length,
+  //       itemBuilder: (context, index) {
+  //         final item = list[index];
+  //         return ListTile(
+  //           leading: const Icon(
+  //             Icons.location_on,
+  //             color: CustomColor.Icon_Color,
+  //           ),
+  //           title: Text(
+  //             "${item.name ?? ""} ${item.postcode ?? ""}",
+  //             style: AppTextStyles.regular(),
+  //           ),
+  //           onTap: () => onTap(item),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
 
 }

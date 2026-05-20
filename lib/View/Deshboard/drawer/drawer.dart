@@ -12,7 +12,7 @@ import '../../yourtrip/yourtrip.dart';
 class appDrawer extends StatelessWidget {
   appDrawer({super.key});
 
-  //final profileController = Get.find<profileModelController>();
+
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
       :  Get.put(profileModelController());

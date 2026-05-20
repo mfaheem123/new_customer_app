@@ -15,6 +15,20 @@ class LoginController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   var isLoading = false.obs;
 
+
+    @override
+    void onInit() {
+      super.onInit();
+
+      emailController.addListener(() {
+        update();
+      });
+
+      passwordController.addListener(() {
+        update();
+      });
+    }
+
   // Future<void> login() async {
   //   isLoading.value = true;
   //
@@ -83,55 +97,6 @@ class LoginController extends GetxController {
 
 
 
-///////////////////////////////////////////////////////////////// ===========================
-//
-// Future<void> userLoginApi() async {
-//
-//   // Step 1: Create FormData
-//   // Step 1: Create FormData correctly
-//   // final formData = FormData();
-//   // formData.fields.addAll([
-//   //   MapEntry("email", emailController.text),
-//   //   MapEntry("password", passwordController.text),
-//   // ]);
-//
-//   FormData formData = FormData.fromMap({
-//     "email": emailController.text,
-//     "password": passwordController.text,
-//   });
-//
-//
-//   var response = await ApiService.post(
-//     formData,
-//     "auth/login",      // LOGIN ENDPOINT
-//     multiPart: false,
-//     auth: false,
-//   );
-//
-//
-//
-//   // SUCCESS
-//   if (response!.statusCode == 200) {
-//     BotToast.showText(text: "Login Successfully ");
-//     clearFields();
-//     Get.offAllNamed('/DeshBoard_Screen');
-//     print("LOGIN SUCCESS => ${response.data}");
-//
-//
-//     return;
-//       }
-//
-//       // ERROR HANDLING
-//       String errorMessage = "Login Failed ";
-//
-//       if (response.data is Map) {
-//         errorMessage = response.data['message']?.toString() ?? errorMessage;
-//       } else if (response.data is String) {
-//         errorMessage = response.data.toString();
-//       }
-//
-//       BotToast.showText(text: errorMessage);
-//       print("LOGIN FAILED => ${response.data}");
-//     }
+
 
 }
