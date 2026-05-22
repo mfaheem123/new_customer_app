@@ -59,17 +59,10 @@ class RideSearchScreen extends StatelessWidget {
                 SizedBox(
                   height: topBarHeight,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      IconButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        icon: Icon(
-                          Icons.arrow_back,
-                          size: screenWidth * (isTablet ? 0.07 : 0.06),
-                          color: CustomColor.Icon_Color,
-                        ),
-                      ),
+
                       Expanded(
                         child: Center(
                           child: Text(
@@ -157,70 +150,142 @@ class RideSearchScreen extends StatelessWidget {
                       print(rideController.bookingId);
                       Get.dialog(
                         Dialog(
-                          backgroundColor: CustomColor.Container_Colors,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                          backgroundColor: Colors.transparent,
+                          insetPadding:
+                          const EdgeInsets.symmetric(
+                            horizontal: 20,
                           ),
-                          child: SizedBox(
-                            height: screenHeight * (isTablet ? 0.35 : 0.3),
-                            width: screenWidth * (isTablet ? 0.6 : 0.8),
+                          child: Container(
+                            height: 300,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: CustomColor
+                                  .Container_Colors,
+                              borderRadius:
+                              BorderRadius.circular(20),
+                            ),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
-                                  Icons.warning_amber,
-                                  color: Colors.amberAccent,
-                                  size: 60,
+                                /// TITLE
+                                Text(
+                                  CustomText.Delete_address,
+                                  textAlign: TextAlign.center,
+                                  style:
+                                  AppTextStyles.heading(),
                                 ),
-                                const SizedBox(height: 15),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text(
-                                    CustomText.Ride_Cancel_alert,
-                                    textAlign: TextAlign.center,
-                                    style: AppTextStyles.small(),
+
+                                const SizedBox(height: 12),
+
+                                /// ICON
+                                Container(
+                                  height: 70,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red
+                                        .withOpacity(0.08),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons
+                                        .delete_forever_rounded,
+                                    color: Colors.red,
+                                    size: 34,
                                   ),
                                 ),
+
+                                const SizedBox(height: 12),
+
+                                /// DESCRIPTION
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    CustomText.Ride_book_ride_alert,
+                                    textAlign:
+                                    TextAlign.center,
+                                    style:
+                                    AppTextStyles.regular(),
+                                  ),
+                                ),
+
                                 const SizedBox(height: 20),
+
+                                /// BUTTONS
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .center,
                                   children: [
+                                    /// YES BUTTON
                                     CustomTextButton(
+                                      width: 70,
+                                      height: 42,
                                       text: 'Yes',
-                                      onPressed: () {
 
-                                          if (rideController.isFromHistory) {
-                                            // 👉 History wali cancel API
-                                            reebookingController.cancelHistoryRideApi();
-                                          } else {
-                                            // 👉 Normal cancel API
-                                            rideController.rideCancelApi();
-                                          }
+                                      textAlign:
+                                      TextAlign.center,
+                                      rowMainAxisAlignment:
+                                      MainAxisAlignment
+                                          .center,
+                                      columnCrossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .center,
 
-                                      //  rideController.rideCancelApi();
-                                        // Get.to(DeshBoard_Screen());
-                                      },
+                                  onPressed: () {
+
+                                                        if (rideController.isFromHistory) {
+                                                          // 👉 History wali cancel API
+                                                          reebookingController.cancelHistoryRideApi();
+                                                        } else {
+                                                          // 👉 Normal cancel API
+                                                          rideController.rideCancelApi();
+                                                        }
+
+                                                    //  rideController.rideCancelApi();
+                                                      // Get.to(DeshBoard_Screen());
+                                                    },
                                       backgroundColor: Colors.red,
-                                      textColor: CustomColor.Button_Text_Color,
-                                      borderRadius: 8,
+                                      textColor: CustomColor.textColor,
+                                      borderRadius: 10,
                                       elevation: 2,
-                                      fontSize: fontSizeText,
-                                      fontWeight: FontWeight.bold,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      fontSize: 14,
+                                      fontWeight:
+                                      FontWeight.bold,
                                     ),
-                                    const SizedBox(width: 20),
+
+                                    const SizedBox(width: 15),
+
+                                    /// NO BUTTON
                                     CustomTextButton(
-                                      text: '  No  ',
+                                      width: 70,
+                                      height: 42,
+                                      text: ' No ',
+
+                                      textAlign:
+                                      TextAlign.center,
+                                      rowMainAxisAlignment:
+                                      MainAxisAlignment
+                                          .center,
+                                      columnCrossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .center,
+
                                       onPressed: () {
-                                        Get.to(Driverdetailscreen());
+                                        Get.back();
                                       },
-                                      backgroundColor: CustomColor.Button_background_Color,
-                                      textColor: Colors.white,
-                                      borderRadius: 8,
+
+                                      backgroundColor: CustomColor
+                                          .Button_background_Color,
+                                      textColor: CustomColor
+                                          .textColor,
+                                      borderRadius: 10,
                                       elevation: 2,
-                                      fontSize: fontSizeText,
-                                      fontWeight: FontWeight.bold,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      fontSize: 14,
+                                      fontWeight:
+                                      FontWeight.bold,
                                     ),
                                   ],
                                 ),
@@ -229,6 +294,80 @@ class RideSearchScreen extends StatelessWidget {
                           ),
                         ),
                       );
+                      // Get.dialog(
+                      //   Dialog(
+                      //     backgroundColor: CustomColor.Container_Colors,
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(30),
+                      //     ),
+                      //     child: SizedBox(
+                      //       height: screenHeight * (isTablet ? 0.35 : 0.3),
+                      //       width: screenWidth * (isTablet ? 0.6 : 0.8),
+                      //       child: Column(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         children: [
+                      //           const Icon(
+                      //             Icons.warning_amber,
+                      //             color: Colors.amberAccent,
+                      //             size: 60,
+                      //           ),
+                      //           const SizedBox(height: 15),
+                      //           Padding(
+                      //             padding: const EdgeInsets.symmetric(horizontal: 10),
+                      //             child: Text(
+                      //               CustomText.Ride_Cancel_alert,
+                      //               textAlign: TextAlign.center,
+                      //               style: AppTextStyles.small(),
+                      //             ),
+                      //           ),
+                      //           const SizedBox(height: 20),
+                      //           Row(
+                      //             mainAxisAlignment: MainAxisAlignment.center,
+                      //             children: [
+                      //               CustomTextButton(
+                      //                 text: 'Yes',
+                      //                 onPressed: () {
+                      //
+                      //                     if (rideController.isFromHistory) {
+                      //                       // 👉 History wali cancel API
+                      //                       reebookingController.cancelHistoryRideApi();
+                      //                     } else {
+                      //                       // 👉 Normal cancel API
+                      //                       rideController.rideCancelApi();
+                      //                     }
+                      //
+                      //                 //  rideController.rideCancelApi();
+                      //                   // Get.to(DeshBoard_Screen());
+                      //                 },
+                      //                 backgroundColor: Colors.red,
+                      //                 textColor: CustomColor.Button_Text_Color,
+                      //                 borderRadius: 8,
+                      //                 elevation: 2,
+                      //                 fontSize: fontSizeText,
+                      //                 fontWeight: FontWeight.bold,
+                      //                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      //               ),
+                      //               const SizedBox(width: 20),
+                      //               CustomTextButton(
+                      //                 text: '  No  ',
+                      //                 onPressed: () {
+                      //                   Get.to(Driverdetailscreen());
+                      //                 },
+                      //                 backgroundColor: CustomColor.Button_background_Color,
+                      //                 textColor: Colors.white,
+                      //                 borderRadius: 8,
+                      //                 elevation: 2,
+                      //                 fontSize: fontSizeText,
+                      //                 fontWeight: FontWeight.bold,
+                      //                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // );
                     },
                     textWidget: FittedBox(
                       child: Text(

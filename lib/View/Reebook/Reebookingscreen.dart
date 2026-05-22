@@ -10,8 +10,10 @@ import '../../Controller/reebooking/reebookingcontroller.dart';
 import '../../Routing/routes_name.dart';
 import '../Deshboard/map_widget/map_polyLine.dart';
 import '../Deshboard/map_widget/open_street_map.dart';
+import '../Widgets/all_text.dart';
 import '../Widgets/color.dart';
 import '../Widgets/elevat_button.dart';
+import '../Widgets/text_button.dart';
 import '../Widgets/textformfield.dart';
 import '../payments/paymentscreen.dart';
 import '../rides/ridesearchscreen.dart';
@@ -604,16 +606,156 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                             onPressed: () {
                                              // Get.to(RideSearchScreen());
 
-                                              reebookingController.historyBookingApi(trip);
+                                              reebookingController.calculateHistoryBookingFareApi(trip);
+                                              Get.dialog(
+                                                Dialog(
+                                                  backgroundColor: Colors.transparent,
+                                                  insetPadding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 20,
+                                                  ),
+                                                  child: Container(
+                                                    height: 300,
+                                                    padding: const EdgeInsets.all(20),
+                                                    decoration: BoxDecoration(
+                                                      color: CustomColor
+                                                          .Container_Colors,
+                                                      borderRadius:
+                                                      BorderRadius.circular(20),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        /// TITLE
+                                                        Text(
+                                                          CustomText.Delete_address,
+                                                          textAlign: TextAlign.center,
+                                                          style:
+                                                          AppTextStyles.heading(),
+                                                        ),
 
-                                              if (reebookingController.selectedTimeOption.value == "ASAP") {
-                                                // 👉 ASAP → Search Screen
-                                                rideController.isFromHistory = true;
-                                                Get.offAllNamed(routesName.RideSearchScreen);
-                                              } else {
-                                                // 👉 Scheduled → Dashboard
-                                                Get.offAllNamed(routesName.DeshBoard_Screen);
-                                              }
+                                                        const SizedBox(height: 12),
+
+                                                        /// ICON
+                                                        Container(
+                                                          height: 70,
+                                                          width: 70,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.red
+                                                                .withOpacity(0.08),
+                                                            shape: BoxShape.circle,
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons
+                                                                .delete_forever_rounded,
+                                                            color: Colors.red,
+                                                            size: 34,
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(height: 12),
+
+                                                        /// DESCRIPTION
+                                                        Padding(
+                                                          padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                          ),
+                                                          child: Text(
+                                                            CustomText.Ride_book_ride_alert,
+                                                            textAlign:
+                                                            TextAlign.center,
+                                                            style:
+                                                            AppTextStyles.regular(),
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(height: 20),
+
+                                                        /// BUTTONS
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          children: [
+                                                            /// YES BUTTON
+                                                            CustomTextButton(
+                                                              width: 70,
+                                                              height: 42,
+                                                              text: 'Yes',
+
+                                                              textAlign:
+                                                              TextAlign.center,
+                                                              rowMainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                              columnCrossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+
+                                                              onPressed: () {
+                                                                reebookingController.historyBookingApi(trip);
+
+
+                                                                if (reebookingController.selectedTimeOption.value == "ASAP") {
+                                                                  // 👉 ASAP → Search Screen
+                                                                  rideController.isFromHistory = true;
+                                                                  Get.offAllNamed(routesName.RideSearchScreen);
+                                                                } else {
+                                                                  // 👉 Scheduled → Dashboard
+                                                                  Get.offAllNamed(routesName.DeshBoard_Screen);
+                                                                }
+                                                              },
+                                                              backgroundColor:
+                                                              Colors.red,
+                                                              textColor: CustomColor
+                                                                  .textColor,
+                                                              borderRadius: 10,
+                                                              elevation: 2,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+
+                                                            const SizedBox(width: 15),
+
+                                                            /// NO BUTTON
+                                                            CustomTextButton(
+                                                              width: 70,
+                                                              height: 42,
+                                                              text: ' No ',
+
+                                                              textAlign:
+                                                              TextAlign.center,
+                                                              rowMainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                              columnCrossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+
+                                                              onPressed: () {
+                                                                Get.back();
+                                                              },
+
+                                                              backgroundColor: CustomColor
+                                                                  .Button_background_Color,
+                                                              textColor: CustomColor
+                                                                  .textColor,
+                                                              borderRadius: 10,
+                                                              elevation: 2,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+
 
                                             },
                                             textWidget:

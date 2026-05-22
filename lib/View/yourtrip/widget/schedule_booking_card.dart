@@ -228,95 +228,126 @@ class ScheduleBookingCard extends StatelessWidget {
                           tripController.saveBookingId(trip.id!);
 
                           Get.dialog(
-                              Dialog(
-                                backgroundColor: CustomColor.Container_Colors,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                                  ),
-                                  height: 220,
-                                  width: 100,
+                            Dialog(
+                              backgroundColor: CustomColor.Container_Colors,
+                              insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 340,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      SizedBox(height: 15),
 
-                                      Text(
-                                        // CustomText.Delete_address,
-                                        "Delete Ride",
-                                        style: AppTextStyles.heading(
-
+                                      /// ICON
+                                      Container(
+                                        height: 70,
+                                        width: 70,
+                                        decoration: BoxDecoration(
+                                          color: Colors.amber.withOpacity(0.12),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.warning_amber_rounded,
+                                          color: Colors.amber,
+                                          size: 34,
                                         ),
                                       ),
-                                      SizedBox(height: 5),
-                                      Icon(
-                                        Icons.warning_amber,
-                                        color: Colors.amberAccent,
-                                        size: 40,
-                                      ),
-                                      SizedBox(height: 5),
-                                      Center(
-                                        child:  Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                          child: Text(
-                                            CustomText.Delete_home_address_Alert,
-                                            textAlign: TextAlign.center,
 
-                                            style: AppTextStyles.small(),
+                                      const SizedBox(height: 16),
+
+                                      /// TITLE
+                                      Text(
+                                        "Cancel Ride",
+                                        textAlign: TextAlign.center,
+                                        style: AppTextStyles.heading().copyWith(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 10),
+
+                                      /// DESCRIPTION
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                                        child: Text(
+                                          CustomText.Delete_home_address_Alert,
+                                          textAlign: TextAlign.center,
+                                          style: AppTextStyles.small().copyWith(
+                                            color: Colors.grey.shade600,
+                                            height: 1.4,
+                                            fontSize: 13,
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 15,),
 
+                                      const SizedBox(height: 22),
+
+                                      /// BUTTONS
                                       Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
+
+                                          /// YES BUTTON
                                           CustomTextButton(
+                                            width: 70,
+                                            height: 42,
                                             text: 'Yes',
+
+                                            textAlign: TextAlign.center,
+                                            rowMainAxisAlignment: MainAxisAlignment.center,
+                                            columnCrossAxisAlignment: CrossAxisAlignment.center,
+
                                             onPressed: () async {
                                               tripController.rideCancelApi();
                                               Get.back();
-
-
-
                                             },
-                                            backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            borderRadius: 8,
-                                            elevation: 2,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                              vertical: 10,
-                                            ),
-                                          ),
-                                          SizedBox(width: 20),
 
+                                            backgroundColor: Colors.red,
+                                            textColor: CustomColor.textColor,
+                                            borderRadius: 10,
+                                            elevation: 2,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+
+                                          const SizedBox(width: 15),
+
+                                          /// NO BUTTON
                                           CustomTextButton(
-                                            text: '  No  ',
+                                            width: 70,
+                                            height: 42,
+                                            text: ' No ',
+
+                                            textAlign: TextAlign.center,
+                                            rowMainAxisAlignment: MainAxisAlignment.center,
+                                            columnCrossAxisAlignment: CrossAxisAlignment.center,
+
                                             onPressed: () {
                                               Get.back();
                                             },
+
                                             backgroundColor: CustomColor.Button_background_Color,
-                                            textColor: Colors.white,
-                                            borderRadius: 8,
+                                            textColor: CustomColor.textColor,
+                                            borderRadius: 10,
                                             elevation: 2,
-                                            fontSize: 10,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                              vertical: 10,
-                                            ),
                                           ),
                                         ],
                                       ),
                                     ],
                                   ),
                                 ),
-                              )
+                              ),
+                            ),
                           );
-
                           // tripController.rideCancelApi();
                         } else {
                           print("Error: Booking ID is null");

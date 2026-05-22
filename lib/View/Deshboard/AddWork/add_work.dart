@@ -182,84 +182,107 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                                 onPressed: () {
                                   Get.dialog(
                                     Dialog(
-                                      backgroundColor: CustomColor.Container_Colors,
+                                      backgroundColor: Colors.transparent,
+                                      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
                                       child: Container(
+                                        height: 300,
+                                        padding: const EdgeInsets.all(20),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                                          color: CustomColor.Container_Colors,
+                                          borderRadius: BorderRadius.circular(20),
                                         ),
-                                        height: 220,
-                                        width: 100,
                                         child: Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            SizedBox(height: 15),
 
+                                            /// TITLE
                                             Text(
                                               CustomText.Delete_address,
-                                              style: AppTextStyles.heading(
+                                              textAlign: TextAlign.center,
+                                              style: AppTextStyles.heading(),
+                                            ),
 
+                                            const SizedBox(height: 12),
+
+                                            /// ICON
+                                            Container(
+                                              height: 70,
+                                              width: 70,
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.withOpacity(0.08),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                Icons.delete_forever_rounded,
+                                                color: Colors.red,
+                                                size: 34,
                                               ),
                                             ),
-                                            SizedBox(height: 5),
-                                            Icon(
-                                              Icons.warning_amber,
-                                              color: Colors.amberAccent,
-                                              size: 40,
-                                            ),
-                                            SizedBox(height: 5),
-                                            Center(
-                                              child:  Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                                child: Text(
-                                                  CustomText.Delete_home_address_Alert,
-                                                  textAlign: TextAlign.center,
 
-                                                  style: AppTextStyles.small(),
-                                                ),
+                                            const SizedBox(height: 12),
+
+                                            /// DESCRIPTION
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                              child: Text(
+                                                CustomText.Delete_home_address_Alert,
+                                                textAlign: TextAlign.center,
+                                                style: AppTextStyles.regular(),
                                               ),
                                             ),
-                                            SizedBox(height: 15,),
 
+                                            const SizedBox(height: 20),
+
+                                            /// BUTTONS
                                             Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
+
+                                                /// YES BUTTON
                                                 CustomTextButton(
+                                                  width: 70,
+                                                  height: 42,
                                                   text: 'Yes',
+
+                                                  textAlign: TextAlign.center,
+                                                  rowMainAxisAlignment: MainAxisAlignment.center,
+                                                  columnCrossAxisAlignment: CrossAxisAlignment.center,
+
                                                   onPressed: () async {
                                                     mydeshcontroller.deleteWorkapi();
                                                     Get.back();
-
-
-
                                                   },
-                                                  backgroundColor: Colors.red,
-                                                  textColor: Colors.white,
-                                                  borderRadius: 8,
-                                                  elevation: 2,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 10,
-                                                  ),
-                                                ),
-                                                SizedBox(width: 20),
 
+                                                  backgroundColor: Colors.red,
+                                                  textColor: CustomColor.textColor,
+                                                  borderRadius: 10,
+                                                  elevation: 2,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+
+                                                const SizedBox(width: 15),
+
+                                                /// NO BUTTON
                                                 CustomTextButton(
-                                                  text: '  No  ',
+                                                  width: 70,
+                                                  height: 42,
+                                                  text: ' No ',
+
+                                                  textAlign: TextAlign.center,
+                                                  rowMainAxisAlignment: MainAxisAlignment.center,
+                                                  columnCrossAxisAlignment: CrossAxisAlignment.center,
+
                                                   onPressed: () {
                                                     Get.back();
                                                   },
+
                                                   backgroundColor: CustomColor.Button_background_Color,
-                                                  textColor: Colors.white,
-                                                  borderRadius: 8,
+                                                  textColor: CustomColor.textColor,
+                                                  borderRadius: 10,
                                                   elevation: 2,
-                                                  fontSize: 10,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.bold,
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 10,
-                                                  ),
                                                 ),
                                               ],
                                             ),

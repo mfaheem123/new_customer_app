@@ -116,8 +116,8 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                             const SizedBox(width: 10),
 
                             Text(
-                              profileController.profileData?.customer?.name ??
-                                  "Loading...",
+                              (profileController.profileData?.customer?.name ??
+                                  "Loading...").toLowerCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.medium(
@@ -163,21 +163,26 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                         ),
 
                         const SizedBox(height: 10),
-                        // ================= ADD HOME =================
+                        // // ================= ADD HOME =================
                         CustomTextButton(
                           text: "Home Address",
 
+                          // ✅ Start alignment
+                          textAlign: TextAlign.start,
+                          rowMainAxisAlignment: MainAxisAlignment.start,
+                          columnCrossAxisAlignment: CrossAxisAlignment.start,
+
                           subtitle:
-                              profileController
-                                      .profileData
-                                      ?.customer
-                                      ?.address1
-                                      ?.isNotEmpty ==
-                                  true
+                          profileController
+                              .profileData
+                              ?.customer
+                              ?.address1
+                              ?.isNotEmpty ==
+                              true
                               ? profileController
-                                    .profileData!
-                                    .customer!
-                                    .address1!
+                              .profileData!
+                              .customer!
+                              .address1!
                               : "please select home address",
 
                           onPressed: () {
@@ -190,19 +195,9 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
 
                               homeC.dropOff.text = customer.address1!;
 
-                              homeC.selectedDropLat =
-                                  double.tryParse(
-                                    customer.address1Latitude?.toString() ??
-                                        "0",
-                                  ) ??
-                                  0.0;
+                              homeC.selectedDropLat = double.tryParse(customer.address1Latitude?.toString() ?? "0",) ?? 0.0;
 
-                              homeC.selectedDropLon =
-                                  double.tryParse(
-                                    customer.address1Longitude?.toString() ??
-                                        "0",
-                                  ) ??
-                                  0.0;
+                              homeC.selectedDropLon = double.tryParse(customer.address1Longitude?.toString() ?? "0",) ?? 0.0;
 
                               homeC.fetchRoute();
                               homeC.pickupCurrentLocation();
@@ -221,21 +216,26 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
 
                         const SizedBox(height: 5),
 
-                        // ================= ADD WORK =================
+// ================= ADD WORK =================
                         CustomTextButton(
                           text: "Work Address",
 
+                          // ✅ Start alignment
+                          textAlign: TextAlign.start,
+                          rowMainAxisAlignment: MainAxisAlignment.start,
+                          columnCrossAxisAlignment: CrossAxisAlignment.start,
+
                           subtitle:
-                              profileController
-                                      .profileData
-                                      ?.customer
-                                      ?.address2
-                                      ?.isNotEmpty ==
-                                  true
+                          profileController
+                              .profileData
+                              ?.customer
+                              ?.address2
+                              ?.isNotEmpty ==
+                              true
                               ? profileController
-                                    .profileData!
-                                    .customer!
-                                    .address2!
+                              .profileData!
+                              .customer!
+                              .address2!
                               : null,
 
                           onPressed: () {
@@ -252,14 +252,14 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                                   double.tryParse(
                                     customer.address2Latitude?.toString() ?? "0",
                                   ) ??
-                                  0.0;
+                                      0.0;
 
                               homeC.selectedDropLon =
                                   double.tryParse(
                                     customer.address2Longitude?.toString() ??
                                         "0",
                                   ) ??
-                                  0.0;
+                                      0.0;
 
                               homeC.fetchRoute();
                               homeC.pickupCurrentLocation();
@@ -276,11 +276,59 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                         ),
 
                         // // ================= ADD HOME =================
+
+
                         // CustomTextButton(
-                        //   text: "Add Home",
-                        //   onPressed: () => Get.to(AddHomeScreen()),
-                        //   icon: Icon(Icons.home,
-                        //       color: CustomColor.Icon_Color),
+                        //   text: "Home Address",
+                        //
+                        //   subtitle:
+                        //       profileController
+                        //               .profileData
+                        //               ?.customer
+                        //               ?.address1
+                        //               ?.isNotEmpty ==
+                        //           true
+                        //       ? profileController
+                        //             .profileData!
+                        //             .customer!
+                        //             .address1!
+                        //       : "please select home address",
+                        //
+                        //   onPressed: () {
+                        //     final customer =
+                        //         profileController.profileData?.customer;
+                        //
+                        //     if (customer?.address1 != null &&
+                        //         customer!.address1!.trim().isNotEmpty) {
+                        //       homeC.activeField.value = "drop";
+                        //
+                        //       homeC.dropOff.text = customer.address1!;
+                        //
+                        //       homeC.selectedDropLat =
+                        //           double.tryParse(
+                        //             customer.address1Latitude?.toString() ??
+                        //                 "0",
+                        //           ) ??
+                        //           0.0;
+                        //
+                        //       homeC.selectedDropLon =
+                        //           double.tryParse(
+                        //             customer.address1Longitude?.toString() ??
+                        //                 "0",
+                        //           ) ??
+                        //           0.0;
+                        //
+                        //       homeC.fetchRoute();
+                        //       homeC.pickupCurrentLocation();
+                        //
+                        //       Get.to(HomeDriver());
+                        //     } else {
+                        //       Get.to(AddHomeScreen());
+                        //     }
+                        //   },
+                        //
+                        //   icon: Icon(Icons.home, color: CustomColor.Icon_Color),
+                        //
                         //   fontWeight: FontWeight.bold,
                         //   fontSize: 16,
                         // ),
@@ -289,13 +337,78 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                         //
                         // // ================= ADD WORK =================
                         // CustomTextButton(
-                        //   text: "Add Work",
-                        //   onPressed: () => Get.to(AddWork_Screen()),
-                        //   icon: Icon(Icons.work,
-                        //       color: CustomColor.Icon_Color),
+                        //   text: "Work Address",
+                        //
+                        //   subtitle:
+                        //       profileController
+                        //               .profileData
+                        //               ?.customer
+                        //               ?.address2
+                        //               ?.isNotEmpty ==
+                        //           true
+                        //       ? profileController
+                        //             .profileData!
+                        //             .customer!
+                        //             .address2!
+                        //       : null,
+                        //
+                        //   onPressed: () {
+                        //     final customer =
+                        //         profileController.profileData?.customer;
+                        //
+                        //     if (customer?.address2 != null &&
+                        //         customer!.address2!.trim().isNotEmpty) {
+                        //       homeC.activeField.value = "drop";
+                        //
+                        //       homeC.dropOff.text = customer.address2!;
+                        //
+                        //       homeC.selectedDropLat =
+                        //           double.tryParse(
+                        //             customer.address2Latitude?.toString() ?? "0",
+                        //           ) ??
+                        //           0.0;
+                        //
+                        //       homeC.selectedDropLon =
+                        //           double.tryParse(
+                        //             customer.address2Longitude?.toString() ??
+                        //                 "0",
+                        //           ) ??
+                        //           0.0;
+                        //
+                        //       homeC.fetchRoute();
+                        //       homeC.pickupCurrentLocation();
+                        //       Get.to(HomeDriver());
+                        //     } else {
+                        //       Get.to(AddWork_Screen());
+                        //     }
+                        //   },
+                        //
+                        //   icon: Icon(Icons.work, color: CustomColor.Icon_Color),
+                        //
                         //   fontWeight: FontWeight.bold,
                         //   fontSize: 16,
                         // ),
+                        // // // ================= ADD HOME =================
+                        // // CustomTextButton(
+                        // //   text: "Add Home",
+                        // //   onPressed: () => Get.to(AddHomeScreen()),
+                        // //   icon: Icon(Icons.home,
+                        // //       color: CustomColor.Icon_Color),
+                        // //   fontWeight: FontWeight.bold,
+                        // //   fontSize: 16,
+                        // // ),
+                        // //
+                        // // const SizedBox(height: 5),
+                        // //
+                        // // // ================= ADD WORK =================
+                        // // CustomTextButton(
+                        // //   text: "Add Work",
+                        // //   onPressed: () => Get.to(AddWork_Screen()),
+                        // //   icon: Icon(Icons.work,
+                        // //       color: CustomColor.Icon_Color),
+                        // //   fontWeight: FontWeight.bold,
+                        // //   fontSize: 16,
+                        // // ),
                         const SizedBox(height: 5),
 
                         // ================= PREVIOUS TRIP =================

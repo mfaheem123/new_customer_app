@@ -653,66 +653,92 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
 
                                         Get.dialog(
                                           Dialog(
-                                            backgroundColor:
-                                                CustomColor.Container_Colors,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                            ),
+                                            backgroundColor: Colors.transparent,
+                                            insetPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 20,
+                                                ),
                                             child: Container(
+                                              height: 300,
                                               padding: const EdgeInsets.all(20),
-                                              width:
-                                                  MediaQuery.of(
-                                                    context,
-                                                  ).size.width *
-                                                  0.8,
-                                              constraints: BoxConstraints(
-                                                maxHeight:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.height *
-                                                    0.4,
+                                              decoration: BoxDecoration(
+                                                color: CustomColor
+                                                    .Container_Colors,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                               ),
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
                                                 children: [
-                                                  const Icon(
-                                                    Icons.warning_amber,
-                                                    color: Colors.amberAccent,
-                                                    size: 60,
+                                                  /// TITLE
+                                                  Text(
+                                                    CustomText.Delete_address,
+                                                    textAlign: TextAlign.center,
+                                                    style:
+                                                        AppTextStyles.heading(),
                                                   ),
-                                                  const SizedBox(height: 15),
 
+                                                  const SizedBox(height: 12),
+
+                                                  /// ICON
+                                                  Container(
+                                                    height: 70,
+                                                    width: 70,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.red
+                                                          .withOpacity(0.08),
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons
+                                                          .delete_forever_rounded,
+                                                      color: Colors.red,
+                                                      size: 34,
+                                                    ),
+                                                  ),
+
+                                                  const SizedBox(height: 12),
+
+                                                  /// DESCRIPTION
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.symmetric(
                                                           horizontal: 10,
                                                         ),
                                                     child: Text(
-                                                      CustomText
-                                                          .Ride_book_ride_alert,
+                                                         CustomText.Ride_book_ride_alert,
                                                       textAlign:
                                                           TextAlign.center,
                                                       style:
-                                                          AppTextStyles.small(),
+                                                          AppTextStyles.regular(),
                                                     ),
                                                   ),
 
                                                   const SizedBox(height: 20),
 
+                                                  /// BUTTONS
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
+                                                      /// YES BUTTON
                                                       CustomTextButton(
+                                                        width: 70,
+                                                        height: 42,
                                                         text: 'Yes',
-                                                        onPressed: () {
-                                                          rideController
-                                                              .getBookingApi();
 
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        rowMainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        columnCrossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+
+                                                        onPressed: () {
+                                                          rideController.getBookingApi();
                                                           if (rideController
                                                                   .selectedTimeOption
                                                                   .value ==
@@ -731,38 +757,44 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                         backgroundColor:
                                                             Colors.red,
                                                         textColor: CustomColor
-                                                            .Button_Text_Color,
-                                                        borderRadius: 8,
+                                                            .textColor,
+                                                        borderRadius: 10,
                                                         elevation: 2,
-                                                        fontSize: 15,
+                                                        fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              horizontal: 16,
-                                                              vertical: 10,
-                                                            ),
                                                       ),
-                                                      const SizedBox(width: 20),
+
+                                                      const SizedBox(width: 15),
+
+                                                      /// NO BUTTON
                                                       CustomTextButton(
-                                                        text: '  No  ',
+                                                        width: 70,
+                                                        height: 42,
+                                                        text: ' No ',
+
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        rowMainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        columnCrossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+
                                                         onPressed: () {
                                                           Get.back();
-                                                          Get.back();
                                                         },
+
                                                         backgroundColor: CustomColor
                                                             .Button_background_Color,
-                                                        textColor: Colors.white,
-                                                        borderRadius: 8,
+                                                        textColor: CustomColor
+                                                            .textColor,
+                                                        borderRadius: 10,
                                                         elevation: 2,
-                                                        fontSize: 15,
+                                                        fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              horizontal: 16,
-                                                              vertical: 10,
-                                                            ),
                                                       ),
                                                     ],
                                                   ),
@@ -771,6 +803,128 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                             ),
                                           ),
                                         );
+
+                                        /// /////////////////////////////////////////////////////////////////////
+                                        // Get.dialog(
+                                        //   Dialog(
+                                        //     backgroundColor:
+                                        //         CustomColor.Container_Colors,
+                                        //     shape: RoundedRectangleBorder(
+                                        //       borderRadius:
+                                        //           BorderRadius.circular(30),
+                                        //     ),
+                                        //     child: Container(
+                                        //       padding: const EdgeInsets.all(20),
+                                        //       width:
+                                        //           MediaQuery.of(
+                                        //             context,
+                                        //           ).size.width *
+                                        //           0.8,
+                                        //       constraints: BoxConstraints(
+                                        //         maxHeight:
+                                        //             MediaQuery.of(
+                                        //               context,
+                                        //             ).size.height *
+                                        //             0.4,
+                                        //       ),
+                                        //       child: Column(
+                                        //         mainAxisSize: MainAxisSize.min,
+                                        //         mainAxisAlignment:
+                                        //             MainAxisAlignment.center,
+                                        //         children: [
+                                        //           const Icon(
+                                        //             Icons.warning_amber,
+                                        //             color: Colors.amberAccent,
+                                        //             size: 60,
+                                        //           ),
+                                        //           const SizedBox(height: 15),
+                                        //
+                                        //           Padding(
+                                        //             padding:
+                                        //                 const EdgeInsets.symmetric(
+                                        //                   horizontal: 10,
+                                        //                 ),
+                                        //             child: Text(
+                                        //               CustomText
+                                        //                   .Ride_book_ride_alert,
+                                        //               textAlign:
+                                        //                   TextAlign.center,
+                                        //               style:
+                                        //                   AppTextStyles.small(),
+                                        //             ),
+                                        //           ),
+                                        //
+                                        //           const SizedBox(height: 20),
+                                        //
+                                        //           Row(
+                                        //             mainAxisAlignment:
+                                        //                 MainAxisAlignment
+                                        //                     .center,
+                                        //             children: [
+                                        //               CustomTextButton(
+                                        //                 text: 'Yes',
+                                        //                 onPressed: () {
+                                        //                   rideController
+                                        //                       .getBookingApi();
+                                        //
+                                        //                   if (rideController
+                                        //                           .selectedTimeOption
+                                        //                           .value ==
+                                        //                       "ASAP") {
+                                        //                     Get.offAllNamed(
+                                        //                       routesName
+                                        //                           .RideSearchScreen,
+                                        //                     );
+                                        //                   } else {
+                                        //                     Get.offAllNamed(
+                                        //                       routesName
+                                        //                           .DeshBoard_Screen,
+                                        //                     );
+                                        //                   }
+                                        //                 },
+                                        //                 backgroundColor:
+                                        //                     Colors.red,
+                                        //                 textColor: CustomColor
+                                        //                     .Button_Text_Color,
+                                        //                 borderRadius: 8,
+                                        //                 elevation: 2,
+                                        //                 fontSize: 15,
+                                        //                 fontWeight:
+                                        //                     FontWeight.bold,
+                                        //                 padding:
+                                        //                     const EdgeInsets.symmetric(
+                                        //                       horizontal: 16,
+                                        //                       vertical: 10,
+                                        //                     ),
+                                        //               ),
+                                        //               const SizedBox(width: 20),
+                                        //               CustomTextButton(
+                                        //                 text: '  No  ',
+                                        //                 onPressed: () {
+                                        //                   Get.back();
+                                        //                   Get.back();
+                                        //                 },
+                                        //                 backgroundColor: CustomColor
+                                        //                     .Button_background_Color,
+                                        //                 textColor: Colors.white,
+                                        //                 borderRadius: 8,
+                                        //                 elevation: 2,
+                                        //                 fontSize: 15,
+                                        //                 fontWeight:
+                                        //                     FontWeight.bold,
+                                        //                 padding:
+                                        //                     const EdgeInsets.symmetric(
+                                        //                       horizontal: 16,
+                                        //                       vertical: 10,
+                                        //                     ),
+                                        //               ),
+                                        //             ],
+                                        //           ),
+                                        //         ],
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        // );
 
                                         rideController.calculateFareApi();
                                       },

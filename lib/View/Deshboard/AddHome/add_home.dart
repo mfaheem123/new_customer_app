@@ -108,23 +108,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                 }
 
                 if (mydeshcontroller.homeSearchList.isNotEmpty) {
-                  // return ListView.builder(
-                  //   shrinkWrap: true,
-                  //   physics: const NeverScrollableScrollPhysics(),
-                  //   itemCount: mydeshcontroller.homeSearchList.length,
-                  //   itemBuilder: (context, index) {
-                  //     final item = mydeshcontroller.homeSearchList[index];
-                  //
-                  //     return ListTile(
-                  //       title: Text(item.name ?? '',style: AppTextStyles.regular(),),
-                  //       subtitle: Text(item.postcode ?? '',style: AppTextStyles.regular(),),
-                  //       onTap: () {
-                  //         mydeshcontroller.selectHomeLocation(item);
-                  //         mydeshcontroller.HomeController.text = "${item.name} ${item.postcode}";
-                  //       },
-                  //     );
-                  //   },
-                  // );
+
                   return  commonSearchContainer(
                     context: context,
                     list: mydeshcontroller.homeSearchList,
@@ -196,91 +180,116 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                               onPressed: () {
                                 Get.dialog(
                                   Dialog(
-                                    backgroundColor: CustomColor.Container_Colors,
-                                    insetPadding: const EdgeInsets.symmetric(horizontal: 30),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxWidth: 320,
+                                    backgroundColor: Colors.transparent,
+                                    insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+                                    child: Container(
+                                      height: 300,
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: CustomColor.Container_Colors,
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min, // ⭐ IMPORTANT FIX
-                                          children: [
-                                            const SizedBox(height: 10),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
 
-                                            Text(
-                                              CustomText.Delete_address,
-                                              style: AppTextStyles.heading(),
+                                          /// TITLE
+                                          Text(
+                                            CustomText.Delete_address,
+                                            textAlign: TextAlign.center,
+                                            style: AppTextStyles.heading(),
+                                          ),
+
+                                          const SizedBox(height: 12),
+
+                                          /// ICON
+                                          Container(
+                                            height: 70,
+                                            width: 70,
+                                            decoration: BoxDecoration(
+                                              color: Colors.red.withOpacity(0.08),
+                                              shape: BoxShape.circle,
                                             ),
-
-                                            const SizedBox(height: 8),
-
-                                            const Icon(
-                                              Icons.warning_amber,
-                                              color: Colors.amberAccent,
-                                              size: 40,
+                                            child: const Icon(
+                                              Icons.delete_forever_rounded,
+                                              color: Colors.red,
+                                              size: 34,
                                             ),
+                                          ),
 
-                                            const SizedBox(height: 8),
+                                          const SizedBox(height: 12),
 
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                                              child: Text(
-                                                CustomText.Delete_home_address_Alert,
+                                          /// DESCRIPTION
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                                            child: Text(
+                                              CustomText.Delete_home_address_Alert,
+                                              textAlign: TextAlign.center,
+                                              style: AppTextStyles.regular(),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 20),
+
+                                          /// BUTTONS
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+
+                                              /// YES BUTTON
+                                              CustomTextButton(
+                                                width: 70,
+                                                height: 42,
+                                                text: 'Yes',
+
                                                 textAlign: TextAlign.center,
-                                                style: AppTextStyles.small(),
+                                                rowMainAxisAlignment: MainAxisAlignment.center,
+                                                columnCrossAxisAlignment: CrossAxisAlignment.center,
+
+                                                onPressed: () async {
+                                                  mydeshcontroller.deleteHomeApi();
+                                                  Get.back();
+                                                },
+
+                                                backgroundColor: Colors.red,
+                                                textColor: CustomColor.textColor,
+                                                borderRadius: 10,
+                                                elevation: 2,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                            ),
 
-                                            const SizedBox(height: 15),
+                                              const SizedBox(width: 15),
 
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                CustomTextButton(
-                                                  text: 'Yes',
-                                                  onPressed: () {
-                                                    mydeshcontroller.deleteHomeApi();
-                                                    Get.back();
-                                                  },
-                                                  backgroundColor: Colors.red,
-                                                  textColor: Colors.white,
-                                                  borderRadius: 8,
-                                                  elevation: 2,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 10,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 20),
-                                                CustomTextButton(
-                                                  text: 'No',
-                                                  onPressed: () => Get.back(),
-                                                  backgroundColor: CustomColor.Button_background_Color,
-                                                  textColor: Colors.white,
-                                                  borderRadius: 8,
-                                                  elevation: 2,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 10,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                              /// NO BUTTON
+                                              CustomTextButton(
+                                                width: 70,
+                                                height: 42,
+                                                text: ' No ',
+
+                                                textAlign: TextAlign.center,
+                                                rowMainAxisAlignment: MainAxisAlignment.center,
+                                                columnCrossAxisAlignment: CrossAxisAlignment.center,
+
+                                                onPressed: () {
+                                                  Get.back();
+                                                },
+
+                                                backgroundColor: CustomColor.Button_background_Color,
+                                                textColor: CustomColor.textColor,
+                                                borderRadius: 10,
+                                                elevation: 2,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
                                 );
+
                               },
                             ),
                           ],
@@ -307,10 +316,10 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
 
+      height: MediaQuery.sizeOf(context).height * 0.7,
       // ❌ REMOVE FIXED HEIGHT
       child: ListView.builder(
-        shrinkWrap: true,   // ✅ IMPORTANT
-        physics: const NeverScrollableScrollPhysics(), // ✅ IMPORTANT
+
         itemCount: list.length,
         itemBuilder: (context, index) {
           final item = list[index];

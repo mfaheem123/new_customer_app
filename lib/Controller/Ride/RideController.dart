@@ -313,6 +313,9 @@ class RideController extends GetxController {
       "booking_status_id": 1,
       "booking_type_id": 1,
       "booking_source": "app",
+      "fare" :  baseFare,
+      "total_fare": totalFare,
+
 
       // Customer ko stringify kar dein agar indexing masla kar rahi hai
       "customer": jsonEncode([
@@ -359,6 +362,8 @@ class RideController extends GetxController {
   }
 
   ///================================================   fare calculation api
+  double baseFare= 0;
+  double totalFare= 0;
     Future<void> calculateFareApi() async {
     Map<String, dynamic> dataMap = {
       "miles": swapController.totalRouteDistanceMiles,
@@ -390,13 +395,11 @@ class RideController extends GetxController {
 
       final data = res['data']; // 🔥 IMPORTANT FIX
 
-      double baseFare = (data['fare'] ?? 0).toDouble();
-      double returnFare = (data['return_fare'] ?? 0).toDouble();
-      double totalFare = (data['total_fare'] ?? 0).toDouble();
+       baseFare = (data['fare'] ?? 0).toDouble();
+       totalFare = (data['total_fare'] ?? 0).toDouble();
 
       print("FARE CALCULATED ✅ => $data");
       print("BASE FARE => $baseFare");
-      print("RETURN FARE => $returnFare");
       print("TOTAL FARE => $totalFare");
 
       BotToast.showText(text: "Fare Calculated Successfully");

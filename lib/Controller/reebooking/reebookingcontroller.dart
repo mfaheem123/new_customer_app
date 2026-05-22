@@ -203,8 +203,53 @@ Future<void> pickDate(BuildContext context) async {
     return DateFormat('HH:mm').format(dt); // 24-hour time
   }
 
+  ///================================================   fare calculation api
+  double baseFare= 0;
+  double totalFare= 0;
+  Future<void> calculateHistoryBookingFareApi(Booking trip) async {
+    Map<String, dynamic> dataMap = {
+      "miles": trip.miles,
+      "pickup_date": getDate,
+      "pickup_time": getTime,
+      "vehicle_type_id": selectedVehicleId,
+
+      "pickup": trip.pickup,
+      "dropoff": trip.dropoff,
+
+      "journey_type_id": 1,
+
+      "pickup_latitude": trip.pickupLatitude,
+      "pickup_longitude": trip.pickupLongitude,
+    };
+
+    FormData formData = FormData.fromMap(dataMap);
+
+    Response<dynamic>? response = await ApiService.post(
+      formData,
+      "fares/calculate-fare",
+      multiPart: true,
+      auth: true,
+    );
+
+    if (response!.statusCode == 200) {
+
+      final res = response.data;
+
+      final data = res['data']; // 🔥 IMPORTANT FIX
+
+      baseFare = (data['fare'] ?? 0).toDouble();
+      totalFare = (data['total_fare'] ?? 0).toDouble();
+
+      print("FARE CALCULATED ✅ => $data");
+      print("BASE FARE => $baseFare");
+      print("TOTAL FARE => $totalFare");
+
+      BotToast.showText(text: "Fare Calculated Successfully");
+    }
+  }
 
   /// ============================== VIA Points Handling ==============================
+
   List<Map<String, dynamic>> viaPointsList = [];
   void prepareViaPoints({Booking? trip}) {
     viaPointsList.clear();
