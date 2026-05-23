@@ -359,6 +359,8 @@ Future<void> pickDate(BuildContext context) async {
       "booking_status_id": 1,
       "booking_type_id": 1,
       "booking_source": "app",
+      "fares": baseFare,
+      "total_charges": totalFare,
 
       // Customer ko stringify kar dein agar indexing masla kar rahi hai
       "customer": jsonEncode([

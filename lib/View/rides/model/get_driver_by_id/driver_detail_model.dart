@@ -230,7 +230,7 @@ class Driver {
     mot2Expiry: json["mot2_expiry"],
     phcVehicleNumber: json["phc_vehicle_number"],
     phcVehicleExpiry: json["phc_vehicle_expiry"],
-    ni: json["ni"],
+    ni: json["ni"] ?? "",
     image: json["image"],
     createdAt: json["created_at"],
     vehicleId: json["vehicle_id"],

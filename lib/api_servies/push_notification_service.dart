@@ -138,20 +138,23 @@ class PushNotificationService {
         case "RIDE_ACCEPTED":
           // await _hitDriverApi(driverId!); // 🔥 FIX (driverId pass// )
 
-          if (driverId != null) {
-            await _hitDriverApi(driverId!);
-          }
+
 
           if (bookingId != null) {
             await _getBookingById(bookingId!); // 🔥 ADD THIS
           }
-
+          if (driverId != null) {
+            // await _hitDriverApi(driverId!);
+            Get.offAllNamed(routesName.Driverdetailscreen, arguments: {
+              "id": driverId
+            });
+          }
 
           // //  ADD THIS
           final rideController = Get.isRegistered<RideController>()
               ? Get.find<RideController>()
               : Get.put(RideController());
-          rideController.startPolling(driverId!);
+          rideController. startPolling(driverId!);
 
 
           break;
@@ -169,35 +172,35 @@ class PushNotificationService {
     }
   }
 
-  // 🔥 API CALL
-  Future<void> _hitDriverApi(String driverId) async {
-    try {
-      debugPrint("Calling API with driver_id: $driverId");
-
-      var response = await ApiService.get(
-        "drivers/getbyid/$driverId", // ✅ dynamic path
-        auth: true,
-      );
-
-      if ( response!.statusCode == 200) {
-        var data = response.data;
-
-        debugPrint("Driver Data: $data");
-
-        // ✅ NAVIGATION
-        // Get.offAllNamed(routesName.Driverdetailscreen, arguments: data);
-        Get.offAllNamed(routesName.Driverdetailscreen, arguments: {
-          "id": driverId
-        });
-
-      } else {
-        debugPrint("API Failed: ${response.statusCode}");
-      }
-
-    } catch (e) {
-      debugPrint("API error: $e");
-    }
-  }
+  // // 🔥 API CALL
+  // Future<void> _hitDriverApi(String driverId) async {
+  //   try {
+  //     debugPrint("Calling API with driver_id: $driverId");
+  //
+  //     var response = await ApiService.get(
+  //       "drivers/getbyid/$driverId", // ✅ dynamic path
+  //       auth: true,
+  //     );
+  //
+  //     if ( response!.statusCode == 200) {
+  //       var data = response.data;
+  //
+  //       debugPrint("Driver Data: $data");
+  //
+  //       // ✅ NAVIGATION
+  //       // Get.offAllNamed(routesName.Driverdetailscreen, arguments: data);
+  //       Get.offAllNamed(routesName.Driverdetailscreen, arguments: {
+  //         "id": driverId
+  //       });
+  //
+  //     } else {
+  //       debugPrint("API Failed: ${response.statusCode}");
+  //     }
+  //
+  //   } catch (e) {
+  //     debugPrint("API error: $e");
+  //   }
+  // }
 
   Future<void> _getBookingById(String bookingId) async {
     try {

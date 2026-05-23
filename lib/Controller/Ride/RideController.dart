@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/src/response.dart'  ;
 import 'package:get/get.dart' hide FormData, Response;
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import '../../View/profile/controller/profile_controller.dart';
 import '../../View/rides/model/get_driver_by_id/driver_detail_model.dart' hide VehicleType;
@@ -18,17 +19,13 @@ import 'dart:convert';
 class RideController extends GetxController {
 
 
-
-
-
-
   final swapController = Get.isRegistered<SwapController>()
-        ? Get.find<SwapController>()
-        : Get.put(SwapController());
+      ? Get.find<SwapController>()
+      : Get.put(SwapController());
 
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
-      :  Get.put(profileModelController());
+      : Get.put(profileModelController());
 
   bool isFromHistory = false;
 
@@ -38,7 +35,7 @@ class RideController extends GetxController {
   RxInt selectedIndex = (0).obs;
   RxInt selectedVehicleId = 0.obs;
   RxInt selectedPassengers = 0.obs;
-    String bookingId = "0" ;
+  String bookingId = "0";
 
   /// Item select (index + ID + passengers)
   void selectItem(int index) {
@@ -58,7 +55,9 @@ class RideController extends GetxController {
       }
     }
   }
+
   List<VehicleType> get vehicles => vehicleData?.vehicleTypes ?? [];
+
   ///  API call
   Future<void> getVehicleTypes() async {
     loading = true;
@@ -77,7 +76,6 @@ class RideController extends GetxController {
           vehicleData!.vehicleTypes!.isNotEmpty) {
         selectItem(0); // 👉 auto select first item
       }
-
     }
 
     loading = false;
@@ -100,8 +98,12 @@ class RideController extends GetxController {
 
 
 // ----------------- Date & Time -----------------
-  var selectedDate = DateTime.now().obs;
-  var selectedTime = TimeOfDay.now().obs;
+  var selectedDate = DateTime
+      .now()
+      .obs;
+  var selectedTime = TimeOfDay
+      .now()
+      .obs;
 
 // Track which quick-time button is selected ("ASAP", "15 min", "30 min")
   var selectedTimeOption = 'ASAP'.obs;
@@ -229,6 +231,7 @@ class RideController extends GetxController {
 
 
   List<Map<String, dynamic>> viaPointsList = [];
+
   /// ============================== VIA Points Handling ==============================
 
   void prepareViaPoints() {
@@ -252,21 +255,20 @@ class RideController extends GetxController {
         "longitude": swapController.via1Lon,
       });
     }
-   // VIA 2
-      if (swapController.viaController2.text.isNotEmpty) {
-        viaPointsList.add({
-          "viapoint": swapController.viaController2.text,
-          "name": profileName,
-          "mobile": profileMobile,
-          "arrived": null,
-          "passenger_on_board": null,
-          "active": false,
-          "latitude": swapController.via2Lat,
-          "longitude": swapController.via2Lon,
-        });
-      }
+    // VIA 2
+    if (swapController.viaController2.text.isNotEmpty) {
+      viaPointsList.add({
+        "viapoint": swapController.viaController2.text,
+        "name": profileName,
+        "mobile": profileMobile,
+        "arrived": null,
+        "passenger_on_board": null,
+        "active": false,
+        "latitude": swapController.via2Lat,
+        "longitude": swapController.via2Lon,
+      });
+    }
   }
-
 
 
   Future<void> getBookingApi() async {
@@ -313,8 +315,8 @@ class RideController extends GetxController {
       "booking_status_id": 1,
       "booking_type_id": 1,
       "booking_source": "app",
-      "fare" :  baseFare,
-      "total_fare": totalFare,
+      "fares": baseFare,
+      "total_charges": totalFare,
 
 
       // Customer ko stringify kar dein agar indexing masla kar rahi hai
@@ -362,9 +364,10 @@ class RideController extends GetxController {
   }
 
   ///================================================   fare calculation api
-  double baseFare= 0;
-  double totalFare= 0;
-    Future<void> calculateFareApi() async {
+  double baseFare = 0;
+  double totalFare = 0;
+
+  Future<void> calculateFareApi() async {
     Map<String, dynamic> dataMap = {
       "miles": swapController.totalRouteDistanceMiles,
       "pickup_date": getDate,
@@ -390,13 +393,12 @@ class RideController extends GetxController {
     );
 
     if (response!.statusCode == 200) {
-
       final res = response.data;
 
       final data = res['data']; // 🔥 IMPORTANT FIX
 
-       baseFare = (data['fare'] ?? 0).toDouble();
-       totalFare = (data['total_fare'] ?? 0).toDouble();
+      baseFare = (data['fare'] ?? 0).toDouble();
+      totalFare = (data['total_fare'] ?? 0).toDouble();
 
       print("FARE CALCULATED ✅ => $data");
       print("BASE FARE => $baseFare");
@@ -405,7 +407,8 @@ class RideController extends GetxController {
       BotToast.showText(text: "Fare Calculated Successfully");
     }
   }
-///================================================   booking cancel api
+
+  ///================================================   booking cancel api
 
 
   Future<void> rideCancelApi() async {
@@ -424,24 +427,22 @@ class RideController extends GetxController {
     );
 
     if (response!.statusCode == 200) {
-
       BotToast.showText(text: "Booking Cancel Success");
       print(bookingId);
-     isFromHistory = false;
+      isFromHistory = false;
       Get.offAllNamed('/DeshBoard_Screen');
       return;
     }
-
-
   }
 
-///================================================   Driver detail  Api
+  ///================================================   Driver detail  Api
 
   Timer? _timer;
   String? currentDriverId;
+
 //
   BookingGetById? bookingData;
-
+  Booking? currentBooking;
   String? getBookingId;
 
   void setBookingData(Map data) {
@@ -454,17 +455,21 @@ class RideController extends GetxController {
 
       if (booking != null) {
         swapController.setBookingRoute(booking);
+
+        // 2. Ride Complete ke liye save
+        currentBooking = booking;
+        GetStorage().write("booking", booking.toJson());
+
       }
 
-      getBookingId=booking?.id;
+      getBookingId = booking?.id;
       debugPrint("Booking Stored ✅ ID: $getBookingId");
+      debugPrint("=======================================Current Booking Stored ✅ ID: ${currentBooking?.totalCharges}");
       update();
-
     } catch (e) {
       debugPrint("Booking Parse Error: $e");
     }
   }
-
 
 
   // void setBookingData(Map data) {
@@ -481,8 +486,6 @@ class RideController extends GetxController {
   // }
 
   // 🔥 Reactive variables
-
-
   var isLoading = true.obs;
   var bookingStatus = "".obs;
   var driverName = "".obs;
@@ -491,25 +494,25 @@ class RideController extends GetxController {
 
   late DriverGetbyId driverGetbyId;
 
-  // 🔥 START POLLING
+
+// 🔥 START POLLING
   void startPolling(String driverId) {
     currentDriverId = driverId;
 
-    // pehle agar koi timer chal raha ho to stop karo
     stopPolling();
 
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       _hitDriverApi(driverId);
     });
   }
 
-  // 🔥 STOP POLLING
+// 🔥 STOP POLLING
   void stopPolling() {
     _timer?.cancel();
     _timer = null;
   }
-
-  // 🔥 API CALL
+  bool hasNavigated = false;
+// 🔥 API CALL
   Future<void> _hitDriverApi(String driverId) async {
     try {
       var response = await ApiService.get(
@@ -517,46 +520,50 @@ class RideController extends GetxController {
         auth: true,
       );
 
-      if ( response!.statusCode == 200) {
+      if (response != null && response.statusCode == 200) {
         driverGetbyId = DriverGetbyId.fromJson(response.data);
 
-       // String status = driverGetbyId.driver.bookingStatus;
+        final driver = driverGetbyId.driver;
+        final vehicle = driver.vehicle;
 
-
-
-
-        // 🔥 Update UI
-        driverName.value = driverGetbyId.driver.name;
-        bookingStatus.value = driverGetbyId.driver.bookingStatus;
-        vehicleColor.value = driverGetbyId.driver.vehicle.color;
-        vehicleNumber.value = driverGetbyId.driver.vehicle.vehicleNumber;
+        // ✅ SAFE UPDATE (NO NULL CRASH)
+        driverName.value = driver.name ?? "";
+        bookingStatus.value = driver.bookingStatus ?? "";
+        vehicleColor.value = vehicle.color ?? "";
+        vehicleNumber.value = vehicle.vehicleNumber ?? "";
 
         isLoading.value = false;
 
-        debugPrint("=======       =====  5 sec hit       ======>>>>>>   lBooking Status: $bookingStatus");
+        debugPrint("Booking Status: ${bookingStatus.value}");
+        print("image ==================================== >>>> ${driver.image}");
 
-        // 🔥 CONDITION
-        if (bookingStatus == "Available") {
-          stopPolling(); // ❗ important
-
-          // 👉 Payment Screen
-          Get.offAllNamed(routesName.RideCompleteScreen); // apna route lagao
+        // 🔥 CONDITION FIXED
+        if (bookingStatus.value.trim() == "Available" && !hasNavigated) {
+          hasNavigated = true;
+          stopPolling();
+          Get.offAllNamed(routesName.RideCompleteScreen);
         }
-
+        // if (bookingStatus.value.trim() == "Available") {
+        //
+        //   stopPolling();
+        //
+        //   Get.offAllNamed(routesName.RideCompleteScreen);
+        // }
       }
-
-    } catch (e) {
+    } catch (e, s) {
       debugPrint("Polling API error: $e");
+      debugPrint("Stack trace: $s");
     }
   }
-
-  @override
-  void onClose() {
-    stopPolling(); // memory leak se bachne ke liye
-    super.onClose();
-  }
-
+  //
+  // @override
+  // void onClose() {
+  //   stopPolling();
+  //   super.onClose();
+  // }
 }
+///
+
 
 
 

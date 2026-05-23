@@ -672,7 +672,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                 children: [
                                                   /// TITLE
                                                   Text(
-                                                    CustomText.Delete_address,
+                                                    "Book Ride",
                                                     textAlign: TextAlign.center,
                                                     style:
                                                         AppTextStyles.heading(),

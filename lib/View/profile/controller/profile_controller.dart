@@ -98,7 +98,7 @@ class profileModelController extends GetxController {
     loader(true);
 
     FormData formData = FormData.fromMap({
-      "profile_picture": await MultipartFile.fromFile(
+      "image": await MultipartFile.fromFile(
         img.path,
         filename: img.path.split('/').last,
       ),

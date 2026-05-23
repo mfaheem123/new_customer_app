@@ -628,7 +628,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                       children: [
                                                         /// TITLE
                                                         Text(
-                                                          CustomText.Delete_address,
+                                                          "Book Ride",
                                                           textAlign: TextAlign.center,
                                                           style:
                                                           AppTextStyles.heading(),
