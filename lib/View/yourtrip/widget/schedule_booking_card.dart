@@ -89,59 +89,99 @@ class ScheduleBookingCard extends StatelessWidget {
           SizedBox(height: 10),
 
           //==========================        Addresses to Address
+          // Container(
+          //   height: 90,
+          //   color: Colors.transparent,
+          //   child: Row(
+          //     children: [
+          //       Container(
+          //         margin: EdgeInsets.only(left: 10),
+          //         padding: EdgeInsets.only(left: 10,right: 10,bottom: 0,top: 10),
+          //         height: 80,
+          //         width: 130,
+          //
+          //         child: Center(
+          //           child: Text(
+          //             PicUp_Location!,
+          //             // "1A Worrior "
+          //             //     "Garden St.LEO"
+          //             //     " TN36eb",
+          //             softWrap: true,
+          //             maxLines: 3,
+          //             textAlign: TextAlign.center,
+          //             overflow: TextOverflow.ellipsis,
+          //             style: AppTextStyles.small(),
+          //           ),
+          //         ),
+          //       ),
+          //       SizedBox(width: 10),
+          //
+          //       Icon(
+          //         Icons.arrow_forward_rounded,
+          //         size: 30,
+          //         color: CustomColor.Text_Color,
+          //       ),
+          //
+          //       SizedBox(width: 10),
+          //
+          //       Container(
+          //         margin: EdgeInsets.only(left: 8),
+          //
+          //         padding: EdgeInsets.all(10),
+          //         height: 80,
+          //         width: 130,
+          //         child: Center(
+          //           child: Text(
+          //             Drop_of_Location!,
+          //             // "Flat  1 "
+          //             //     "Bland fold"
+          //             //     "Nw6",
+          //             softWrap: true,
+          //             textAlign: TextAlign.center,
+          //             maxLines: 3,
+          //             overflow: TextOverflow.ellipsis,
+          //             style: AppTextStyles.small(),
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Container(
             height: 90,
-            color: Colors.transparent,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  margin: EdgeInsets.only(left: 10),
-                  padding: EdgeInsets.only(left: 10,right: 10,bottom: 0,top: 10),
-                  height: 80,
-                  width: 130,
-
-                  child: Center(
-                    child: Text(
-                      PicUp_Location!,
-                      // "1A Worrior "
-                      //     "Garden St.LEO"
-                      //     " TN36eb",
-                      softWrap: true,
-                      maxLines: 3,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.small(),
-                    ),
+                /// PICKUP
+                Expanded(
+                  child: Text(
+                    PicUp_Location ?? "",
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.small(),
                   ),
                 ),
-                SizedBox(width: 10),
 
-                Icon(
-                  Icons.arrow_forward_rounded,
-                  size: 30,
-                  color: CustomColor.Text_Color,
+                /// ARROW
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 26,
+                    color: CustomColor.Text_Color,
+                  ),
                 ),
 
-                SizedBox(width: 10),
-
-                Container(
-                  margin: EdgeInsets.only(left: 8),
-
-                  padding: EdgeInsets.all(10),
-                  height: 80,
-                  width: 130,
-                  child: Center(
-                    child: Text(
-                      Drop_of_Location!,
-                      // "Flat  1 "
-                      //     "Bland fold"
-                      //     "Nw6",
-                      softWrap: true,
-                      textAlign: TextAlign.center,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.small(),
-                    ),
+                /// DROP OFF
+                Expanded(
+                  child: Text(
+                    Drop_of_Location ?? "",
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.small(),
                   ),
                 ),
               ],
@@ -149,55 +189,54 @@ class ScheduleBookingCard extends StatelessWidget {
           ),
           //SizedBox(height: 2),
           //=======================================     Rate and status
-          Container  (
-            //color: CustomColor.background,
-            padding: EdgeInsets.only(left: 14 ,top: 0),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
             height: 70,
             child: Row(
               children: [
-                Icon(Icons.directions_car,
-                  color: CustomColor.Icon_Color,),
-                SizedBox(width: 2,),
-                Container(
-                  height: 60,
-                  padding: EdgeInsets.only(top: 2),
-                  child: Column(
-                    children: [
-                      Text(
-                        vechileName!,
-                        // " ESTATE CAR",
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.small(),
-                      ),
-                      Text(
-                        "${fare!}£",
-                        // "&177.00",
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.medium(size: 20),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 70),
-                //====================================   Status text
-                Container(
-                  height: 30,
-                  width: 100,
-                  margin: EdgeInsets.only(left: 25),
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(
-                      15,
+                /// LEFT: CAR + FARE
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.directions_car,
+                      color: CustomColor.Icon_Color,
                     ),
-                  ),
+                    const SizedBox(width: 6),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          vechileName ?? "",
+                          style: AppTextStyles.small(),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          "${fare ?? ""} £",
+                          style: AppTextStyles.medium(size: 18),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+                /// 👉 CENTER STATUS (TRUE CENTER FIX)
+                Expanded(
                   child: Center(
-                    child: Text(
-                      (status!).toUpperCase(),
-                      // "Cancelled",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: CustomColor.Text_Color,
+                    child: Container(
+                      margin:EdgeInsets.only(left: 45) ,
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        (status ?? "").toUpperCase(),
+                        style: AppTextStyles.small(
+                            weight: FontWeight.bold,
+                          size: 13
+                        ),
                       ),
                     ),
                   ),

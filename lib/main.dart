@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:customer/api_servies/push_notification_service.dart';
+import 'Binding/auth_binding.dart';
 import 'Routing/routes.dart';
 import 'package:bot_toast/bot_toast.dart';
 
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Customer App',
       initialRoute:  routesName.Splash_Screen,
+      initialBinding: InitialBinding(), // ✅ ADD THIS
       //transitionDuration: Duration(seconds: ),
       defaultTransition: Transition.leftToRight,
       builder: BotToastInit(),

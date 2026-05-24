@@ -500,9 +500,41 @@ class RideCompleteScreen extends StatelessWidget {
                             width: 250,
                             child: MyElevatedButton(
                               text: '',
-                              onPressed: () {
-                                Get.to(ThanksScreen());
+                              onPressed: () async {
+
+                                /// Booking ID
+                                final box = GetStorage();
+
+                                final bookingData = box.read("booking");
+
+                                final bookingId = bookingData != null
+                                    ? bookingData["id"].toString()
+                                    : "";
+
+                                if (bookingId.isEmpty) {
+                                  Get.snackbar(
+                                    "Error",
+                                    "Booking ID not found",
+                                  );
+                                  return;
+                                }
+
+                                /// Cash = 1
+                                if (paymentController.paymentMethod.value == "Cash") {
+                                  paymentController.selectMethod(0);
+                                }
+
+                                /// Credit Card = 2
+                                else {
+                                  paymentController.selectMethod(1);
+                                }
+
+                                /// API
+                                await paymentController.updatePaymentMethodApi(bookingId);
+
+
                               },
+
                               textWidget: FittedBox(
                                 child: Text(
                                   'Done',

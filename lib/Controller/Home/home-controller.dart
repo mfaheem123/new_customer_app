@@ -49,24 +49,36 @@ class SwapController extends GetxController {
 //===============================================   pick UP location
 
 
-  void pickupCurrentLocation() {
+  void pickupCurrentLocation() async {
     final loc = mapC.selectedLocation.value;
 
     if (loc == null) {
-      print("❌ Location not ready yet");
-      return;
+      // 🔥 fallback fix
+      await mapC.address  ; // if available
     }
+
+    final updatedLoc = mapC.selectedLocation.value;
+
+    if (updatedLoc == null) return;
 
     pickUp.text = mapC.address.value;
 
-    /// 🔥 MAP → ROUTE SYSTEM
-    setPickup(loc.latitude, loc.longitude);
+    await setPickup(updatedLoc.latitude, updatedLoc.longitude);
+  }
+  void resetRouteState() {
+    selectedPickUPLat = 0;
+    selectedPickUPLon = 0;
+    selectedDropLat = 0;
+    selectedDropLon = 0;
 
-    print("🟢 PICKUP FROM CURRENT LOCATION → ${loc.latitude}, ${loc.longitude}");
+    routePoints.clear();
+    pickUp.clear();
+    dropOff.clear();
+
+    update(["map", "distance"]);
   }
 
-
-///======================================================================================  listWidget working and api
+  ///======================================================================================  listWidget working and api
   var selectedItem = (0).obs;
   RxInt selectedIndex = 0.obs;
 

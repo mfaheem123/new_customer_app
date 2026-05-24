@@ -457,8 +457,8 @@ class RideController extends GetxController {
         swapController.setBookingRoute(booking);
 
         // 2. Ride Complete ke liye save
-        currentBooking = booking;
-        GetStorage().write("booking", booking.toJson());
+         currentBooking = booking;
+       GetStorage().write("booking", booking.toJson());
 
       }
 

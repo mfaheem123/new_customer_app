@@ -321,16 +321,30 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
         itemCount: list.length,
         itemBuilder: (context, index) {
           final item = list[index];
-          return ListTile(
-            leading: const Icon(
-              Icons.location_on,
-              color: CustomColor.Icon_Color,
-            ),
-            title: Text(
-              "${item.name ?? ""} ${item.postcode ?? ""}",
-              style: AppTextStyles.regular(),
-            ),
-            onTap: () => onTap(item),
+          return Column(
+            children: [
+              ListTile(
+                leading: const Icon(
+                  Icons.location_on,
+                  color: CustomColor.Icon_Color,
+                ),
+                title: Text(
+                ("${item.name ?? ""} ${item.postcode ?? ""}").toUpperCase(),
+                  style: AppTextStyles.regular(),
+                ),
+                onTap: () => onTap(item),
+              ),
+
+              // 🔥 Line under every address
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: Colors.white.withOpacity(0.3),
+                ),
+              ),
+            ],
           );
         },
       ),

@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:customer/Routing/routes_name.dart';
+import 'package:customer/View/Widgets/elevat_button.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import '../Controller/Home/home-controller.dart';
@@ -135,6 +137,31 @@ class PushNotificationService {
 
       // ✅ TYPE HANDLE
       switch (type) {
+
+        case "Available":
+          Scaffold(
+            body:Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 30, 1, 44),
+                      Color.fromARGB(255, 227, 194, 242),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+                child: Center(
+                  child:SizedBox(
+                    height: 50,
+                    width: 250,
+                    child: MyElevatedButton(text: "Go to Deshboard", onPressed: ()=>Get.offAllNamed(routesName.SigIn_Screen)
+                    ),
+                  ),
+                ),
+            ) ,
+          );
+          break;
         case "RIDE_ACCEPTED":
           // await _hitDriverApi(driverId!); // 🔥 FIX (driverId pass// )
 

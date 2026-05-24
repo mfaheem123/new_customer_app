@@ -117,7 +117,8 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
 
                             Text(
                               (profileController.profileData?.customer?.name ??
-                                  "Loading...").toLowerCase(),
+                                      "Loading...")
+                                  .toUpperCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.medium(
@@ -173,17 +174,9 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                           columnCrossAxisAlignment: CrossAxisAlignment.start,
 
                           subtitle:
-                          profileController
-                              .profileData
-                              ?.customer
-                              ?.address1
-                              ?.isNotEmpty ==
-                              true
-                              ? profileController
-                              .profileData!
-                              .customer!
-                              .address1!
-                              : "please select home address",
+                              profileController.profileData?.customer?.address1?.isNotEmpty == true
+                              ? profileController.profileData!.customer!.address1!
+                              : "Please select home address",
 
                           onPressed: () {
                             final customer =
@@ -194,10 +187,9 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                               homeC.activeField.value = "drop";
 
                               homeC.dropOff.text = customer.address1!;
-
-                              homeC.selectedDropLat = double.tryParse(customer.address1Latitude?.toString() ?? "0",) ?? 0.0;
-
-                              homeC.selectedDropLon = double.tryParse(customer.address1Longitude?.toString() ?? "0",) ?? 0.0;
+                              homeC.setDrop((customer.address1Latitude ?? 0).toDouble(),
+                                (customer.address1Longitude ?? 0).toDouble(),
+                              );
 
                               homeC.fetchRoute();
                               homeC.pickupCurrentLocation();
@@ -216,7 +208,7 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
 
                         const SizedBox(height: 5),
 
-// ================= ADD WORK =================
+                        // ================= ADD WORK =================
                         CustomTextButton(
                           text: "Work Address",
 
@@ -226,17 +218,17 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                           columnCrossAxisAlignment: CrossAxisAlignment.start,
 
                           subtitle:
-                          profileController
-                              .profileData
-                              ?.customer
-                              ?.address2
-                              ?.isNotEmpty ==
-                              true
+                              profileController
+                                      .profileData
+                                      ?.customer
+                                      ?.address2
+                                      ?.isNotEmpty ==
+                                  true
                               ? profileController
-                              .profileData!
-                              .customer!
-                              .address2!
-                              : null,
+                                    .profileData!
+                                    .customer!
+                                    .address2!
+                              : "Please select work address",
 
                           onPressed: () {
                             final customer =
@@ -247,22 +239,14 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                               homeC.activeField.value = "drop";
 
                               homeC.dropOff.text = customer.address2!;
-
-                              homeC.selectedDropLat =
-                                  double.tryParse(
-                                    customer.address2Latitude?.toString() ?? "0",
-                                  ) ??
-                                      0.0;
-
-                              homeC.selectedDropLon =
-                                  double.tryParse(
-                                    customer.address2Longitude?.toString() ??
-                                        "0",
-                                  ) ??
-                                      0.0;
+                              homeC.setDrop(
+                                (customer.address2Latitude ?? 0).toDouble(),
+                                (customer.address2Longitude ?? 0).toDouble(),
+                              );
 
                               homeC.fetchRoute();
                               homeC.pickupCurrentLocation();
+                              homeC.update();
                               Get.to(HomeDriver());
                             } else {
                               Get.to(AddWork_Screen());
@@ -276,7 +260,6 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                         ),
 
                         // // ================= ADD HOME =================
-
 
                         // CustomTextButton(
                         //   text: "Home Address",

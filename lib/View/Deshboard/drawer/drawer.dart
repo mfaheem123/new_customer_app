@@ -1,5 +1,3 @@
-
-
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:customer/api_servies/session.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +10,10 @@ import '../../yourtrip/yourtrip.dart';
 class appDrawer extends StatelessWidget {
   appDrawer({super.key});
 
-
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
-      :  Get.put(profileModelController());
-
+      : Get.put(profileModelController());
+  // final controller = Get.find<profileModelController>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +33,7 @@ class appDrawer extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
-                child:  ListView (
+                child: ListView(
                   children: [
                     const SizedBox(height: 50),
 
@@ -46,12 +43,13 @@ class appDrawer extends StatelessWidget {
                     else if (user == null)
                       SizedBox(
                         height: 300,
-                          child: Center(
-                              child: Text("No Data Fetched",
-                                textAlign: TextAlign.center,
-                                style: AppTextStyles.heading(),
-                              )
-                          )
+                        child: Center(
+                          child: Text(
+                            "No Data Fetched",
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.heading(),
+                          ),
+                        ),
                       )
                     else
                       Column(
@@ -60,11 +58,16 @@ class appDrawer extends StatelessWidget {
                           Center(
                             child: CircleAvatar(
                               radius: 50,
-                              backgroundImage: controller.selectedImage.value != null
-                                  ? FileImage(controller.selectedImage.value!) // use .value and null check
-                                  : (user.profileImage != null && user.profileImage!.isNotEmpty
-                                  ? NetworkImage(user.profileImage!) as ImageProvider
-                                  : const AssetImage("assets/images/profileimage.png")),
+                              backgroundImage:
+                                  controller.selectedImage.value != null
+                                  ? FileImage(controller.selectedImage.value!)
+                                  : (user.profileImage != null &&
+                                            user.profileImage!.isNotEmpty
+                                        ? NetworkImage(user.profileImage!)
+                                        : const AssetImage(
+                                                "assets/images/profileimage.png",
+                                              )
+                                              as ImageProvider),
                             ),
                           ),
 
@@ -72,7 +75,9 @@ class appDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 10.0),
                             child: Text(
-                              user.name != null ? "${user.name}" : "No Data Found",
+                              user.name != null
+                                  ? "${user.name}"
+                                  : "No Data Found",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.heading(),
@@ -87,10 +92,7 @@ class appDrawer extends StatelessWidget {
                               style: AppTextStyles.medium(),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-
-                          ),
+                          Padding(padding: const EdgeInsets.only(left: 10.0)),
                         ],
                       ),
 
@@ -99,38 +101,72 @@ class appDrawer extends StatelessWidget {
 
                     // Drawer Options
                     ListTile(
-                      leading: const Icon(Icons.home, size: 20, color: Colors.white),
+                      leading: const Icon(
+                        Icons.home,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                       title: Text("Home", style: AppTextStyles.medium()),
                       onTap: () => Get.toNamed('/Deshboard'),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.picture_in_picture, size: 20, color: Colors.white),
+                      leading: const Icon(
+                        Icons.picture_in_picture,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                       title: Text("Your Trip", style: AppTextStyles.medium()),
                       onTap: () => Get.to(Yourtrip()),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.payments, size: 20, color: Colors.white),
+                      leading: const Icon(
+                        Icons.payments,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                       title: Text("Payment", style: AppTextStyles.medium()),
                       onTap: () => Get.to(PaymentScreen()),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.settings, size: 20, color: Colors.white),
-                      title: Text("User Profile", style: AppTextStyles.medium()),
+                      leading: const Icon(
+                        Icons.settings,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        "User Profile",
+                        style: AppTextStyles.medium(),
+                      ),
                       onTap: () => Get.toNamed('/ProfileScreen'),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.send_to_mobile, size: 20, color: Colors.white),
-                      title: Text("Invite your Friend", style: AppTextStyles.medium()),
+                      leading: const Icon(
+                        Icons.send_to_mobile,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        "Invite your Friend",
+                        style: AppTextStyles.medium(),
+                      ),
                       onTap: () {},
                     ),
                     ListTile(
-                      leading: const Icon(Icons.person, size: 20, color: Colors.white),
+                      leading: const Icon(
+                        Icons.person,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                       title: Text("About", style: AppTextStyles.medium()),
                       onTap: () => Get.toNamed('/AboutScreen'),
                     ),
                     const SizedBox(height: 15),
                     ListTile(
-                      leading: const Icon(Icons.logout, size: 20, color: Colors.white),
+                      leading: const Icon(
+                        Icons.logout,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                       title: Text("Logout", style: AppTextStyles.medium()),
                       onTap: () {
                         TokenManager.clearSession();
@@ -143,28 +179,7 @@ class appDrawer extends StatelessWidget {
             ),
           ),
         );
-      }
+      },
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

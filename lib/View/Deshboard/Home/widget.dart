@@ -13,7 +13,6 @@ import '../../textstyle/apptextstyle.dart';
 import '../AddHome/add_home.dart';
 import '../AddWork/add_work.dart';
 
-
 class containerWidget extends StatefulWidget {
   const containerWidget({super.key});
 
@@ -210,48 +209,124 @@ class _containerWidgetState extends State<containerWidget> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  ListTile(
-                                    onTap: () {
-                                      Get.to(AddHomeScreen());
-                                    },
-                                    title: Text(
-                                      "Home",
-                                      style: AppTextStyles.regular(),
-                                    ),
-                                    // subtitle: Text(
-                                    //   profileController
-                                    //           .profileData
-                                    //           ?.addhomeAddress ??
-                                    //       'Address',
-                                    //   style: AppTextStyles.small(),
-                                    // ),
+                                  // // ================= ADD HOME =================
+                                  CustomTextButton(
+                                    text: "Home Address",
 
-                                    leading: Icon(
-                                      controller.iconItems[controller.selectedIndex.value]["icon"],
-                                      color: CustomColor.textColor,
-                                      size: 25,
+                                    // ✅ Start alignment
+                                    textAlign: TextAlign.start,
+                                    rowMainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                    columnCrossAxisAlignment:
+                                        CrossAxisAlignment.start,
+
+                                    subtitle:
+                                        profileController
+                                                .profileData
+                                                ?.customer
+                                                ?.address1
+                                                ?.isNotEmpty ==
+                                            true
+                                        ? profileController
+                                              .profileData!
+                                              .customer!
+                                              .address1!
+                                        : "Please select home address",
+
+                                    onPressed: () {
+                                      final customer = profileController
+                                          .profileData
+                                          ?.customer;
+
+                                      if (customer?.address1 != null &&
+                                          customer!.address1!
+                                              .trim()
+                                              .isNotEmpty) {
+                                        homeC.activeField.value = "drop";
+
+                                        homeC.dropOff.text = customer.address1!;
+                                        homeC.setDrop(
+                                          (customer.address1Latitude ?? 0)
+                                              .toDouble(),
+                                          (customer.address1Longitude ?? 0)
+                                              .toDouble(),
+                                        );
+
+                                        homeC.fetchRoute();
+                                      } else {
+                                        Get.to(AddHomeScreen());
+                                      }
+                                    },
+
+                                    icon: Icon(
+                                      Icons.home,
+                                      color: CustomColor.Icon_Color,
                                     ),
+
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
 
-                                  ListTile(
-                                    onTap: () {
-                                      Get.to(AddWork_Screen());
+                                  const SizedBox(height: 5),
+
+                                  // ================= ADD WORK =================
+                                  CustomTextButton(
+                                    text: "Work Address",
+
+                                    // ✅ Start alignment
+                                    textAlign: TextAlign.start,
+                                    rowMainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                    columnCrossAxisAlignment:
+                                        CrossAxisAlignment.start,
+
+                                    subtitle:
+                                        profileController
+                                                .profileData
+                                                ?.customer
+                                                ?.address2
+                                                ?.isNotEmpty ==
+                                            true
+                                        ? profileController
+                                              .profileData!
+                                              .customer!
+                                              .address2!
+                                        : "Please select work address",
+
+                                    onPressed: () {
+                                      final customer = profileController
+                                          .profileData
+                                          ?.customer;
+
+                                      if (customer?.address2 != null &&
+                                          customer!.address2!
+                                              .trim()
+                                              .isNotEmpty) {
+                                        homeC.activeField.value = "drop";
+
+                                        homeC.dropOff.text = customer.address2!;
+                                        homeC.setDrop(
+                                          (customer.address2Latitude ?? 0)
+                                              .toDouble(),
+                                          (customer.address2Longitude ?? 0)
+                                              .toDouble(),
+                                        );
+
+                                        homeC.fetchRoute();
+
+                                        homeC.update();
+                                      } else {
+                                        Get.to(AddWork_Screen());
+                                      }
                                     },
-                                    title: Text(
-                                      "Add Work",
-                                      style: AppTextStyles.regular(),
+
+                                    icon: Icon(
+                                      Icons.work,
+                                      color: CustomColor.Icon_Color,
                                     ),
-                                    // subtitle: Text(
-                                    //   profileController.profileData?.addworkAddress ?? 'Address',
-                                    //   style: AppTextStyles.small(),
-                                    // ),
-                                    leading: Icon(
-                                      controller.iconItems[controller
-                                          .selectedIndex
-                                          .value]["icon"],
-                                      color: CustomColor.textColor,
-                                      size: 25,
-                                    ),
+
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
 
                                   ListTile(
@@ -261,7 +336,7 @@ class _containerWidgetState extends State<containerWidget> {
                                     },
                                     title: Text(
                                       "Baby Note",
-                                      style: AppTextStyles.regular(),
+                                      style: AppTextStyles.medium(weight: FontWeight.bold),
                                     ),
                                     leading: Icon(
                                       Icons.note_alt_outlined,
@@ -269,7 +344,6 @@ class _containerWidgetState extends State<containerWidget> {
                                       size: 25,
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
@@ -283,39 +357,42 @@ class _containerWidgetState extends State<containerWidget> {
                             //     : MediaQuery.of(context).size.height * 0.3,
                             height:
                                 (homeC.showVia1.value && homeC.showVia2.value)
-                                ? MediaQuery.of(context).size.height * 0.18 // 2 VIA → smallest
+                                ? MediaQuery.of(context).size.height *
+                                      0.18 // 2 VIA → smallest
                                 : (homeC.showVia1.value)
-                                ? MediaQuery.of(context).size.height *0.25 // 1 VIA → medium
-                                : MediaQuery.of(context).size.height *0.35, // 0 VIA → large
+                                ? MediaQuery.of(context).size.height *
+                                      0.25 // 1 VIA → medium
+                                : MediaQuery.of(context).size.height *
+                                      0.35, // 0 VIA → large
 
                             child: Obx(
                               () => homeC.airportLoading.value
-                               ? Column(
-                                children: [
-                                  /// 🔹 TOP SLIM LOADER
-                                  SizedBox(
-                                    height: 3,
-                                    width: double.infinity,
-                                    child: LinearProgressIndicator(
-                                      minHeight: 3,
-                                      color: CustomColor.Icon_Color,
-                                      backgroundColor: Colors.white24,
-                                    ),
-                                  ),
+                                  ? Column(
+                                      children: [
+                                        /// 🔹 TOP SLIM LOADER
+                                        SizedBox(
+                                          height: 3,
+                                          width: double.infinity,
+                                          child: LinearProgressIndicator(
+                                            minHeight: 3,
+                                            color: CustomColor.Icon_Color,
+                                            backgroundColor: Colors.white24,
+                                          ),
+                                        ),
 
-                                  /// 🔹 Remaining empty space (so height stays same)
-                                  const Expanded(child: SizedBox()),
-                                ],
-                              )
-        //     SizedBox(
-                              //   height: 2,
-                              //   width: double.infinity,
-                              //   child: LinearProgressIndicator(
-                              //     minHeight: 3,
-                              //     color: CustomColor.Icon_Color,
-                              //     backgroundColor: Colors.white24,
-                              //   ),
-                              // )
+                                        /// 🔹 Remaining empty space (so height stays same)
+                                        const Expanded(child: SizedBox()),
+                                      ],
+                                    )
+                                  //     SizedBox(
+                                  //   height: 2,
+                                  //   width: double.infinity,
+                                  //   child: LinearProgressIndicator(
+                                  //     minHeight: 3,
+                                  //     color: CustomColor.Icon_Color,
+                                  //     backgroundColor: Colors.white24,
+                                  //   ),
+                                  // )
                                   : ListView.builder(
                                       itemCount: homeC.busStops.length,
                                       itemBuilder: (context, index) {
@@ -326,7 +403,9 @@ class _containerWidgetState extends State<containerWidget> {
                                           ),
 
                                           leading: Icon(
-                                            controller.iconItems[controller.selectedIndex.value]["icon"],
+                                            controller.iconItems[controller
+                                                .selectedIndex
+                                                .value]["icon"],
                                             color: CustomColor.textColor,
                                             size: 25,
                                           ),
@@ -350,14 +429,10 @@ class _containerWidgetState extends State<containerWidget> {
     );
   }
 
-
-
   void showBabyNoteDialog() {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         backgroundColor: CustomColor.Container_Colors,
         title: Text(
           "Baby Note",
@@ -367,8 +442,7 @@ class _containerWidgetState extends State<containerWidget> {
             weight: FontWeight.bold,
           ),
         ),
-        content:
-        CustomTextField(
+        content: CustomTextField(
           controller: homeC.babyNoteController,
           hintText: "Enter baby note...",
           borderRadius: 15,
@@ -401,7 +475,6 @@ class _containerWidgetState extends State<containerWidget> {
                 onPressed: () {
                   homeC.babyNoteController.clear();
                   Get.back();
-
                 },
                 backgroundColor: Colors.red,
                 textColor: Colors.white,
@@ -409,10 +482,7 @@ class _containerWidgetState extends State<containerWidget> {
                 elevation: 2,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
 
               SizedBox(width: 12),
@@ -428,18 +498,13 @@ class _containerWidgetState extends State<containerWidget> {
                 elevation: 2,
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
             ],
           ),
         ],
-
       ),
       barrierDismissible: false,
     );
   }
-
 }

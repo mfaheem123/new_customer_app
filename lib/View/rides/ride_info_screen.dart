@@ -638,18 +638,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                     child: MyElevatedButton(
                                       text: '',
                                       onPressed: () {
-                                        if (rideController
-                                            .selectedTimeOption
-                                            .value
-                                            .isEmpty) {
-                                          Get.snackbar(
-                                            "Select Time",
-                                            "Please select a time option first",
-                                            backgroundColor: Colors.black87,
-                                            colorText: Colors.white,
-                                          );
-                                          return;
-                                        }
+
 
                                         Get.dialog(
                                           Dialog(
@@ -685,14 +674,14 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                     height: 70,
                                                     width: 70,
                                                     decoration: BoxDecoration(
-                                                      color: Colors.red
+                                                      color: Colors.yellow
                                                           .withOpacity(0.08),
                                                       shape: BoxShape.circle,
                                                     ),
                                                     child: const Icon(
                                                       Icons
-                                                          .delete_forever_rounded,
-                                                      color: Colors.red,
+                                                          .check_circle_rounded,
+                                                      color: Colors.yellow,
                                                       size: 34,
                                                     ),
                                                   ),

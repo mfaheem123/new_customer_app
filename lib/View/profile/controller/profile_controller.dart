@@ -15,12 +15,12 @@ class profileModelController extends GetxController {
   RxBool loading = true.obs; // Remove Rx, will call update()
   GetProfileModel? profileData;
 
-  //
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   getuserProfile();
-  // }
+
+  @override
+  void onInit() {
+    super.onInit();
+    getuserProfile();
+  }
 
   ///--------------------------------------------------------------  user get profile api
 

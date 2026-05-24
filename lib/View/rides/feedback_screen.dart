@@ -2,15 +2,28 @@ import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji_feedback/flutter_emoji_feedback.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+
 import '../Deshboard/dashboard.dart';
 import '../Widgets/all_text.dart';
 import '../Widgets/elevat_button.dart';
+import 'model/booking_get_by_id/booking_get_model.dart';
 
 class ThanksScreen extends StatelessWidget {
-  const ThanksScreen({super.key});
+  ThanksScreen({super.key});
+
+  final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
+
+    /// 🔥 GET BOOKING FROM STORAGE
+    final bookingData = box.read("booking");
+
+    final booking = bookingData != null
+        ? Booking.fromJson(bookingData)
+        : null;
+
     return SafeArea(
       child: Scaffold(
         body: LayoutBuilder(
@@ -47,6 +60,7 @@ class ThanksScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
                           /// ================= TOP BAR =================
                           Row(
                             children: [
@@ -96,10 +110,10 @@ class ThanksScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 12),
-                                Icon(
+                                const Icon(
                                   Icons.favorite,
                                   color: Colors.white,
-                                  size: isTablet ? 36 : 28,
+                                  size: 28,
                                 ),
                               ],
                             ),
@@ -118,7 +132,7 @@ class ThanksScreen extends StatelessWidget {
                               ),
                               Expanded(
                                 child: Text(
-                                  "Muhammad Ibad Ullah Qureshi",
+                                  (booking?.name ?? "N/A").toUpperCase(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: AppTextStyles.medium(
@@ -139,8 +153,8 @@ class ThanksScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  "1A Worrior Garden St. LEO Worrior Garden St. LEO TN36eb",
-                                  maxLines: 3,
+                                  (booking?.dropoff ?? "No Address Found").toUpperCase(),
+                                  maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: AppTextStyles.medium(
                                     size: isTablet ? 20 : 18,
@@ -163,7 +177,9 @@ class ThanksScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                "Cash",
+                                booking?.paymentTypeId == 1
+                                    ? "Cash"
+                                    : "Credit Card",
                                 style: AppTextStyles.medium(
                                   size: isTablet ? 20 : 18,
                                 ),
@@ -194,21 +210,19 @@ class ThanksScreen extends StatelessWidget {
 
                           const SizedBox(height: 35),
 
-                          /// ================= EMOJI FEEDBACK =================
+                          /// ================= EMOJI =================
                           Center(
                             child: SizedBox(
                               width: isTablet ? 400 : double.infinity,
                               child: EmojiFeedback(
                                 initialRating: 4,
-                                animDuration:
-                                const Duration(milliseconds: 300),
+                                animDuration: const Duration(milliseconds: 300),
                                 curve: Curves.bounceIn,
                                 labelTextStyle: AppTextStyles.small(
                                   size: isTablet ? 16 : 14,
                                 ),
                                 inactiveElementScale: .5,
                                 onChanged: (value) {},
-                                onChangeWaitForAnimation: true,
                               ),
                             ),
                           ),
@@ -232,6 +246,11 @@ class ThanksScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: () {
+
+                                  /// 🔥 REMOVE BOOKING FROM STORAGE
+                                  box.remove("booking");
+
+                                  /// GO DASHBOARD
                                   Get.offAll(() => DeshBoard_Screen());
                                 },
                               ),
@@ -252,234 +271,3 @@ class ThanksScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-// import 'package:customer/View/textstyle/apptextstyle.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_emoji_feedback/flutter_emoji_feedback.dart';
-// import 'package:get/get.dart';
-// import '../Deshboard/dashboard.dart';
-// import '../Widgets/all_text.dart';
-// import '../Widgets/elevat_button.dart';
-//
-// class ThanksScreen extends StatelessWidget {
-//   const ThanksScreen({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final width = MediaQuery.of(context).size.width;
-//     final height = MediaQuery.of(context).size.height;
-//
-//     return SafeArea(
-//       child: Scaffold(
-//         body: Container(
-//           width: double.infinity,
-//           height: double.infinity,
-//           padding: const EdgeInsets.all(15),
-//           decoration: const BoxDecoration(
-//             gradient: LinearGradient(
-//               colors: [
-//                 Color.fromARGB(255, 30, 1, 44),
-//                 Color.fromARGB(255, 227, 194, 242),
-//               ],
-//               begin: Alignment.topCenter,
-//               end: Alignment.bottomCenter,
-//             ),
-//           ),
-//           child: SingleChildScrollView(
-//             physics: const BouncingScrollPhysics(),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 /// ================= TOP BAR =================
-//                 SizedBox(
-//                   height: height * 0.08,
-//                   child: Row(
-//                     children: [
-//                       IconButton(
-//                         onPressed: () => Get.back(),
-//                         icon: Icon(
-//                           Icons.arrow_back,
-//                           color: Colors.white,
-//                           size: width * 0.06,
-//                         ),
-//                       ),
-//                       Expanded(
-//                         child: Center(
-//                           child: Text(
-//                             CustomText.PaymentsDone,
-//                             style: TextStyle(
-//                               fontSize: width * 0.055,
-//                               fontWeight: FontWeight.bold,
-//                               color: Colors.white,
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                       // IconButton(
-//                       //   onPressed: () {},
-//                       //   icon: Icon(
-//                       //     Icons.edit_notifications_sharp,
-//                       //     color: Colors.yellow,
-//                       //     size: width * 0.06,
-//                       //   ),
-//                       // ),
-//                     ],
-//                   ),
-//                 ),
-//
-//                 SizedBox(height: height * 0.02),
-//
-//                 /// ================= THANK YOU BOX =================
-//                 Container(
-//                   height: height * 0.2,
-//                   padding: EdgeInsets.only(top: 30),
-//                   width: double.infinity,
-//                   decoration: BoxDecoration(
-//                     color: Colors.green,
-//                     borderRadius: BorderRadius.circular(25),
-//                   ),
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Text(
-//                         CustomText.Thanks_caption,
-//                         textAlign: TextAlign.center,
-//                         style: AppTextStyles.medium(),
-//                       ),
-//                       const SizedBox(height: 10),
-//                       const Icon(
-//                         Icons.favorite,
-//                         color: Colors.white,
-//                         size: 30,
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//
-//                 SizedBox(height: height * 0.02),
-//
-//                 /// ================= NAME =================
-//                 Row(
-//                   children: [
-//                     Text(
-//                       "${CustomText.Name_thnks_scr} : ",
-//                       style: AppTextStyles.medium(),
-//                     ),
-//                     Expanded(
-//                       child: Text(
-//                         "Muhammad Ibad Ullah Qureshi",
-//                         maxLines: 1,
-//                         overflow: TextOverflow.ellipsis,
-//                         style: AppTextStyles.medium(),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//
-//                 SizedBox(height: height * 0.015),
-//
-//                 /// ================= ADDRESS =================
-//                 Row(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     const Icon(Icons.location_on, color: Colors.red),
-//                     const SizedBox(width: 10),
-//                     Expanded(
-//                       child: Text(
-//                         "1A Worrior Garden St. LEO Worrior Garden St. LEO TN36eb",
-//                         maxLines: 2,
-//                         overflow: TextOverflow.ellipsis,
-//                         style: AppTextStyles.medium(),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//
-//                 SizedBox(height: height * 0.015),
-//
-//                 /// ================= PAYMENT METHOD =================
-//                 Row(
-//                   children: [
-//                     Text(
-//                       "${CustomText.Payments_Method} : ",
-//                       style: AppTextStyles.medium(),
-//                     ),
-//                     const SizedBox(width: 5),
-//                     Text(
-//                       "Cash",
-//                       style: AppTextStyles.medium(),
-//                     ),
-//                   ],
-//                 ),
-//
-//                 SizedBox(height: height * 0.01),
-//
-//                 /// ================= STATUS =================
-//                 Row(
-//                   children: [
-//                     Text(
-//                       "${CustomText.Status} : ",
-//                       style: AppTextStyles.medium(),
-//                     ),
-//                     const SizedBox(width: 5),
-//                     Text(
-//                       "Paid",
-//                       style: AppTextStyles.medium(),
-//                     ),
-//                   ],
-//                 ),
-//
-//                 SizedBox(height: height * 0.05),
-//
-//                 /// ================= EMOJI FEEDBACK =================
-//                 Center(
-//                   child: SizedBox(
-//                     width: width * 0.9,
-//                     child: EmojiFeedback(
-//                       initialRating: 4,
-//                       animDuration: const Duration(milliseconds: 300),
-//                       curve: Curves.bounceIn,
-//                       labelTextStyle: AppTextStyles.small(),
-//                       inactiveElementScale: .5,
-//                       onChanged: (value) {},
-//                       onChangeWaitForAnimation: true,
-//                     ),
-//                   ),
-//                 ),
-//
-//                 SizedBox(height: height * 0.05),
-//
-//                 /// ================= DONE BUTTON =================
-//                 Center(
-//                   child: SizedBox(
-//                     height: 55,
-//                     width: 250,
-//                     child: MyElevatedButton(
-//                       text: '',
-//                       textWidget: FittedBox(
-//                         child: Text(
-//                           "Done",
-//                           style: AppTextStyles.medium(
-//                             size: 25,
-//                             weight: FontWeight.bold,
-//                           ),
-//                         ),
-//                       ),
-//                       onPressed: () {
-//                         Get.offAll(() => DeshBoard_Screen());
-//                       },
-//                     ),
-//                   ),
-//                 ),
-//
-//                 SizedBox(height: height * 0.03),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }

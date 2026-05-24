@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../Controller/Home/home-controller.dart';
 import '../../Controller/Ride/RideController.dart';
 import '../../Controller/reebooking/reebookingcontroller.dart';
 import '../../Routing/routes_name.dart';
@@ -16,6 +17,7 @@ import '../Widgets/elevat_button.dart';
 import '../Widgets/text_button.dart';
 import '../Widgets/textformfield.dart';
 import '../payments/paymentscreen.dart';
+import '../profile/controller/profile_controller.dart';
 import '../rides/ridesearchscreen.dart';
 import 'extras.dart';
 
@@ -641,15 +643,15 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                           height: 70,
                                                           width: 70,
                                                           decoration: BoxDecoration(
-                                                            color: Colors.red
+                                                            color: Colors.yellow
                                                                 .withOpacity(0.08),
                                                             shape: BoxShape.circle,
                                                           ),
                                                           child: const Icon(
                                                             Icons
-                                                                .delete_forever_rounded,
-                                                            color: Colors.red,
-                                                            size: 34,
+                                                                .check_circle_rounded,
+                                                            color: Colors.yellow,
+                                                             size: 34,
                                                           ),
                                                         ),
 
@@ -687,14 +689,15 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                               textAlign:
                                                               TextAlign.center,
                                                               rowMainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                              MainAxisAlignment.center,
                                                               columnCrossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
+                                                              CrossAxisAlignment.center,
 
                                                               onPressed: () {
                                                                 reebookingController.historyBookingApi(trip);
+                                                                Get.find<profileModelController>().getuserProfile();
+                                                               final homeC = Get.find<SwapController>();
+                                                                homeC.resetRouteState();homeC.resetRouteState();
 
 
                                                                 if (reebookingController.selectedTimeOption.value == "ASAP") {

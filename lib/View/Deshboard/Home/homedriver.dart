@@ -67,6 +67,7 @@ class HomeDriver extends StatelessWidget {
                                     padding: const EdgeInsets.only(right: 25.0),
                                     child: CustomTextField(
                                       controller: homeC.pickUp,
+                                      textCapitalization: TextCapitalization.characters,
                                       hintText: "Pick Up",
                                       borderRadius: 20,
                                       prefixIcon: Icon(
@@ -78,11 +79,10 @@ class HomeDriver extends StatelessWidget {
                                         onTap: () {
                                           homeC.removePickUpField();
                                         },
-                                        child: Icon(
-                                          Icons.cancel,
-                                          size: 15,
-                                          color:
-                                              CustomColor.textField_Icon_Color,
+                                        child:  Icon(
+                                          Icons.close,
+                                          size: 18,
+                                          color: CustomColor.textField_Icon_Color,
                                         ),
                                       ),
                                       onChanged: (v) {
@@ -106,8 +106,10 @@ class HomeDriver extends StatelessWidget {
                                             children: [
                                               Expanded(
                                                 child: CustomTextField(
+                                                  textCapitalization: TextCapitalization.characters,
                                                   controller:
                                                       homeC.viaController1,
+
                                                   hintText: "1st Stop",
                                                   borderRadius: 20,
                                                   prefixIcon: Icon(
@@ -121,11 +123,10 @@ class HomeDriver extends StatelessWidget {
                                                       homeC.viaController1
                                                           .clear();
                                                     },
-                                                    child: Icon(
-                                                      Icons.cancel,
-                                                      size: 15,
-                                                      color: CustomColor
-                                                          .textField_Icon_Color,
+                                                    child:  Icon(
+                                                      Icons.close,
+                                                      size: 18,
+                                                      color: CustomColor.textField_Icon_Color,
                                                     ),
                                                   ),
                                                   onChanged: (v) {
@@ -157,6 +158,7 @@ class HomeDriver extends StatelessWidget {
                                             children: [
                                               Expanded(
                                                 child: CustomTextField(
+                                                  textCapitalization: TextCapitalization.characters,
                                                   controller:
                                                       homeC.viaController2,
                                                   hintText: "2nd Stop",
@@ -172,11 +174,10 @@ class HomeDriver extends StatelessWidget {
                                                       homeC.viaController2
                                                           .clear();
                                                     },
-                                                    child: Icon(
-                                                      Icons.cancel,
-                                                      size: 15,
-                                                      color: CustomColor
-                                                          .textField_Icon_Color,
+                                                    child:   Icon(
+                                                      Icons.close,
+                                                      size: 18,
+                                                      color: CustomColor.textField_Icon_Color,
                                                     ),
                                                   ),
                                                   onChanged: (v) {
@@ -210,6 +211,7 @@ class HomeDriver extends StatelessWidget {
                                     padding: const EdgeInsets.only(right: 25.0),
                                     child: CustomTextField(
                                       controller: homeC.dropOff,
+                                      textCapitalization: TextCapitalization.characters,
                                       hintText: "Destination",
                                       borderRadius: 20,
                                       prefixIcon: Icon(
@@ -221,11 +223,10 @@ class HomeDriver extends StatelessWidget {
                                         onTap: () {
                                           homeC.removeDropOff();
                                         },
-                                        child: Icon(
-                                          Icons.cancel,
-                                          size: 15,
-                                          color:
-                                              CustomColor.textField_Icon_Color,
+                                        child:  Icon(
+                                          Icons.close,
+                                          size: 18,
+                                          color: CustomColor.textField_Icon_Color,
                                         ),
                                       ),
                                       onChanged: (v) {
@@ -314,7 +315,7 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.searchList,
                                 onTap: (item) {
-                                  homeC.pickUp.text = item.name ?? "";
+                                  homeC.pickUp.text = (item.name ?? "").toUpperCase();
 
                                   homeC.setPickup(
                                     item.lat ?? 0.0,
@@ -333,7 +334,7 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.dropSearchList,
                                 onTap: (item) {
-                                  homeC.dropOff.text = item.name ?? "";
+                                  homeC.dropOff.text = (item.name ?? "").toUpperCase();
                                   homeC.setDrop(
                                     item.lat ?? 0.0,
                                     item.lon ?? 0.0,
@@ -351,7 +352,7 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.viaSearchList1,
                                 onTap: (item) {
-                                  homeC.viaController1.text = item.name ?? "";
+                                  homeC.viaController1.text = (item.name ?? "").toUpperCase();
                                   homeC.setVia1(
                                     item.lat ?? 0.0,
                                     item.lon ?? 0.0,
@@ -372,7 +373,8 @@ class HomeDriver extends StatelessWidget {
                                     item.lon ?? 0.0,
 
                                   );
-                                  homeC.viaController2.text = item.name ?? "";
+                                  homeC.viaController2.text = (item.name ?? "").toUpperCase();
+
                                   controller.viaSearchList2.clear();
                                 },
                               );
@@ -511,7 +513,7 @@ class HomeDriver extends StatelessWidget {
                   color: CustomColor.Icon_Color,
                 ),
                 title: Text(
-                  "${item.name ?? ""}  ${item.postcode ?? ""}",
+                ("${item.name ?? ""}  ${item.postcode ?? ""}").toUpperCase(),
                   style: AppTextStyles.regular(),
                 ),
                 onTap: () => onTap(item), // 🔥 callback
