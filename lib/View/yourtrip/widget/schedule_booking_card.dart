@@ -409,7 +409,9 @@ class ScheduleBookingCard extends StatelessWidget {
                       onPressed: () {
                         // Get.toNamed('/TripDetail');
 
-                        final swapController = Get.find<SwapController>();
+                        final swapController = Get.isRegistered<SwapController>()
+                            ? Get.find<SwapController>()
+                            : Get.put(SwapController());
 
                         swapController.setRouteFromBooking(trip);
 

@@ -203,8 +203,9 @@ class bookingCardwidget extends StatelessWidget {
                     color: CustomColor.Container_Colors,
                     child: TextButton(
                       onPressed: () {
-                          final swapController = Get.find<SwapController>();
-
+                        final swapController = Get.isRegistered<SwapController>()
+                            ? Get.find<SwapController>()
+                            : Get.put(SwapController());
                           swapController.setRouteFromBooking(trip);
 
 
@@ -227,7 +228,10 @@ class bookingCardwidget extends StatelessWidget {
                       onPressed: () {
                        // Get.toNamed('/TripDetail');
 
-                        final swapController = Get.find<SwapController>();
+                        // final swapController = Get.find<SwapController>();
+                        final swapController = Get.isRegistered<SwapController>()
+                            ? Get.find<SwapController>()
+                            : Get.put(SwapController());
 
                         swapController.setRouteFromBooking(trip);
 
