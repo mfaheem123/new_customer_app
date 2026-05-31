@@ -23,6 +23,8 @@ class DeshBoard_Screen extends StatefulWidget {
 }
 
 class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
+
+
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
       : Get.put(profileModelController());
@@ -133,8 +135,9 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                         // ================= WHERE TO =================
                         InkWell(
                           onTap: () {
-                            Get.toNamed(routesName.HomeDriver);
+
                             homeC.pickupCurrentLocation();
+                            Get.toNamed(routesName.HomeDriver);
                           },
                           child: Container(
                             height: 50,
@@ -194,9 +197,9 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                               homeC.fetchRoute();
                               homeC.pickupCurrentLocation();
 
-                              Get.to(HomeDriver());
+                              Get.to(()=>HomeDriver());
                             } else {
-                              Get.to(AddHomeScreen());
+                              Get.to(()=>AddHomeScreen());
                             }
                           },
 
@@ -247,9 +250,9 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                               homeC.fetchRoute();
                               homeC.pickupCurrentLocation();
                               homeC.update();
-                              Get.to(HomeDriver());
+                              Get.to(()=>HomeDriver());
                             } else {
-                              Get.to(AddWork_Screen());
+                              Get.to(()=>AddWork_Screen());
                             }
                           },
 

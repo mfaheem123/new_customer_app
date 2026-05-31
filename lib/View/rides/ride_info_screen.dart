@@ -6,8 +6,10 @@ import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../Controller/Home/home-controller.dart';
 import '../Widgets/elevat_button.dart';
 import '../Widgets/text_button.dart';
+import '../profile/controller/profile_controller.dart';
 import 'ridesearchscreen.dart';
 
 class RideInfoScreen extends StatefulWidget {
@@ -742,6 +744,22 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                                   .DeshBoard_Screen,
                                                             );
                                                           }
+                                                          final profileController = Get.isRegistered<profileModelController>()
+                                                              ? Get.find<profileModelController>()
+                                                              : Get.put(profileModelController());
+                                                          profileController.getuserProfile();
+
+                                                          final homeC = Get.isRegistered<SwapController>()
+                                                              ? Get.find<SwapController>()
+                                                              : Get.put(SwapController());
+                                                          homeC.resetRouteState();homeC.resetRouteState();
+                                                          homeC.dropOff.clear();
+                                                          homeC.pickUp.clear();
+                                                          homeC.viaController1.clear();
+                                                          homeC.viaController2.clear();
+                                                          homeC.activeField.value = "";
+                                                          homeC.update();
+
                                                         },
                                                         backgroundColor:
                                                             Colors.red,

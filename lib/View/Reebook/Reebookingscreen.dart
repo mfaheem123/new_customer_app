@@ -696,8 +696,8 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                               onPressed: () {
                                                                 reebookingController.historyBookingApi(trip);
                                                                 Get.find<profileModelController>().getuserProfile();
-                                                               final homeC = Get.find<SwapController>();
-                                                                homeC.resetRouteState();homeC.resetRouteState();
+
+
 
 
                                                                 if (reebookingController.selectedTimeOption.value == "ASAP") {
@@ -708,6 +708,22 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                                   // 👉 Scheduled → Dashboard
                                                                   Get.offAllNamed(routesName.DeshBoard_Screen);
                                                                 }
+
+                                                                final profileController = Get.isRegistered<profileModelController>()
+                                                                    ? Get.find<profileModelController>()
+                                                                    : Get.put(profileModelController());
+                                                                profileController.getuserProfile();
+
+                                                                final homeC = Get.isRegistered<SwapController>()
+                                                                    ? Get.find<SwapController>()
+                                                                    : Get.put(SwapController());
+                                                                homeC.resetRouteState();homeC.resetRouteState();
+                                                                homeC.dropOff.clear();
+                                                                homeC.pickUp.clear();
+                                                                homeC.viaController1.clear();
+                                                                homeC.viaController2.clear();
+                                                                homeC.activeField.value = "";
+                                                                homeC.update();
                                                               },
                                                               backgroundColor:
                                                               Colors.red,

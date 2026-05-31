@@ -470,38 +470,90 @@ class _containerWidgetState extends State<containerWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
+              /// YES BUTTON
               CustomTextButton(
+                width: 75,
+                height: 42,
                 text: 'Cancel',
-                onPressed: () {
+
+                textAlign: TextAlign.center,
+                rowMainAxisAlignment: MainAxisAlignment.center,
+                columnCrossAxisAlignment: CrossAxisAlignment.center,
+
+                onPressed: () async {
                   homeC.babyNoteController.clear();
-                  Get.back();
+                      Get.back();
                 },
+
                 backgroundColor: Colors.red,
-                textColor: Colors.white,
-                borderRadius: 8,
+                textColor: CustomColor.textColor,
+                borderRadius: 10,
                 elevation: 2,
-                fontSize: 10,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
 
-              SizedBox(width: 12),
+              const SizedBox(width: 15),
 
+              /// NO BUTTON
               CustomTextButton(
-                text: '  Save  ',
+                width: 75,
+                height: 42,
+                text: ' Save ',
+
+                textAlign: TextAlign.center,
+                rowMainAxisAlignment: MainAxisAlignment.center,
+                columnCrossAxisAlignment: CrossAxisAlignment.center,
+
                 onPressed: () {
                   homeC.babynoteText();
                 },
+
                 backgroundColor: CustomColor.Button_background_Color,
-                textColor: Colors.white,
-                borderRadius: 8,
+                textColor: CustomColor.textColor,
+                borderRadius: 10,
                 elevation: 2,
-                fontSize: 11,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
             ],
           ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     CustomTextButton(
+          //       text: 'Cancel',
+          //       onPressed: () {
+          //         homeC.babyNoteController.clear();
+          //         Get.back();
+          //       },
+          //       backgroundColor: Colors.red,
+          //       textColor: Colors.white,
+          //       borderRadius: 8,
+          //       elevation: 2,
+          //       fontSize: 10,
+          //       fontWeight: FontWeight.bold,
+          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          //     ),
+          //
+          //     SizedBox(width: 12),
+          //
+          //     CustomTextButton(
+          //       text: '  Save  ',
+          //       onPressed: () {
+          //         homeC.babynoteText();
+          //       },
+          //       backgroundColor: CustomColor.Button_background_Color,
+          //       textColor: Colors.white,
+          //       borderRadius: 8,
+          //       elevation: 2,
+          //       fontSize: 11,
+          //       fontWeight: FontWeight.bold,
+          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
       barrierDismissible: false,

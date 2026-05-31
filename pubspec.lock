@@ -153,14 +153,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  file_picker:
-    dependency: "direct main"
-    description:
-      name: file_picker
-      sha256: d974b6ba2606371ac71dd94254beefb6fa81185bde0b59bdc1df09885da85fde
-      url: "https://pub.dev"
-    source: hosted
-    version: "10.3.8"
   file_selector_linux:
     dependency: transitive
     description:
@@ -318,30 +310,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.1.0"
-  flutter_osm_interface:
-    dependency: transitive
-    description:
-      name: flutter_osm_interface
-      sha256: fe7b02fee205aec861d0f08f643d4d6c49a5b9df06d3b43919fdf6699a275829
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.0"
-  flutter_osm_plugin:
-    dependency: "direct main"
-    description:
-      name: flutter_osm_plugin
-      sha256: f926a711cc193fed5c9aacde79603d81cd54c93ea19d35e553b5cec062b6bb46
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.3"
-  flutter_osm_web:
-    dependency: transitive
-    description:
-      name: flutter_osm_web
-      sha256: "570e714db452f43480fc81f48592139a48865c75a3092a19e4c536416b154bf5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -504,14 +472,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  google_polyline_algorithm:
-    dependency: transitive
-    description:
-      name: google_polyline_algorithm
-      sha256: "357874f00d3f93c3ba1bf4b4d9a154aa9ee87147c068238c1e8392012b686a03"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
   gsettings:
     dependency: transitive
     description:
@@ -928,14 +888,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-  routing_client_dart:
-    dependency: transitive
-    description:
-      name: routing_client_dart
-      sha256: "4e2acf1145bb8056e04fd93101a9f2bab2fd769c9d972f7f403f9733a670cb33"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.5"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -981,14 +933,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  stream_transform:
-    dependency: transitive
-    description:
-      name: stream_transform
-      sha256: ad47125e588cfd37a9a7f86c7d6356dde8dfe89d071d293f80ca9e9273a33871
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
   string_scanner:
     dependency: transitive
     description:
