@@ -130,8 +130,16 @@ class PickupScreen extends StatelessWidget {
                       //
                       // )
                       // OpenStreetMapWidget(),//==== map
-                      SizedBox(
+                      Container(
                         height: MediaQuery.of(context).size.height * 0.55,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.grey, width: 2),
+                          image: const DecorationImage(
+                            image: AssetImage("assets/images/map_image.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                         //  child: Image(image: AssetImage("assets/images/map2.png"),fit: BoxFit.cover,),
                         child: PickupLocationScreen(),
                       ),

@@ -13,7 +13,7 @@ class DeshBoardAddHome_Controller extends GetxController {
   Future<void> sendEmail() async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
-      path: 'example@gmail.com',
+      path: 'info@seacars,co.uk',
       queryParameters: {
         'subject': 'Ride Inquiry',
         'body': 'Hello, I need help regarding my ride',
