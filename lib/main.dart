@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Customer App',
       initialRoute:  routesName.Splash_Screen,
-      initialBinding: InitialBinding(), // ✅ ADD THIS
+      initialBinding: InitialBinding(),
       //transitionDuration: Duration(seconds: ),
       defaultTransition: Transition.leftToRight,
       builder: BotToastInit(),

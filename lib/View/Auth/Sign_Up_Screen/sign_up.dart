@@ -350,7 +350,8 @@ class _SigUp_ScreenState extends State<SigUp_Screen> {
                     ],
                   ),
 
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 150),
+                  // const SizedBox(height: 100),
                 ],
               ),
             ),

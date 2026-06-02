@@ -45,14 +45,15 @@ class ExtrasScreen extends StatelessWidget {
                     ),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
 
                       IconButton(
                         onPressed: () => Get.back(),
                         icon: Icon(
                           Icons.arrow_back,
-                          size: MediaQuery.of(context).size.width * 0.06,
+                          // size: MediaQuery.of(context).size.width * 0.06,
+                          size: 25,
                           color: CustomColor.Icon_Color,
                         ),
                       ),
@@ -63,7 +64,7 @@ class ExtrasScreen extends StatelessWidget {
                           child: Text(
                             "Extras",
                             style: AppTextStyles.heading(
-                              size: MediaQuery.of(context).size.width * 0.06,
+                              // size: MediaQuery.of(context).size.width * 0.06,
                             ),
                           ),
                         ),
@@ -258,58 +259,137 @@ class ExtrasScreen extends StatelessWidget {
 
                       const SizedBox(height: 15),
 
-
                       Row(
                         children: [
 
-                          Column(
-                            children: const [
-                              Text(
-                                "Water / Extras",
-                                style: TextStyle(color: CustomColor.Text_Color, fontSize: 15),
-                              ),
-                              Text(
-                                "17.00",
-                                style: TextStyle(
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "Water / Extras",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
                                     color: CustomColor.Text_Color,
                                     fontSize: 15,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 10),
-                          Padding(
-                            padding: EdgeInsetsGeometry.only(top: 20),
-                              child: Icon(Icons.add, size: 25, color: CustomColor.Icon_Color)),
-                          const SizedBox(width: 10),
-                          Column(
-                            children: const [
-                              Text(
-                                "Extra Charges",
-                                style: TextStyle(color: CustomColor.Text_Color, fontSize: 15),
-                              ),
-                              Text(
-                                "17.00",
-                                style: TextStyle(
+                                  ),
+                                ),
+                                Text(
+                                  "00.00",
+                                  style: TextStyle(
                                     color: CustomColor.Text_Color,
                                     fontSize: 15,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(width: 15),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15.0),
-                            child: const Text(
-                              "=   34.00",
+
+                          const SizedBox(width: 5),
+
+                          const Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: Icon(
+                              Icons.add,
+                              size: 22,
+                              color: CustomColor.Icon_Color,
+                            ),
+                          ),
+
+                          const SizedBox(width: 5),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "Extra Charges",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: CustomColor.Text_Color,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Text(
+                                  "00.00",
+                                  style: TextStyle(
+                                    color: CustomColor.Text_Color,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(width: 5),
+
+                          const Padding(
+                            padding: EdgeInsets.only(top: 15),
+                            child: Text(
+                              "= 00.00",
                               style: TextStyle(
-                                  color: CustomColor.Text_Color,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                                color: CustomColor.Text_Color,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
                       ),
+
+                      // Row(
+                      //   children: [
+                      //
+                      //     Column(
+                      //       children: const [
+                      //         Text(
+                      //           "Water / Extras",
+                      //           style: TextStyle(color: CustomColor.Text_Color, fontSize: 15),
+                      //         ),
+                      //         Text(
+                      //           "17.00",
+                      //           style: TextStyle(
+                      //               color: CustomColor.Text_Color,
+                      //               fontSize: 15,
+                      //               fontWeight: FontWeight.bold),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     const SizedBox(width: 10),
+                      //     Padding(
+                      //       padding: EdgeInsetsGeometry.only(top: 20),
+                      //         child: Icon(Icons.add, size: 25, color: CustomColor.Icon_Color)),
+                      //     const SizedBox(width: 10),
+                      //     Column(
+                      //       children: const [
+                      //         Text(
+                      //           "Extra Charges",
+                      //           style: TextStyle(color: CustomColor.Text_Color, fontSize: 15),
+                      //         ),
+                      //         Text(
+                      //           "17.00",
+                      //           style: TextStyle(
+                      //               color: CustomColor.Text_Color,
+                      //               fontSize: 15,
+                      //               fontWeight: FontWeight.bold),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     const SizedBox(width: 10),
+                      //     Padding(
+                      //       padding: const EdgeInsets.only(top: 15.0,right: 10),
+                      //       child: const Text(
+                      //         "=  34.0",
+                      //         style: TextStyle(
+                      //             color: CustomColor.Text_Color,
+                      //             fontSize: 18,
+                      //             fontWeight: FontWeight.bold),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
 
                       const SizedBox(height: 25),
 

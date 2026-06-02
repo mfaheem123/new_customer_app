@@ -372,7 +372,7 @@ class RideCompleteScreen extends StatelessWidget {
                   /// ================= TOP =================
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
-                    height: MediaQuery.of(context).size.height * 0.85,
+                    height: MediaQuery.of(context).size.height * 0.8,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -383,7 +383,7 @@ class RideCompleteScreen extends StatelessWidget {
                             child: Text(
                               CustomText.Ride_Complete,
                               style: AppTextStyles.heading(
-                                size: MediaQuery.of(context).size.width * 0.06,
+                                // size: MediaQuery.of(context).size.width * 0.06,
                               ),
                             ),
                           ),
@@ -554,7 +554,7 @@ class RideCompleteScreen extends StatelessWidget {
 
                   /// ================= CALL SUPPORT =================
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
+                   padding: const EdgeInsets.symmetric(vertical: 5),
                     decoration: BoxDecoration(
                       color: CustomColor.Container_Colors,
                       borderRadius: const BorderRadius.only(
