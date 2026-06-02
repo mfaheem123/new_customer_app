@@ -364,14 +364,14 @@ class Aboutscreen extends StatelessWidget {
 
                   const SizedBox(height: 15),
 
-                  // ================= APP NAME
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      "CRMILES" ,
-                      style: AppTextStyles.heading(),
-                    ),
-                  ),
+              // ================= APP NAME
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(
+                  "SEA CARS PRIVATE HIRE LTD",
+                  style: AppTextStyles.heading(size: 20),
+                ),
+              ),
 
                   // ================= ADDRESS
                   Padding(

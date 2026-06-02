@@ -142,8 +142,8 @@ class RideSearchScreen extends StatelessWidget {
 
                 // ================= Cancel Button
                 SizedBox(
-                  height: buttonHeight,
-                  width: buttonWidth,
+                  height: 50,
+                  width: 250,
                   child: MyElevatedButton(
                     text: '',
                     onPressed: () {

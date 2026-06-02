@@ -20,7 +20,7 @@ class ForgetPasswordOtp extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         //backgroundColor: AppColors.primary,
-        leading: BackButton(color: Colors.white),
+
       ),
       body: Container(
         decoration: const BoxDecoration(
