@@ -67,8 +67,7 @@ class _YourtripState extends State<Yourtrip> {
                       },
                       icon: Icon(
                         Icons.arrow_back,
-                        size: 25,
-                        // size: MediaQuery.of(context).size.width * 0.06,
+                        size: MediaQuery.of(context).size.width * 0.06,
                         color: CustomColor.Icon_Color,
                       ),
                     ),
@@ -80,23 +79,22 @@ class _YourtripState extends State<Yourtrip> {
                         child: Text(
                           CustomText.Your_Trip,
                           style: AppTextStyles.heading(
-                            // size: MediaQuery.of(context).size.width * 0.06,
+                            size: MediaQuery.of(context).size.width * 0.06,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.06,)
 
-                    // IconButton(
-                    //   onPressed: () {
-                    //    //   Get.back();
-                    //   },
-                      // icon: Icon(
-                      //   Icons.edit_notifications_sharp,
-                      //   size: MediaQuery.of(context).size.width * 0.06,
-                      //   color: Colors.yellow,
-                      // ),
-                    // ),
+                    IconButton(
+                      onPressed: () {
+                       //   Get.back();
+                      },
+                      icon: Icon(
+                        Icons.edit_notifications_sharp,
+                        size: MediaQuery.of(context).size.width * 0.06,
+                        color: Colors.yellow,
+                      ),
+                    ),
                   ],
                 ),
               ),

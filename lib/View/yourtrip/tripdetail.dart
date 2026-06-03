@@ -60,8 +60,7 @@ class TripDetail extends StatelessWidget {
               ),
           
              ///=========================  Map
-              Container(
-
+              SizedBox(
                   height: 300,
                   child:  MapScreen()
           

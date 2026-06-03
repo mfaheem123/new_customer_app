@@ -531,12 +531,12 @@ Future<void> pickupLocation(String text) async {
   Future<void> setPickup(double lat, double lon) async {
     selectedPickUPLat = lat;
     selectedPickUPLon = lon;
-    print("pickUp ====================================${selectedPickUPLat }   , ${selectedPickUPLon }");
+    print("====================================${selectedPickUPLat }   , ${selectedPickUPLon }");
     await fetchRoute();
     update();
   }
   
-    void setDrop(double lat, double  lon) {
+    void setDrop(double lat, double lon) {
       selectedDropLat = lat;
       selectedDropLon = lon;
       print("Dropoff================================================${selectedDropLat }   , ${selectedDropLon }");
