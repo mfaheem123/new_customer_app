@@ -146,7 +146,7 @@ class ExtrasScreen extends StatelessWidget {
 
 
                 Padding(
-                    padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
                   child: Column(
                     children: [
                       const SizedBox(height: 10),
@@ -155,7 +155,7 @@ class ExtrasScreen extends StatelessWidget {
                       CustomTextField(
                         hintText: "Enter ",
                         borderRadius: 15,
-                       // fillColor: CustomColor.textfield_fill,
+                        // fillColor: CustomColor.textfield_fill,
                         maxlength: 30,
                         maxLines: 3,
                         contentPadding: EdgeInsets.symmetric(vertical: 25, horizontal: 15),

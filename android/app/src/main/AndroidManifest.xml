@@ -27,7 +27,7 @@
 
     <application
         android:name="${applicationName}"
-        android:label="customer_app"
+        android:label="SeaCars"
         android:icon="@mipmap/ic_launcher">
 
         <activity

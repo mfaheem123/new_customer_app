@@ -400,7 +400,7 @@ class RideController extends GetxController {
       baseFare = (data['fare'] ?? 0).toDouble();
       totalFare = (data['total_fare'] ?? 0).toDouble();
 
-      print("FARE CALCULATED ✅ => $data");
+      print("FARE CALCULATED ✅ => $data" );
       print("BASE FARE => $baseFare");
       print("TOTAL FARE => $totalFare");
 

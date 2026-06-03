@@ -553,38 +553,42 @@ class RideCompleteScreen extends StatelessWidget {
                   const Spacer(),
 
                   /// ================= CALL SUPPORT =================
-                  Container(
-                   padding: const EdgeInsets.symmetric(vertical: 5),
-                    decoration: BoxDecoration(
-                      color: CustomColor.Container_Colors,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                          onPressed: () async {
-                            final phone =
-                                 "01424202020";
+                  InkWell(
+                    onTap: ()async {
 
-                            final Uri phoneUri = Uri.parse("tel:$phone");
+                        final phone =
+                            "01424202020";
 
-                            await launchUrl(
-                              phoneUri,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          },
-                          child: Text(
-                            "Help And Support Please Call",
-                            style: AppTextStyles.medium(),
-                          ),
+                        final Uri phoneUri = Uri.parse("tel:$phone");
+
+                        await launchUrl(
+                        phoneUri,
+                        mode: LaunchMode.externalApplication,
+                        );
+                    },
+                    child: Container(
+                     padding: const EdgeInsets.symmetric(vertical: 13),
+                      height: MediaQuery.of(context).size.height*0.1,
+                      decoration: BoxDecoration(
+                        color: CustomColor.Container_Colors,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
                         ),
-                        const Icon(Icons.call,
-                            size: 25, color: Colors.white),
-                      ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                           Text(
+                              "Help And Support Please Call",
+                              style: AppTextStyles.medium(),
+                            ),
+
+                          const Icon(Icons.call,
+                              size: 25, color: Colors.white),
+                        ],
+                      ),
                     ),
                   ),
 

@@ -1,287 +1,286 @@
-// import 'package:customer/View/Widgets/all_text.dart';
-// import 'package:customer/View/Widgets/color.dart';
+//
+//
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:get/get_core/src/get_main.dart';
 // import 'package:url_launcher/url_launcher.dart';
+//
 // import '../../../Controller/Deshboard/deshboard_cont.dart';
-// import '../../Widgets/elevat_button.dart';
-// import '../../textstyle/apptextstyle.dart';
 // import '../map_widget/map_controller.dart';
 // import '../map_widget/open_street_map.dart';
-//
-//
+// import '../../Widgets/color.dart';
+// import '../../Widgets/elevat_button.dart';
+// import '../../Widgets/all_text.dart';
+// import '../../textstyle/apptextstyle.dart';
 //
 // class Aboutscreen extends StatelessWidget {
-//    Aboutscreen({super.key});
-//   // final mapWedgit =OpenStreetMapWidget();
+//   Aboutscreen({super.key});
 //
+//   final controller = Get.isRegistered<PickLocationController>()
+//       ? Get.find<PickLocationController>()
+//       : Get.put(PickLocationController());
 //
-//    final controller = Get.isRegistered<PickLocationController>()
-//        ? Get.find<PickLocationController>()
-//        : Get.put(PickLocationController());
-//    final deshboardcontroller = Get.isRegistered<DeshBoardAddHome_Controller>()
-//        ? Get.find<DeshBoardAddHome_Controller>()
-//        : Get.put(DeshBoardAddHome_Controller());
+//   final deshboardcontroller = Get.isRegistered<DeshBoardAddHome_Controller>()
+//       ? Get.find<DeshBoardAddHome_Controller>()
+//       : Get.put(DeshBoardAddHome_Controller());
+//
 //   @override
 //   Widget build(BuildContext context) {
+//     final size = MediaQuery.of(context).size;
+//
 //     return SafeArea(
 //       child: Scaffold(
-//         //backgroundColor: CustomColor.background,
-//
-//         body:  Container(
-//           height:MediaQuery.of(context).size.height,
-//           width:MediaQuery.of(context).size.width,
-//           decoration: BoxDecoration(
+//         body: Container(
+//           width: size.width,
+//           height: size.height,
+//           decoration: const BoxDecoration(
 //             gradient: LinearGradient(
 //               colors: [
 //                 Color.fromARGB(255, 30, 1, 44),
-//                 Color.fromARGB(255, 227, 194, 242)
+//                 Color.fromARGB(255, 227, 194, 242),
 //               ],
 //               begin: Alignment.topCenter,
 //               end: Alignment.bottomCenter,
 //             ),
 //           ),
-//           child : Column(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
 //
-//               Container(
-//                 padding: EdgeInsets.symmetric(horizontal: 10),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Row(
-//                       children: [
-//                         IconButton(
-//                           onPressed: () {
-//                             Get.back();
-//                           },
-//                           icon: Icon(
-//                             Icons.arrow_back,
-//                             size: MediaQuery.of(context).size.width * 0.06,
-//                             color: CustomColor.Icon_Color,
+//           // ✅ IMPORTANT FIX
+//           child:Padding(
+//             padding: const EdgeInsets.only(bottom: 20),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 // ================= HEADER
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 0),
+//                   child: Row(
+//                     children: [
+//                       IconButton(
+//                         onPressed: () => Get.back(),
+//                         icon: Icon(
+//                           Icons.arrow_back,
+//                           size: 25,
+//                           color: CustomColor.Icon_Color,
+//                         ),
+//                       ),
+//
+//                       Expanded(
+//                         child: Center(
+//                           child: Text(
+//                             CustomText.About,
+//                             style: AppTextStyles.heading(),
 //                           ),
 //                         ),
+//                       ),
 //
-//                         // SizedBox(width: 5),
+//                       // right side empty space for perfect center
+//                       const SizedBox(width: 48),
+//                     ],
+//                   ),
+//                 ),
 //
-//                         Expanded(
-//                           child: Center(
-//                             child: Text(
-//                               CustomText.About,
-//                               style: AppTextStyles.heading(
-//                                 size: MediaQuery.of(context).size.width * 0.06,
+//                 const SizedBox(height: 15),
 //
-//                               ),
+//                 // ================= APP NAME
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//                   child: Text("SEA CARS PRIVATE HIRE LTD", style: AppTextStyles.heading(size: 20)),
+//                 ),
+//
+//                 // ================= ADDRESS
+//                 Padding(
+//                   padding: const EdgeInsets.all(6.0),
+//                   child: Row(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       const Icon(
+//                         Icons.location_on_rounded,
+//                         size: 20,
+//                         color: Colors.red,
+//                       ),
+//                       const SizedBox(width: 8),
+//                       Expanded(
+//                         child: Text(
+//                           ("1 Warrior Gardens, St. Leonards-on-Sea TN37 6EB")
+//                               .toUpperCase(),
+//                           softWrap: true,
+//                           maxLines: 3,
+//                           overflow: TextOverflow.ellipsis,
+//                           style: AppTextStyles.medium(),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//
+//                 // ================= CALL / EMAIL
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 10),
+//                   child: Row(
+//                     children: [
+//                       const Spacer(),
+//
+//                       CircleAvatar(
+//                         radius: 20,
+//                         backgroundColor: Colors.white,
+//                         child: IconButton(
+//                           onPressed: () async {
+//                             final Uri phoneUri = Uri.parse(
+//                               "tel://01424202020",
+//                             );
+//
+//                             await launchUrl(
+//                               phoneUri,
+//                               mode: LaunchMode.externalApplication,
+//                             );
+//                           },
+//                           icon: const Icon(
+//                             Icons.call,
+//                             size: 20,
+//                             color: Colors.black,
+//                           ),
+//                         ),
+//                       ),
+//
+//                       const SizedBox(width: 10),
+//
+//                       CircleAvatar(
+//                         radius: 20,
+//                         backgroundColor: Colors.white,
+//                         child: IconButton(
+//                           onPressed: () {
+//                             deshboardcontroller.sendEmail();
+//                           },
+//                           icon: const Icon(
+//                             Icons.email,
+//                             size: 20,
+//                             color: Colors.black,
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                  Spacer(),
+//
+//                 // const SizedBox(height: 15),
+//
+//                 // ================= MAP (RESPONSIVE)
+//                 Stack(
+//                     children: [
+//                       SizedBox(
+//                         height: MediaQuery.of(context).size.height * 0.65,
+//                         width: double.infinity,
+//                       ),
+//
+//                       Container(
+//                        // margin: const EdgeInsets.symmetric(horizontal: 10),
+//                         height: MediaQuery.of(context).size.height * 0.65,
+//                         width: double.infinity,
+//                         decoration: BoxDecoration(
+//                           // borderRadius: BorderRadius.circular(20),
+//                           // border: Border.all(color: Colors.grey, width: 2),
+//                           image: const DecorationImage(
+//                             image: AssetImage("assets/images/map_about.png"),
+//                             fit: BoxFit.cover,
+//                           ),
+//                         ),
+//                       ),
+//                       Positioned(
+//                          top :MediaQuery.of(context).size.height * 0.45,
+//                         bottom: 60, // neechy
+//                         left: 0,
+//                         right: 0,
+//                         child: Container(
+//                           margin: const EdgeInsets.symmetric(horizontal: 10),
+//                           height: MediaQuery.of(context).size.height * 0.2,
+//                           width: 100,
+//                           decoration: BoxDecoration(
+//                             shape: BoxShape.circle,
+//                             color: Colors.white,
+//                             image: const DecorationImage(
+//                               image: AssetImage("assets/images/logo.png"),
+//                               fit: BoxFit.contain,
 //                             ),
 //                           ),
 //                         ),
-//
-//
-//                       ],
-//                     ),
-//
-//
-//                     // Row(
-//                     //   children: [
-//                     //
-//                     //     Padding(
-//                     //       padding:  EdgeInsets.only(left: 15),
-//                     //       child: Container(
-//                     //         decoration: BoxDecoration(
-//                     //           color: Colors.blueGrey,
-//                     //           borderRadius: BorderRadius.circular(7),
-//                     //         ),
-//                     //         height: 40,
-//                     //         width: 40,
-//                     //         child: IconButton(
-//                     //           onPressed: () {
-//                     //             Get.back();
-//                     //           },
-//                     //           icon:  Icon(Icons.arrow_back, size: 25, color: Colors.white),
-//                     //         ),
-//                     //       ),
-//                     //     ),
-//                     //
-//                     //
-//                     //      SizedBox(width: 10),
-//                     //
-//                     //
-//                     //     Expanded(
-//                     //       child: Center(
-//                     //         child: Text(
-//                     //           CustomText.About,
-//                     //           style: TextStyle(
-//                     //             fontSize: MediaQuery.of(context).size.width * 0.065, // responsive font
-//                     //             color: Colors.white,
-//                     //             fontWeight: FontWeight.bold,
-//                     //           ),
-//                     //         ),
-//                     //       ),
-//                     //     ),
-//                     //
-//                     //
-//                     //     SizedBox(width: 55),
-//                     //   ],
-//                     // ),
-//
-//
-//                     SizedBox(height: 15,),
-//
-//                     Padding(
-//                       padding: const EdgeInsets.all(10.0),
-//                       child: Text("CRMILES",
-//                           style: AppTextStyles.heading()
 //                       ),
-//                     ),
-//                     //==================================  address
-//                     Container(
-//                       padding: const EdgeInsets.all(10.0),
-//                       width: 400,
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.start,
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//
-//                           Padding(
-//                             padding: const EdgeInsets.only(top: 5.0),
-//                             child: Icon(Icons.location_on_rounded, size:20 , color: Colors.white),
-//                           ),
-//                           SizedBox(width: 5),
-//                           Expanded(
-//                             child: Obx(() => Text(
-//                               controller.address.value, // ✅ correct
-//                               softWrap: true,
-//                               maxLines: 2,
-//                               overflow: TextOverflow.ellipsis,
-//                               style: AppTextStyles.medium(),
-//                             )),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//
-//                     //=====================================          buttons call and email
-//                     Container(
-//                       height: 50,
-//                       padding:  EdgeInsets.symmetric(horizontal: 10), // optional padding
-//                       child: Row(
-//                         children: [
-//
-//                           Spacer(),
 //
 //
-//                           CircleAvatar(
-//                             radius: 20,
-//                             backgroundColor: Colors.white,
-//                             child: IconButton(
+//
+//                       // ================= WEBSITE BUTTON
+//                       Positioned(
+//                         //top :MediaQuery.of(context).size.height * 0.54,
+//                         bottom: 19, // neechy
+//                         left: 0,
+//                         right: 0,
+//
+//                         child: Center(
+//                           child: SizedBox(
+//                             height: 55,
+//                             width: 200,
+//                             child: MyElevatedButton(
+//                               backgroundColor: CustomColor.Button_background_Color.withOpacity(0.8),
+//                               text: '',
+//                               fontSize: 14,
 //                               onPressed: () async {
-//                                 const phone = "tel://03001234567";
-//                                 final Uri phoneUri = Uri.parse(phone);
+//                                 final Uri url = Uri.parse(
+//                                   "https://seacars.co.uk/#contact",
+//                                 );
 //
 //                                 try {
-//                                   bool launched = await launchUrl(
-//                                     phoneUri,
-//                                     mode: LaunchMode.externalApplication,
+//                                   await launchUrl(
+//                                     url,
+//                                     mode: LaunchMode.platformDefault,
 //                                   );
-//
-//                                   if (!launched) {
-//                                     print("Dialer app not found");
-//                                   }
 //                                 } catch (e) {
 //                                   print("Error: $e");
 //                                 }
 //                               },
-//                               icon:  Icon(Icons.call, size: 20, color: Colors.black),
+//                               textWidget: FittedBox(
+//                                 child: Text(
+//                                   "WebSite Link",
+//                                   style: AppTextStyles.regular(
+//                                     size: 25,
+//                                     weight: FontWeight.bold,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//
+//
+//                           ),
+//                         ),
+//                       ),
+//
+//                       Positioned(
+//                         bottom: 1,
+//                         left: 0,
+//                         right: 0,
+//                         child: Center(
+//                           child: Text(
+//                             "Version 1.0.0",
+//                             style: AppTextStyles.small(
+//                               size: 15,
+//                               color: Colors.red,
 //                             ),
 //                           ),
-//
-//                           SizedBox(width: 5),
-//
-//
-//                           CircleAvatar(
-//                             radius: 20,
-//                             backgroundColor: Colors.white,
-//                             child: IconButton(
-//                               onPressed: () {
-//                                 deshboardcontroller.sendEmail();
-//                               },
-//                               icon:  Icon(Icons.email, size: 20, color: Colors.black),
-//                             ),
-//                           ),
-//                         ],
+//                         ),
 //                       ),
-//                     ),
+//                     ]
 //
-//                     SizedBox(height: 10
-//                       ,),
-//                   ],
 //                 ),
-//               ),
-//
-//               //============================================   map
-//               Container(
-//                 margin: EdgeInsets.symmetric(horizontal: 10),
-//                 decoration: BoxDecoration(
-//                   borderRadius: BorderRadius.circular(20),
-//                   border: Border.all(color: Colors.grey, width: 2),
-//                   image: const DecorationImage(
-//                     image: AssetImage("assets/images/map_image.png"),
-//                     fit: BoxFit.cover,
-//                   ),
-//                 ),
-//                 height: 450,
-//                 child: ClipRRect(
-//                   borderRadius: BorderRadius.circular(18),
-//                   child: PickupLocationScreen(),
-//                 ),
-//                 // child: Image(image: AssetImage("assets/images/map2.png"),fit: BoxFit.cover,),
-//
-//               ),
-//
-//               SizedBox(
-//                 height: 55,
-//                 width: 250,
-//                 child: MyElevatedButton(
-//                   text: '',
-//                   fontSize: 14,
-//                   onPressed: ()async  {
-//                     final Uri url = Uri.parse('https://seacars.co.uk');
-//
-//                     if (await canLaunchUrl(url)) {
-//                     await launchUrl(
-//                     url,
-//                     mode: LaunchMode.externalApplication,
-//                     );
-//                     }
 //
 //
-//                   },
-//                   textWidget: FittedBox(
-//                     child: Text(
-//                       "WebSite Link",
-//                       style: AppTextStyles.regular(
-//                         size: 25,
-//                         weight: FontWeight.bold,
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//
-//
-//
-//
-//             ],
+//               ],
+//             ),
 //           ),
 //         ),
-//
 //       ),
 //     );
 //   }
 // }
+
+
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -289,7 +288,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Controller/Deshboard/deshboard_cont.dart';
 import '../map_widget/map_controller.dart';
-import '../map_widget/open_street_map.dart';
 import '../../Widgets/color.dart';
 import '../../Widgets/elevat_button.dart';
 import '../../Widgets/all_text.dart';
@@ -302,8 +300,7 @@ class Aboutscreen extends StatelessWidget {
       ? Get.find<PickLocationController>()
       : Get.put(PickLocationController());
 
-  final deshboardcontroller =
-  Get.isRegistered<DeshBoardAddHome_Controller>()
+  final deshboardcontroller = Get.isRegistered<DeshBoardAddHome_Controller>()
       ? Get.find<DeshBoardAddHome_Controller>()
       : Get.put(DeshBoardAddHome_Controller());
 
@@ -327,42 +324,38 @@ class Aboutscreen extends StatelessWidget {
             ),
           ),
 
-          // ✅ IMPORTANT FIX
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-
-                  // ================= HEADER
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => Get.back(),
-                          icon: Icon(
-                            Icons.arrow_back,
-                            size: size.width * 0.06,
-                            color: CustomColor.Icon_Color,
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              CustomText.About,
-                              style: AppTextStyles.heading(
-                                size: size.width * 0.06,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ================= HEADER
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: Icon(
+                        Icons.arrow_back,
+                        size: 25,
+                        color: CustomColor.Icon_Color,
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 15),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          CustomText.About,
+                          style: AppTextStyles.heading(),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 48),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 15),
 
               // ================= APP NAME
               Padding(
@@ -373,131 +366,192 @@ class Aboutscreen extends StatelessWidget {
                 ),
               ),
 
-                  // ================= ADDRESS
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(
-                          Icons.location_on_rounded,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Obx(() => Text(
-                            controller.address.value,
-                            softWrap: true,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.medium(),
-                          )),
-                        ),
-                      ],
+              // ================= ADDRESS
+              Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.location_on_rounded,
+                      size: 20,
+                      color: Colors.red,
                     ),
-                  ),
 
-                  // ================= CALL / EMAIL
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: [
-                        const Spacer(),
+                    const SizedBox(width: 8),
 
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.white,
-                          child: IconButton(
-                            onPressed: () async {
-                              final Uri phoneUri =
-                              Uri.parse("tel://01424202020");
-
-                              await launchUrl(
-                                phoneUri,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            },
-                            icon: const Icon(Icons.call,
-                                size: 20, color: Colors.black),
-                          ),
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.white,
-                          child: IconButton(
-                            onPressed: () {
-                              deshboardcontroller.sendEmail();
-                            },
-                            icon: const Icon(Icons.email,
-                                size: 20, color: Colors.black),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  // ================= MAP (RESPONSIVE)
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    height: size.height * 0.5, // ✅ FIXED RESPONSIVE
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey, width: 2),
-                      image: const DecorationImage(
-                        image: AssetImage("assets/images/map_image.png"),
-                        fit: BoxFit.cover,
+                    Expanded(
+                      child: Text(
+                        "1 Warrior Gardens, St. Leonards-on-Sea TN37 6EB"
+                            .toUpperCase(),
+                        softWrap: true,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.medium(),
                       ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(18),
-                      child: PickupLocationScreen(),
-                    ),
-                  ),
+                  ],
+                ),
+              ),
 
-                  const SizedBox(height: 20),
+              // ================= CALL / EMAIL
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    const Spacer(),
 
-                  // ================= WEBSITE BUTTON
-                  Center(
-                    child: SizedBox(
-                      height: 55,
-                      width: 200,
-                      child: MyElevatedButton(
-                        text: '',
-                        fontSize: 14,
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.white,
+                      child: IconButton(
                         onPressed: () async {
-                          final Uri url =
-                          Uri.parse('https://seacars.co.uk');
+                          final Uri phoneUri = Uri.parse(
+                            "tel://01424202020",
+                          );
 
-                          if (await canLaunchUrl(url)) {
-                            await launchUrl(
-                              url,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          }
+                          await launchUrl(
+                            phoneUri,
+                            mode: LaunchMode.externalApplication,
+                          );
                         },
-                        textWidget: FittedBox(
-                          child: Text(
-                            "WebSite Link",
-                            style: AppTextStyles.regular(
-                              size: 25,
-                              weight: FontWeight.bold,
+                        icon: const Icon(
+                          Icons.call,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.white,
+                      child: IconButton(
+                        onPressed: () {
+                          deshboardcontroller.sendEmail();
+                        },
+                        icon: const Icon(
+                          Icons.email,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // ================= FULL SCREEN MAP
+              Expanded(
+                child: Stack(
+                  children: [
+                    // ================= MAP IMAGE
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "assets/images/map_about.png",
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+
+                    // ================= CENTER LOGO
+                    Positioned(
+                      //top: 40,
+                      bottom: 100,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          height: 80,
+                          width: 80,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(15),
+                            child: Image(
+                              image: AssetImage(
+                                "assets/images/logo.png",
+                              ),
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 20),
-                ],
+                    // ================= WEBSITE BUTTON
+                    Positioned(
+                      bottom: 35,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: SizedBox(
+                          height: 55,
+                          width: 200,
+                          child: MyElevatedButton(
+                            backgroundColor:
+                            CustomColor.Button_background_Color
+                                .withOpacity(0.8),
+                            text: '',
+                            fontSize: 14,
+                            onPressed: () async {
+                              final Uri url = Uri.parse(
+                                "https://seacars.co.uk/#contact",
+                              );
+
+                              try {
+                                await launchUrl(
+                                  url,
+                                  mode: LaunchMode.platformDefault,
+                                );
+                              } catch (e) {
+                                print("Error: $e");
+                              }
+                            },
+                            textWidget: FittedBox(
+                              child: Text(
+                                "WebSite Link",
+                                style: AppTextStyles.regular(
+                                  size: 25,
+                                  weight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // ================= VERSION
+                    Positioned(
+                      bottom: 5,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Text(
+                          "Version 1.0.0",
+                          style: AppTextStyles.small(
+                            size: 15,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),

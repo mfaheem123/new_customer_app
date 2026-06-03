@@ -203,7 +203,7 @@ class RideSearchScreen extends StatelessWidget {
                                     horizontal: 10,
                                   ),
                                   child: Text(
-                                    CustomText.Ride_book_ride_alert,
+                                    CustomText.Ride_Cancel_alert,
                                     textAlign:
                                     TextAlign.center,
                                     style:

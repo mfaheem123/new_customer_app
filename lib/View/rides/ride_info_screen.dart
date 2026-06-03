@@ -193,8 +193,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? CustomColor
-                                          .Container_Colors.withOpacity(
-                                        0.4,
+                                          .Container_Colors.withOpacity(0.4,
                                       )
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(15),
@@ -690,7 +689,22 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
 
                                                 const SizedBox(height: 12),
 
+                                                /// Fare
+                                                // Padding(
+                                                //   padding:
+                                                //   const EdgeInsets.symmetric(
+                                                //     horizontal: 10,
+                                                //   ),
+                                                //   child: Text("Total Fare "
+                                                //       " ${rideController.totalFare} ",
+                                                //     textAlign:
+                                                //     TextAlign.center,
+                                                //     style:
+                                                //     AppTextStyles.regular(),
+                                                //   ),
+                                                // ),
                                                 /// DESCRIPTION
+
                                                 Padding(
                                                   padding:
                                                   const EdgeInsets.symmetric(
@@ -753,11 +767,11 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                             ? Get.find<SwapController>()
                                                             : Get.put(SwapController());
                                                         // homeC.resetRouteState();homeC.resetRouteState();
-                                                        homeC.dropOff.clear();
-                                                        homeC.pickUp.clear();
-                                                        homeC.viaController1.clear();
-                                                        homeC.viaController2.clear();
-                                                        homeC.activeField.value = "";
+                                                        // homeC.dropOff.clear();
+                                                        // homeC.pickUp.clear();
+                                                        // homeC.viaController1.clear();
+                                                        // homeC.viaController2.clear();
+                                                        // homeC.activeField.value = "";
                                                         homeC.update();
 
                                                       },
@@ -811,127 +825,6 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                         ),
                                       );
 
-                                      /// /////////////////////////////////////////////////////////////////////
-                                      // Get.dialog(
-                                      //   Dialog(
-                                      //     backgroundColor:
-                                      //         CustomColor.Container_Colors,
-                                      //     shape: RoundedRectangleBorder(
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(30),
-                                      //     ),
-                                      //     child: Container(
-                                      //       padding: const EdgeInsets.all(20),
-                                      //       width:
-                                      //           MediaQuery.of(
-                                      //             context,
-                                      //           ).size.width *
-                                      //           0.8,
-                                      //       constraints: BoxConstraints(
-                                      //         maxHeight:
-                                      //             MediaQuery.of(
-                                      //               context,
-                                      //             ).size.height *
-                                      //             0.4,
-                                      //       ),
-                                      //       child: Column(
-                                      //         mainAxisSize: MainAxisSize.min,
-                                      //         mainAxisAlignment:
-                                      //             MainAxisAlignment.center,
-                                      //         children: [
-                                      //           const Icon(
-                                      //             Icons.warning_amber,
-                                      //             color: Colors.amberAccent,
-                                      //             size: 60,
-                                      //           ),
-                                      //           const SizedBox(height: 15),
-                                      //
-                                      //           Padding(
-                                      //             padding:
-                                      //                 const EdgeInsets.symmetric(
-                                      //                   horizontal: 10,
-                                      //                 ),
-                                      //             child: Text(
-                                      //               CustomText
-                                      //                   .Ride_book_ride_alert,
-                                      //               textAlign:
-                                      //                   TextAlign.center,
-                                      //               style:
-                                      //                   AppTextStyles.small(),
-                                      //             ),
-                                      //           ),
-                                      //
-                                      //           const SizedBox(height: 20),
-                                      //
-                                      //           Row(
-                                      //             mainAxisAlignment:
-                                      //                 MainAxisAlignment
-                                      //                     .center,
-                                      //             children: [
-                                      //               CustomTextButton(
-                                      //                 text: 'Yes',
-                                      //                 onPressed: () {
-                                      //                   rideController
-                                      //                       .getBookingApi();
-                                      //
-                                      //                   if (rideController
-                                      //                           .selectedTimeOption
-                                      //                           .value ==
-                                      //                       "ASAP") {
-                                      //                     Get.offAllNamed(
-                                      //                       routesName
-                                      //                           .RideSearchScreen,
-                                      //                     );
-                                      //                   } else {
-                                      //                     Get.offAllNamed(
-                                      //                       routesName
-                                      //                           .DeshBoard_Screen,
-                                      //                     );
-                                      //                   }
-                                      //                 },
-                                      //                 backgroundColor:
-                                      //                     Colors.red,
-                                      //                 textColor: CustomColor
-                                      //                     .Button_Text_Color,
-                                      //                 borderRadius: 8,
-                                      //                 elevation: 2,
-                                      //                 fontSize: 15,
-                                      //                 fontWeight:
-                                      //                     FontWeight.bold,
-                                      //                 padding:
-                                      //                     const EdgeInsets.symmetric(
-                                      //                       horizontal: 16,
-                                      //                       vertical: 10,
-                                      //                     ),
-                                      //               ),
-                                      //               const SizedBox(width: 20),
-                                      //               CustomTextButton(
-                                      //                 text: '  No  ',
-                                      //                 onPressed: () {
-                                      //                   Get.back();
-                                      //                   Get.back();
-                                      //                 },
-                                      //                 backgroundColor: CustomColor
-                                      //                     .Button_background_Color,
-                                      //                 textColor: Colors.white,
-                                      //                 borderRadius: 8,
-                                      //                 elevation: 2,
-                                      //                 fontSize: 15,
-                                      //                 fontWeight:
-                                      //                     FontWeight.bold,
-                                      //                 padding:
-                                      //                     const EdgeInsets.symmetric(
-                                      //                       horizontal: 16,
-                                      //                       vertical: 10,
-                                      //                     ),
-                                      //               ),
-                                      //             ],
-                                      //           ),
-                                      //         ],
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // );
 
                                       rideController.calculateFareApi();
                                     },

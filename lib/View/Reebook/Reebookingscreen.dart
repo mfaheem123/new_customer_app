@@ -294,8 +294,8 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
 
 
               Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                height: MediaQuery.of(context).size.height*0.2,
+                padding: EdgeInsets.symmetric(vertical: 15),
+                height: MediaQuery.of(context).size.height*0.14,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(topRight: Radius.circular(20),topLeft: Radius.circular(15)),
                   color: CustomColor.Container_Colors,
@@ -719,11 +719,11 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                                       ? Get.find<SwapController>()
                                                                       : Get.put(SwapController());
                                                                   // homeC.resetRouteState();homeC.resetRouteState();
-                                                                  homeC.dropOff.clear();
-                                                                  homeC.pickUp.clear();
-                                                                  homeC.viaController1.clear();
-                                                                  homeC.viaController2.clear();
-                                                                  homeC.activeField.value = "";
+                                                                  // homeC.dropOff.clear();
+                                                                  // homeC.pickUp.clear();
+                                                                  // homeC.viaController1.clear();
+                                                                  // homeC.viaController2.clear();
+                                                                  // homeC.activeField.value = "";
                                                                   homeC.update();
                                                                 },
                                                                 backgroundColor:
@@ -1008,20 +1008,20 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                         ),
                       ),
                   
-                      Container(
-                        margin: EdgeInsets.only(top: 15),
-                          // margin: EdgeInsets.symmetric(vertical: 8),
-                        //color: CustomColor.Container_Colors,
-                        height: 55,
-                        width: 250  ,
-                        child: MyElevatedButton(
-                          text: '',
-                          textWidget: FittedBox(
-                            child: Text("Confirm Booking",style: AppTextStyles.medium(size: 25 ,weight: FontWeight.bold),),
-                          ),
-                          onPressed: () {  },
-                        ),
-                      ),
+                      // Container(
+                      //   margin: EdgeInsets.only(top: 15),
+                      //     // margin: EdgeInsets.symmetric(vertical: 8),
+                      //   //color: CustomColor.Container_Colors,
+                      //   height: 55,
+                      //   width: 250  ,
+                      //   child: MyElevatedButton(
+                      //     text: '',
+                      //     textWidget: FittedBox(
+                      //       child: Text("Confirm Booking",style: AppTextStyles.medium(size: 25 ,weight: FontWeight.bold),),
+                      //     ),
+                      //     onPressed: () {  },
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
