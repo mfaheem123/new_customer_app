@@ -484,6 +484,9 @@ class Aboutscreen extends StatelessWidget {
                                 "assets/images/logo.png",
                               ),
                               fit: BoxFit.cover,
+
+
+
                             ),
                           ),
                         ),
