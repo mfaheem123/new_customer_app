@@ -368,7 +368,7 @@ class Aboutscreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
-                      "CRMILES",
+                      "CRMILES" ,
                       style: AppTextStyles.heading(),
                     ),
                   ),
