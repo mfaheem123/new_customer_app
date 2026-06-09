@@ -193,7 +193,7 @@ class _SigIn_ScreenState extends State<SigIn_Screen> {
                               },
 
                               child: Text(
-                                "Forget Password",
+                                "Forgot Password",
 
                                 style: AppTextStyles.regular(
                                   color: CustomColor.black,

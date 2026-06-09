@@ -88,65 +88,7 @@ class ScheduleBookingCard extends StatelessWidget {
 
           SizedBox(height: 10),
 
-          //==========================        Addresses to Address
-          // Container(
-          //   height: 90,
-          //   color: Colors.transparent,
-          //   child: Row(
-          //     children: [
-          //       Container(
-          //         margin: EdgeInsets.only(left: 10),
-          //         padding: EdgeInsets.only(left: 10,right: 10,bottom: 0,top: 10),
-          //         height: 80,
-          //         width: 130,
-          //
-          //         child: Center(
-          //           child: Text(
-          //             PicUp_Location!,
-          //             // "1A Worrior "
-          //             //     "Garden St.LEO"
-          //             //     " TN36eb",
-          //             softWrap: true,
-          //             maxLines: 3,
-          //             textAlign: TextAlign.center,
-          //             overflow: TextOverflow.ellipsis,
-          //             style: AppTextStyles.small(),
-          //           ),
-          //         ),
-          //       ),
-          //       SizedBox(width: 10),
-          //
-          //       Icon(
-          //         Icons.arrow_forward_rounded,
-          //         size: 30,
-          //         color: CustomColor.Text_Color,
-          //       ),
-          //
-          //       SizedBox(width: 10),
-          //
-          //       Container(
-          //         margin: EdgeInsets.only(left: 8),
-          //
-          //         padding: EdgeInsets.all(10),
-          //         height: 80,
-          //         width: 130,
-          //         child: Center(
-          //           child: Text(
-          //             Drop_of_Location!,
-          //             // "Flat  1 "
-          //             //     "Bland fold"
-          //             //     "Nw6",
-          //             softWrap: true,
-          //             textAlign: TextAlign.center,
-          //             maxLines: 3,
-          //             overflow: TextOverflow.ellipsis,
-          //             style: AppTextStyles.small(),
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
+
           Container(
             height: 90,
             padding: const EdgeInsets.symmetric(horizontal: 10),

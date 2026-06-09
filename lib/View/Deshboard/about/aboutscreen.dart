@@ -496,13 +496,12 @@ class Aboutscreen extends StatelessWidget {
                       left: 0,
                       right: 0,
                       child: Center(
-                        child: SizedBox(
+                        child:SizedBox(
                           height: 55,
                           width: 200,
                           child: MyElevatedButton(
                             backgroundColor:
-                            CustomColor.Button_background_Color
-                                .withOpacity(0.8),
+                            CustomColor.Button_background_Color.withOpacity(0.8),
                             text: '',
                             fontSize: 14,
                             onPressed: () async {
@@ -513,23 +512,73 @@ class Aboutscreen extends StatelessWidget {
                               try {
                                 await launchUrl(
                                   url,
-                                  mode: LaunchMode.platformDefault,
+                                  mode: LaunchMode.externalApplication,
                                 );
                               } catch (e) {
                                 print("Error: $e");
                               }
                             },
-                            textWidget: FittedBox(
-                              child: Text(
-                                "WebSite Link",
-                                style: AppTextStyles.regular(
-                                  size: 25,
-                                  weight: FontWeight.bold,
+
+                            // 👇 Yahan icon + text add kiya hai
+                            textWidget: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.public, // world icon
+                                  color: Colors.white,
+                                  size: 24,
                                 ),
-                              ),
+                                const SizedBox(width: 8),
+
+                                Flexible(
+                                  child: FittedBox(
+                                    child: Text(
+                                      "WebSite Link",
+                                      style: AppTextStyles.regular(
+                                        size: 25,
+                                        weight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
+                        // SizedBox(
+                        //   height: 55,
+                        //   width: 200,
+                        //   child: MyElevatedButton(
+                        //     backgroundColor:
+                        //     CustomColor.Button_background_Color
+                        //         .withOpacity(0.8),
+                        //     text: '',
+                        //     fontSize: 14,
+                        //     onPressed: () async {
+                        //       final Uri url = Uri.parse(
+                        //         "https://seacars.co.uk/#contact",
+                        //       );
+                        //
+                        //       try {
+                        //         await launchUrl(
+                        //           url,
+                        //           mode: LaunchMode.platformDefault,
+                        //         );
+                        //       } catch (e) {
+                        //         print("Error: $e");
+                        //       }
+                        //     },
+                        //     textWidget: FittedBox(
+                        //       child: Text(
+                        //         "WebSite Link",
+                        //         style: AppTextStyles.regular(
+                        //           size: 25,
+                        //           weight: FontWeight.bold,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ),
                     ),
 
