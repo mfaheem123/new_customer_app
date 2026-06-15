@@ -1,3 +1,4 @@
+import 'package:customer/View/Widgets/color.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 
@@ -109,7 +110,7 @@ class CustomTextButton extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.medium(
                           size: 11,
-                          color: Colors.grey,
+                          color: CustomColor.Text_Color ,
                           weight: FontWeight.w400,
                         ),
                       ),

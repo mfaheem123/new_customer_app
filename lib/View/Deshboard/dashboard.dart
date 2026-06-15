@@ -140,6 +140,7 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                             Get.toNamed(routesName.HomeDriver);
                           },
                           child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
                             height: 50,
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -150,10 +151,14 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  "Where To",
-                                  style: AppTextStyles.medium(
-                                    weight: FontWeight.bold,
+
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  child: Text(
+                                    "Where To Go",
+                                    style: AppTextStyles.regular(
+                                      weight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                                 Icon(

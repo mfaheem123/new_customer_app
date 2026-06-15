@@ -722,7 +722,7 @@ Future<void> pickupLocation(String text) async {
     }
   }
 /// ==============================================  History booking
-  void setRouteFromBooking(dynamic trip) {
+  void setRouteFromBooking(dynamic trip)  {
 
     /// Pickup
     selectedPickUPLat = double.tryParse(trip.pickupLatitude ?? "0") ?? 0.0;

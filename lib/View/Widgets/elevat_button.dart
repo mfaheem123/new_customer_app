@@ -33,8 +33,14 @@ class MyElevatedButton extends StatelessWidget {
         backgroundColor: backgroundColor,
         foregroundColor: textColor,
         elevation: elevation,
+        shadowColor: Colors.black.withOpacity(0.3), // ✨ better shadow
+        surfaceTintColor: Colors.transparent, // ✨ clean material look
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
+          side: BorderSide( // ✨ border decoration add
+            color: textColor.withOpacity(0.2),
+            width: 1,
+          ),
         ),
         padding: padding,
       ),

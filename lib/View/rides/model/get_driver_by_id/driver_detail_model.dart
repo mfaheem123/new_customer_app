@@ -19,7 +19,7 @@ class DriverGetbyId {
 
   factory DriverGetbyId.fromJson(Map<String, dynamic> json) => DriverGetbyId(
     status: json["status"],
-    driver: Driver.fromJson(json["driver"]),
+    driver: Driver. fromJson(json["driver"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -190,88 +190,176 @@ class Driver {
     required this.shifts,
     required this.vehicle,
   });
-
   factory Driver.fromJson(Map<String, dynamic> json) => Driver(
-    id: json["id"],
-    subsidiaryId: json["subsidiary_id"],
-    username: json["username"],
-    password: json["password"],
-    name: json["name"],
-    email: json["email"],
-    mobile: json["mobile"],
-    telephone: json["telephone"],
-    address: json["address"],
-    dob: json["dob"],
-    driverType: json["driver_type"],
-    driverCommission: json["driver_commission"],
-    rentLimit: json["rent_limit"],
-    rentPaid: json["rent_paid"],
-    balance: json["balance"],
-    hasPda: json["has_pda"],
-    useCompanyVehicle: json["use_company_vehicle"],
-    active: json["active"],
-    startDate: json["start_date"],
-    endDate: json["end_date"],
+    id: json["id"] ?? 0,
+    subsidiaryId: json["subsidiary_id"] ?? 0,
+    username: json["username"] ?? "",
+    password: json["password"] ?? "",
+    name: json["name"] ?? "",
+    email: json["email"] ?? "",
+    mobile: json["mobile"] ?? "",
+    telephone: json["telephone"] ?? "",
+    address: json["address"] ?? "",
+    dob: json["dob"] ?? "",
+    driverType: json["driver_type"] ?? "",
+    driverCommission: json["driver_commission"]?.toString() ?? "",
+    rentLimit: json["rent_limit"]?.toString() ?? "",
+    rentPaid: json["rent_paid"] ?? false,
+    balance: json["balance"]?.toString() ?? "",
+    hasPda: json["has_pda"] ?? false,
+    useCompanyVehicle: json["use_company_vehicle"] ?? false,
+    active: json["active"] ?? false,
+    startDate: json["start_date"] ?? "",
+    endDate: json["end_date"] ?? "",
     licenceNumber: json["licence_number"],
-    licenceExpiry: json["licence_expiry"],
+    licenceExpiry: json["licence_expiry"] ?? "",
     phcDriverNumber: json["phc_driver_number"],
-    phcDriverExpiry: json["phc_driver_expiry"],
+    phcDriverExpiry: json["phc_driver_expiry"] ?? "",
     insuranceNumber: json["insurance_number"],
-    insuranceExpiry: json["insurance_expiry"],
+    insuranceExpiry: json["insurance_expiry"] ?? "",
     rentalAgreementNumber: json["rental_agreement_number"],
-    rentalAgreementExpiry: json["rental_agreement_expiry"],
+    rentalAgreementExpiry: json["rental_agreement_expiry"] ?? "",
     roadTaxNumber: json["road_tax_number"],
-    roadTaxExpiry: json["road_tax_expiry"],
+    roadTaxExpiry: json["road_tax_expiry"] ?? "",
     v5RegistrationNumber: json["v5_registration_number"],
-    v5RegistrationExpiry: json["v5_registration_expiry"],
+    v5RegistrationExpiry: json["v5_registration_expiry"] ?? "",
     motNumber: json["mot_number"],
-    motExpiry: json["mot_expiry"],
+    motExpiry: json["mot_expiry"] ?? "",
     mot2Number: json["mot2_number"],
-    mot2Expiry: json["mot2_expiry"],
+    mot2Expiry: json["mot2_expiry"] ?? "",
     phcVehicleNumber: json["phc_vehicle_number"],
-    phcVehicleExpiry: json["phc_vehicle_expiry"],
+    phcVehicleExpiry: json["phc_vehicle_expiry"] ?? "",
     ni: json["ni"] ?? "",
-    image: json["image"],
-    createdAt: json["created_at"],
-    vehicleId: json["vehicle_id"],
-    driverStatus: json["driver_status"],
-    sessionStatus: json["session_status"],
-    bookingStatus: json["booking_status"],
-    latitude: json["latitude"],
-    longitude: json["longitude"],
+    image: json["image"] ?? "",
+    createdAt: json["created_at"] ?? "",
+    vehicleId: json["vehicle_id"] ?? 0,
+    driverStatus: json["driver_status"] ?? "",
+    sessionStatus: json["session_status"] ?? "",
+    bookingStatus: json["booking_status"] ?? "",
+    latitude: json["latitude"]?.toString() ?? "",
+    longitude: json["longitude"]?.toString() ?? "",
     webDeviceId: json["web_device_id"],
     mobileDeviceId: json["mobile_device_id"],
     lastBooking: json["last_booking"],
     lastVehicle: json["last_vehicle"],
-    notes: List<Note>.from(json["notes"].map((x) => Note.fromJson(x))),
+    notes: json["notes"] == null
+        ? []
+        : List<Note>.from(
+        json["notes"].map((x) => Note.fromJson(x))),
     zone: json["zone"],
-    rank: json["rank"],
+    rank: json["rank"] ?? 0,
     waitingTime: json["waiting_time"],
     zoneUpdatedAt: json["zone_updated_at"],
     os: json["os"],
     version: json["version"],
-    sinBinTimer: json["sin_bin_timer"],
+    sinBinTimer: json["sin_bin_timer"] ?? "",
     position: json["position"],
-    pdaRent: json["pda_rent"],
+    pdaRent: json["pda_rent"]?.toString() ?? "",
     companyVehicleId: json["company_vehicle_id"],
-    licenceExpiryTime: json["licence_expiry_time"],
-    phcDriverExpiryTime: json["phc_driver_expiry_time"],
-    insuranceExpiryTime: json["insurance_expiry_time"],
-    phcVehicleExpiryTime: json["phc_vehicle_expiry_time"],
-    motExpiryTime: json["mot_expiry_time"],
-    mot2ExpiryTime: json["mot2_expiry_time"],
-    v5RegistrationExpiryTime: json["v5_registration_expiry_time"],
-    roadTaxExpiryTime: json["road_tax_expiry_time"],
-    rentalAgreementExpiryTime: json["rental_agreement_expiry_time"],
-    driverAccessToken: json["driver_access_token"],
-    companyId: json["company_id"],
+    licenceExpiryTime: json["licence_expiry_time"] ?? "",
+    phcDriverExpiryTime: json["phc_driver_expiry_time"] ?? "",
+    insuranceExpiryTime: json["insurance_expiry_time"] ?? "",
+    phcVehicleExpiryTime: json["phc_vehicle_expiry_time"] ?? "",
+    motExpiryTime: json["mot_expiry_time"] ?? "",
+    mot2ExpiryTime: json["mot2_expiry_time"] ?? "",
+    v5RegistrationExpiryTime:
+    json["v5_registration_expiry_time"] ?? "",
+    roadTaxExpiryTime: json["road_tax_expiry_time"] ?? "",
+    rentalAgreementExpiryTime:
+    json["rental_agreement_expiry_time"] ?? "",
+    driverAccessToken: json["driver_access_token"] ?? "",
+    companyId: json["company_id"] ?? 0,
     fcmToken: json["fcm_token"],
-    fcmUpdatedAt: json["fcm_updated_at"],
+    fcmUpdatedAt: json["fcm_updated_at"] ?? "",
     lastLoginAt: json["last_login_at"],
-    subsidiaryName: json["subsidiary_name"],
-    shifts: List<Shift>.from(json["shifts"].map((x) => Shift.fromJson(x))),
+    subsidiaryName: json["subsidiary_name"] ?? "",
+    shifts: json["shifts"] == null
+        ? []
+        : List<Shift>.from(
+        json["shifts"].map((x) => Shift.fromJson(x))),
     vehicle: Vehicle.fromJson(json["vehicle"]),
   );
+  // factory Driver.fromJson(Map<String, dynamic> json) => Driver(
+  //   id: json["id"],
+  //   subsidiaryId: json["subsidiary_id"],
+  //   username: json["username"],
+  //   password: json["password"],
+  //   name: json["name"],
+  //   email: json["email"],
+  //   mobile: json["mobile"],
+  //   telephone: json["telephone"],
+  //   address: json["address"],
+  //   dob: json["dob"],
+  //   driverType: json["driver_type"],
+  //   driverCommission: json["driver_commission"],
+  //   rentLimit: json["rent_limit"],
+  //   rentPaid: json["rent_paid"],
+  //   balance: json["balance"],
+  //   hasPda: json["has_pda"],
+  //   useCompanyVehicle: json["use_company_vehicle"],
+  //   active: json["active"],
+  //   startDate: json["start_date"],
+  //   endDate: json["end_date"],
+  //   licenceNumber: json["licence_number"],
+  //   licenceExpiry: json["licence_expiry"],
+  //   phcDriverNumber: json["phc_driver_number"],
+  //   phcDriverExpiry: json["phc_driver_expiry"],
+  //   insuranceNumber: json["insurance_number"],
+  //   insuranceExpiry: json["insurance_expiry"],
+  //   rentalAgreementNumber: json["rental_agreement_number"],
+  //   rentalAgreementExpiry: json["rental_agreement_expiry"],
+  //   roadTaxNumber: json["road_tax_number"],
+  //   roadTaxExpiry: json["road_tax_expiry"],
+  //   v5RegistrationNumber: json["v5_registration_number"],
+  //   v5RegistrationExpiry: json["v5_registration_expiry"],
+  //   motNumber: json["mot_number"],
+  //   motExpiry: json["mot_expiry"],
+  //   mot2Number: json["mot2_number"],
+  //   mot2Expiry: json["mot2_expiry"],
+  //   phcVehicleNumber: json["phc_vehicle_number"],
+  //   phcVehicleExpiry: json["phc_vehicle_expiry"],
+  //   ni: json["ni"] ?? "",
+  //   image: json["image"],
+  //   createdAt: json["created_at"],
+  //   vehicleId: json["vehicle_id"],
+  //   driverStatus: json["driver_status"],
+  //   sessionStatus: json["session_status"],
+  //   bookingStatus: json["booking_status"],
+  //   latitude: json["latitude"],
+  //   longitude: json["longitude"],
+  //   webDeviceId: json["web_device_id"],
+  //   mobileDeviceId: json["mobile_device_id"],
+  //   lastBooking: json["last_booking"],
+  //   lastVehicle: json["last_vehicle"],
+  //   notes: List<Note>.from(json["notes"].map((x) => Note.fromJson(x))),
+  //   zone: json["zone"],
+  //   rank: json["rank"],
+  //   waitingTime: json["waiting_time"],
+  //   zoneUpdatedAt: json["zone_updated_at"],
+  //   os: json["os"],
+  //   version: json["version"],
+  //   sinBinTimer: json["sin_bin_timer"],
+  //   position: json["position"],
+  //   pdaRent: json["pda_rent"],
+  //   companyVehicleId: json["company_vehicle_id"],
+  //   licenceExpiryTime: json["licence_expiry_time"],
+  //   phcDriverExpiryTime: json["phc_driver_expiry_time"],
+  //   insuranceExpiryTime: json["insurance_expiry_time"],
+  //   phcVehicleExpiryTime: json["phc_vehicle_expiry_time"],
+  //   motExpiryTime: json["mot_expiry_time"],
+  //   mot2ExpiryTime: json["mot2_expiry_time"],
+  //   v5RegistrationExpiryTime: json["v5_registration_expiry_time"],
+  //   roadTaxExpiryTime: json["road_tax_expiry_time"],
+  //   rentalAgreementExpiryTime: json["rental_agreement_expiry_time"],
+  //   driverAccessToken: json["driver_access_token"],
+  //   companyId: json["company_id"],
+  //   fcmToken: json["fcm_token"],
+  //   fcmUpdatedAt: json["fcm_updated_at"],
+  //   lastLoginAt: json["last_login_at"],
+  //   subsidiaryName: json["subsidiary_name"],
+  //   shifts: List<Shift>.from(json["shifts"].map((x) => Shift.fromJson(x))),
+  //   vehicle: Vehicle.fromJson(json["vehicle"]),
+  // );
 
   Map<String, dynamic> toJson() => {
     "id": id,
@@ -462,28 +550,28 @@ class Vehicle {
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) => Vehicle(
-    id: json["id"],
-    vehicleTypeId: json["vehicle_type_id"],
-    vehicleNumber: json["vehicle_number"],
-    make: json["make"],
-    model: json["model"],
-    color: json["color"],
-    owner: json["owner"],
-    startDate: json["start_date"],
-    endDate: json["end_date"],
-    company: json["company"],
-    assigned: json["assigned"],
-    logBook: LogBook.fromJson(json["log_book"]),
-    mot: Mot.fromJson(json["mot"]),
-    mot2: Mot2.fromJson(json["mot2"]),
-    insurance: Insurance.fromJson(json["insurance"]),
-    phcVehicle: PhcVehicle.fromJson(json["phc_vehicle"]),
-    roadTax: RoadTax.fromJson(json["road_tax"]),
-    rentalAgreement: RentalAgreement.fromJson(json["rental_agreement"]),
-    v5Registration: V5Registration.fromJson(json["v5_registration"]),
-    licence: Licence.fromJson(json["licence"]),
-    phcDriver: PhcDriver.fromJson(json["phc_driver"]),
-    vehicleType: VehicleType.fromJson(json["vehicle_type"]),
+    id: json["id"]?? "",
+    vehicleTypeId: json["vehicle_type_id"]?? "",
+    vehicleNumber: json["vehicle_number"]?? "",
+    make: json["make"]?? "",
+    model: json["model"]?? "",
+    color: json["color"]?? "",
+    owner: json["owner"]?? "",
+    startDate: json["start_date"]?? "",
+    endDate: json["end_date"]?? "",
+    company: json["company"]?? "",
+    assigned: json["assigned"]?? "",
+    logBook: LogBook.fromJson(json["log_book"]?? ""),
+    mot: Mot.fromJson(json["mot"]?? ""),
+    mot2: Mot2.fromJson(json["mot2"]?? ""),
+    insurance: Insurance.fromJson(json["insurance"]?? ""),
+    phcVehicle: PhcVehicle.fromJson(json["phc_vehicle"]?? ""),
+    roadTax: RoadTax.fromJson(json["road_tax"]?? ""),
+    rentalAgreement: RentalAgreement.fromJson(json["rental_agreement"]?? ""),
+    v5Registration: V5Registration.fromJson(json["v5_registration"]?? ""),
+    licence: Licence.fromJson(json["licence"]?? ""),
+    phcDriver: PhcDriver.fromJson(json["phc_driver"]?? ""),
+    vehicleType: VehicleType.fromJson(json["vehicle_type"]?? ""),
   );
 
   Map<String, dynamic> toJson() => {
@@ -526,10 +614,10 @@ class Insurance {
   });
 
   factory Insurance.fromJson(Map<String, dynamic> json) => Insurance(
-    insuranceNumber: json["insurance_number"],
-    insuranceExpiry: DateTime.parse(json["insurance_expiry"]),
-    insuranceExpiryTime: json["insurance_expiry_time"],
-    insuranceDocument: json["insurance_document"],
+    insuranceNumber: json["insurance_number"]?? "",
+    insuranceExpiry: DateTime.parse(json["insurance_expiry"]?? ""),
+    insuranceExpiryTime: json["insurance_expiry_time"]?? "",
+    insuranceDocument: json["insurance_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -554,10 +642,10 @@ class Licence {
   });
 
   factory Licence.fromJson(Map<String, dynamic> json) => Licence(
-    licenceNumber: json["licence_number"],
-    licenceExpiry: DateTime.parse(json["licence_expiry"]),
-    licenceExpiryTime: json["licence_expiry_time"],
-    licenceDocument: json["licence_document"],
+    licenceNumber: json["licence_number"]?? "",
+    licenceExpiry: DateTime.parse(json["licence_expiry"]?? ""),
+    licenceExpiryTime: json["licence_expiry_time"]?? "",
+    licenceDocument: json["licence_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -578,8 +666,8 @@ class LogBook {
   });
 
   factory LogBook.fromJson(Map<String, dynamic> json) => LogBook(
-    logBookNumber: json["log_book_number"],
-    logBookDocument: json["log_book_document"],
+    logBookNumber: json["log_book_number"] ?? "",
+    logBookDocument: json["log_book_document"] ?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -602,10 +690,10 @@ class Mot {
   });
 
   factory Mot.fromJson(Map<String, dynamic> json) => Mot(
-    motNumber: json["mot_number"],
-    motExpiry: DateTime.parse(json["mot_expiry"]),
-    motExpiryTime: json["mot_expiry_time"],
-    motDocument: json["mot_document"],
+    motNumber: json["mot_number"]?? "",
+    motExpiry: DateTime.parse(json["mot_expiry"]?? ""),
+    motExpiryTime: json["mot_expiry_time"]?? "",
+    motDocument: json["mot_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -630,10 +718,10 @@ class Mot2 {
   });
 
   factory Mot2.fromJson(Map<String, dynamic> json) => Mot2(
-    mot2Number: json["mot2_number"],
-    mot2Expiry: DateTime.parse(json["mot2_expiry"]),
-    mot2ExpiryTime: json["mot2_expiry_time"],
-    mot2Document: json["mot2_document"],
+    mot2Number: json["mot2_number"]?? "",
+    mot2Expiry: DateTime.parse(json["mot2_expiry"]?? ""),
+    mot2ExpiryTime: json["mot2_expiry_time"]?? "",
+    mot2Document: json["mot2_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -658,10 +746,10 @@ class PhcDriver {
   });
 
   factory PhcDriver.fromJson(Map<String, dynamic> json) => PhcDriver(
-    phcDriverNumber: json["phc_driver_number"],
-    phcDriverExpiry: DateTime.parse(json["phc_driver_expiry"]),
-    phcDriverExpiryTime: json["phc_driver_expiry_time"],
-    phcDriverDocument: json["phc_driver_document"],
+    phcDriverNumber: json["phc_driver_number"]?? "",
+    phcDriverExpiry: DateTime.parse(json["phc_driver_expiry"]?? ""),
+    phcDriverExpiryTime: json["phc_driver_expiry_time"]?? "",
+    phcDriverDocument: json["phc_driver_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -686,10 +774,10 @@ class PhcVehicle {
   });
 
   factory PhcVehicle.fromJson(Map<String, dynamic> json) => PhcVehicle(
-    phcVehicleNumber: json["phc_vehicle_number"],
-    phcVehicleExpiry: DateTime.parse(json["phc_vehicle_expiry"]),
-    phcVehicleExpiryTime: json["phc_vehicle_expiry_time"],
-    phcVehicleDocument: json["phc_vehicle_document"],
+    phcVehicleNumber: json["phc_vehicle_number"]?? "",
+    phcVehicleExpiry: DateTime.parse(json["phc_vehicle_expiry"]?? ""),
+    phcVehicleExpiryTime: json["phc_vehicle_expiry_time"]?? "",
+    phcVehicleDocument: json["phc_vehicle_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -714,10 +802,10 @@ class RentalAgreement {
   });
 
   factory RentalAgreement.fromJson(Map<String, dynamic> json) => RentalAgreement(
-    rentalAgreementNumber: json["rental_agreement_number"],
-    rentalAgreementExpiry: DateTime.parse(json["rental_agreement_expiry"]),
-    rentalAgreementExpiryTime: json["rental_agreement_expiry_time"],
-    rentalAgreementDocument: json["rental_agreement_document"],
+    rentalAgreementNumber: json["rental_agreement_number"]?? "",
+    rentalAgreementExpiry: DateTime.parse(json["rental_agreement_expiry"]?? ""),
+    rentalAgreementExpiryTime: json["rental_agreement_expiry_time"]?? "",
+    rentalAgreementDocument: json["rental_agreement_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -742,10 +830,10 @@ class RoadTax {
   });
 
   factory RoadTax.fromJson(Map<String, dynamic> json) => RoadTax(
-    roadTaxNumber: json["road_tax_number"],
-    roadTaxExpiry: DateTime.parse(json["road_tax_expiry"]),
-    roadTaxExpiryTime: json["road_tax_expiry_time"],
-    roadTaxDocument: json["road_tax_document"],
+    roadTaxNumber: json["road_tax_number"]?? "",
+    roadTaxExpiry: DateTime.parse(json["road_tax_expiry"]?? ""),
+    roadTaxExpiryTime: json["road_tax_expiry_time"]?? "",
+    roadTaxDocument: json["road_tax_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -770,10 +858,10 @@ class V5Registration {
   });
 
   factory V5Registration.fromJson(Map<String, dynamic> json) => V5Registration(
-    v5RegistrationNumber: json["v5_registration_number"],
-    v5RegistrationExpiry: DateTime.parse(json["v5_registration_expiry"]),
-    v5RegistrationExpiryTime: json["v5_registration_expiry_time"],
-    v5RegistrationDocument: json["v5_registration_document"],
+    v5RegistrationNumber: json["v5_registration_number"]?? "",
+    v5RegistrationExpiry: DateTime.parse(json["v5_registration_expiry"]?? ""),
+    v5RegistrationExpiryTime: json["v5_registration_expiry_time"]?? "",
+    v5RegistrationDocument: json["v5_registration_document"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
@@ -800,11 +888,11 @@ class VehicleType {
   });
 
   factory VehicleType.fromJson(Map<String, dynamic> json) => VehicleType(
-    id: json["id"],
-    name: json["name"],
-    driverWaitingCharges: json["driver_waiting_charges"],
-    accountWaitingCharges: json["account_waiting_charges"],
-    waitingTime: json["waiting_time"],
+    id: json["id"]?? "",
+    name: json["name"]?? "",
+    driverWaitingCharges: json["driver_waiting_charges"]?? "",
+    accountWaitingCharges: json["account_waiting_charges"]?? "",
+    waitingTime: json["waiting_time"]?? "",
   );
 
   Map<String, dynamic> toJson() => {

@@ -501,36 +501,37 @@ class RideCompleteScreen extends StatelessWidget {
                             child: MyElevatedButton(
                               text: '',
                               onPressed: () async {
+                                Get.to(ThanksScreen());
 
-                                /// Booking ID
-                                final box = GetStorage();
-
-                                final bookingData = box.read("booking");
-
-                                final bookingId = bookingData != null
-                                    ? bookingData["id"].toString()
-                                    : "";
-
-                                if (bookingId.isEmpty) {
-                                  Get.snackbar(
-                                    "Error",
-                                    "Booking ID not found",
-                                  );
-                                  return;
-                                }
-
-                                /// Cash = 1
-                                if (paymentController.paymentMethod.value == "Cash") {
-                                  paymentController.selectMethod(0);
-                                }
-
-                                /// Credit Card = 2
-                                else {
-                                  paymentController.selectMethod(1);
-                                }
-
-                                /// API
-                                await paymentController.updatePaymentMethodApi(bookingId);
+                                // /// Booking ID
+                                // final box = GetStorage();
+                                //
+                                // final bookingData = box.read("booking");
+                                //
+                                // final bookingId = bookingData != null
+                                //     ? bookingData["id"].toString()
+                                //     : "";
+                                //
+                                // if (bookingId.isEmpty) {
+                                //   Get.snackbar(
+                                //     "Error",
+                                //     "Booking ID not found",
+                                //   );
+                                //   return;
+                                // }
+                                //
+                                // /// Cash = 1
+                                // if (paymentController.paymentMethod.value == "Cash") {
+                                //   paymentController.selectMethod(0);
+                                // }
+                                //
+                                // /// Credit Card = 2
+                                // else {
+                                //   paymentController.selectMethod(1);
+                                // }
+                                //
+                                // /// API
+                                // // await paymentController.updatePaymentMethodApi(bookingId);
 
 
                               },

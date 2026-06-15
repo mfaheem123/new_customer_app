@@ -166,131 +166,133 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                         topLeft: Radius.circular(40),
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        SizedBox(height: 15),
-
-                        // 🔹 Driver Name
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.grey, width: 1.5),
-                                ),
-                                child: CircleAvatar(
-                                  radius: 25, // 👈 choti profile image
-                                  backgroundImage: NetworkImage(
-                                    Uri.encodeFull(controller.driverGetbyId.driver.image),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      
+                          SizedBox(height: 15),
+                      
+                          // 🔹 Driver Name
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.grey, width: 1.5),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 25, // 👈 choti profile image
+                                    backgroundImage: NetworkImage(
+                                      Uri.encodeFull(controller.driverGetbyId.driver.image),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  controller.driverName.value,
-                                  textAlign: TextAlign.start,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppTextStyles.heading(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 15),
-
-                        // 🔹 Status
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                CustomText.Status + " : ",
-                                style: AppTextStyles.medium(),
-                              ),
-                              SizedBox(width: 5),
-                              Container(
-                                height: 30,
-                                width: 130,
-                                decoration: BoxDecoration(
-                                  color: controller.bookingStatus.value == "Available"
-                                      ? Colors.blueAccent
-                                      : Colors.green,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: Center(
+                                SizedBox(width: 10),
+                                Expanded(
                                   child: Text(
-                                    controller.bookingStatus.value,
-                                    textAlign: TextAlign.center,
-                                    style: AppTextStyles.medium(weight: FontWeight.bold),
+                                    controller.driverName.value,
+                                    textAlign: TextAlign.start,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyles.heading(),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 15),
-
-                        // 🔹 Vehicle info + image
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text("${CustomText.Vehicle_Color} : ",
-                                          style: AppTextStyles.medium()),
-                                      Text(
-                                        controller.vehicleColor.value,
-                                        style:  AppTextStyles.medium(weight: FontWeight.bold),
-                                      ),
-                                    ],
+                          SizedBox(height: 15),
+                      
+                          // 🔹 Status
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  CustomText.Status + " : ",
+                                  style: AppTextStyles.medium(),
+                                ),
+                                SizedBox(width: 5),
+                                Container(
+                                  height: 30,
+                                  width: 130,
+                                  decoration: BoxDecoration(
+                                    color: controller.bookingStatus.value == "Available"
+                                        ? Colors.blueAccent
+                                        : Colors.green,
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
-                                  SizedBox(height: 15),
-                                  Row(
-                                    children: [
-                                      Text("${CustomText.Vehicle_number} : ",
-                                          style: AppTextStyles.medium()),
-                                      Text(
-                                        controller.vehicleNumber.value,
-                                        style: AppTextStyles.medium(weight: FontWeight.bold),
-                                      ),
-                                    ],
+                                  child: Center(
+                                    child: Text(
+                                      controller.bookingStatus.value,
+                                      textAlign: TextAlign.center,
+                                      style: AppTextStyles.medium(weight: FontWeight.bold),
+                                    ),
                                   ),
-                                ],
-                              ),
-                              Spacer(),
-                              // Container(
-                              //   margin: EdgeInsets.only(right: 10),
-                              //   height: 60,
-                              //   width: 100,
-                              //   child: Image.asset(
-                              //     "assets/images/carimage.jpg",
-                              //     fit: BoxFit.contain,
-                              //   ),
-                              // ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 15),
-                        // Center(
-                        //   child: ElevatedButton(
-                        //     onPressed: () {
-                        //       Get.to(RideCompleteScreen());
-                        //     },
-                        //     child: Text("Move to feedback screen"),
-                        //   ),
-                        // ),
-                      ],
+                          SizedBox(height: 15),
+                      
+                          // 🔹 Vehicle info + image
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text("${CustomText.Vehicle_Color} : ",
+                                            style: AppTextStyles.medium()),
+                                        Text(
+                                          controller.vehicleColor.value,
+                                          style:  AppTextStyles.medium(weight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 15),
+                                    Row(
+                                      children: [
+                                        Text("${CustomText.Vehicle_number} : ",
+                                            style: AppTextStyles.medium()),
+                                        Text(
+                                          controller.vehicleNumber.value,
+                                          style: AppTextStyles.medium(weight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                // Container(
+                                //   margin: EdgeInsets.only(right: 10),
+                                //   height: 60,
+                                //   width: 100,
+                                //   child: Image.asset(
+                                //     "assets/images/carimage.jpg",
+                                //     fit: BoxFit.contain,
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          // Center(
+                          //   child: ElevatedButton(
+                          //     onPressed: () {
+                          //       Get.to(RideCompleteScreen());
+                          //     },
+                          //     child: Text("Move to feedback screen"),
+                          //   ),
+                          // ),
+                        ],
+                      ),
                     ),
                   );
                 }),
