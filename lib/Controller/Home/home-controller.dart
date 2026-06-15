@@ -773,7 +773,8 @@ Future<void> pickupLocation(String text) async {
 
 
   ///============================================================  map funtion driver detail screen
-
+  RxDouble driverLat = 0.0.obs;
+  RxDouble driverLng = 0.0.obs;
 
   void setBookingRoute(booking) {
 

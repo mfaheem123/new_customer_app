@@ -1,4 +1,5 @@
-  import 'package:customer/View/textstyle/apptextstyle.dart';
+  import 'package:customer/Binding/auth_binding.dart';
+import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -18,6 +19,11 @@ class _MapScreenState extends State<MapScreen> {
   final c = Get.isRegistered<SwapController>()
       ? Get.find<SwapController>()
       : Get.put(SwapController());
+
+  // final rideController = Get.isRegistered<RideController>()
+  //     ? Get.find<RideController>()
+  //     : Get.put(RideController());
+  final rideController = Get.find<SwapController>();
 
 
   final MapController mapController = MapController();
@@ -141,9 +147,23 @@ class _MapScreenState extends State<MapScreen> {
                   ],
                 ),
 
-              ///                                                                  Pick up Marker
+
               MarkerLayer(
                 markers: [
+
+                  // if (rideController.driverLat.value != 0.0 && rideController.driverLng.value != 0.0)
+                  //   Marker(
+                  //     point: LatLng(rideController.driverLat.value, rideController.driverLng.value),
+                  //     width: 50,
+                  //     height: 50,
+                  //     child: const Icon(
+                  //       Icons.local_taxi,
+                  //       color: Colors.black,
+                  //       size: 40,
+                  //     ),
+                  //   ),
+
+                  ///                                                                  Pick up Marker
                   // Pickup
                   Marker(
                     point: pickupLatLng,

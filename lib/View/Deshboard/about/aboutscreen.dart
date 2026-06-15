@@ -506,7 +506,7 @@ class Aboutscreen extends StatelessWidget {
                             fontSize: 14,
                             onPressed: () async {
                               final Uri url = Uri.parse(
-                                "https://seacars.co.uk/#contact",
+                                "https://seacars.co.uk/#booking",
                               );
 
                               try {

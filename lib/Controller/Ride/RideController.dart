@@ -445,6 +445,8 @@ class RideController extends GetxController {
   Booking? currentBooking;
   String? getBookingId;
 
+
+
   void setBookingData(Map data) {
     try {
       bookingData = BookingGetById.fromJson(
@@ -492,7 +494,9 @@ class RideController extends GetxController {
   var vehicleColor = "".obs;
   var vehicleNumber = "".obs;
 
-  late DriverGetbyId driverGetbyId;
+
+
+ DriverGetbyId? driverGetbyId;
 
 
 // 🔥 START POLLING
@@ -523,7 +527,7 @@ class RideController extends GetxController {
       if (response != null && response.statusCode == 200) {
         driverGetbyId = DriverGetbyId.fromJson(response.data);
 
-        final driver = driverGetbyId.driver;
+        final driver = driverGetbyId!.driver;
         final vehicle = driver.vehicle;
 
         // ✅ SAFE UPDATE (NO NULL CRASH)
@@ -532,12 +536,27 @@ class RideController extends GetxController {
         vehicleColor.value = vehicle.color ?? "";
         vehicleNumber.value = vehicle.vehicleNumber ?? "";
 
+        // ==============================
+        // 🔥 LOCATION FIX (STRING → DOUBLE)
+        // ==============================
+        // double lat = double.tryParse(driver.latitude.toString()) ?? 0.0;
+        // double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
+        //
+        // swapController.driverLat.value = lat;
+        // swapController.driverLng.value = lng;
+
         isLoading.value = false;
+
+        // debugPrint("Driver Lat: $lat");
+        // debugPrint("Driver Lng: $lng");
+
 
         debugPrint("Booking Status: ${bookingStatus.value}");
         print("image ==================================== >>>> ${driver.image}");
 
-        // 🔥 CONDITION FIXED
+        // ==============================
+        // RIDE COMPLETE CONDITION
+        // ==============================
         if (bookingStatus.value.trim() == "Available" && !hasNavigated) {
           hasNavigated = true;
           stopPolling();

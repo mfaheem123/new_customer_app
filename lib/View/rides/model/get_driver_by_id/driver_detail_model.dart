@@ -691,7 +691,9 @@ class Mot {
 
   factory Mot.fromJson(Map<String, dynamic> json) => Mot(
     motNumber: json["mot_number"]?? "",
-    motExpiry: DateTime.parse(json["mot_expiry"]?? ""),
+    motExpiry: json["mot_expiry"] == null || json["mot_expiry"] == ""
+  ? DateTime.now()
+      : DateTime.parse(json["mot_expiry"]),
     motExpiryTime: json["mot_expiry_time"]?? "",
     motDocument: json["mot_document"]?? "",
   );

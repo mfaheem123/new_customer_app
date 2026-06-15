@@ -187,7 +187,7 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                                   child: CircleAvatar(
                                     radius: 25, // 👈 choti profile image
                                     backgroundImage: NetworkImage(
-                                      Uri.encodeFull(controller.driverGetbyId.driver.image),
+                                      Uri.encodeFull(controller.driverGetbyId!.driver.image),
                                     ),
                                   ),
                                 ),
