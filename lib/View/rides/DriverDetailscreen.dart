@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Controller/Home/home-controller.dart';
 import '../../Controller/Ride/RideController.dart';
+import '../Deshboard/map_widget/tracking_driver_map.dart';
 import '../Widgets/all_text.dart';
 
 
@@ -127,7 +128,10 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(18),
-                    child: MapScreen(),
+                   child: TrackingMap( c: Get.isRegistered<SwapController>()
+                       ? Get.find<SwapController>()
+                       : Get.put(SwapController())),
+                   //  child: MapScreen(),
                   ),
                 ),
               ),

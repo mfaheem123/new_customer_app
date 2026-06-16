@@ -539,16 +539,18 @@ class RideController extends GetxController {
         // ==============================
         // 🔥 LOCATION FIX (STRING → DOUBLE)
         // ==============================
-        // double lat = double.tryParse(driver.latitude.toString()) ?? 0.0;
-        // double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
-        //
-        // swapController.driverLat.value = lat;
-        // swapController.driverLng.value = lng;
+        double lat = double.tryParse(driver.latitude.toString()) ?? 0.0;
+        double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
+
+        swapController.driverLat.value = lat;
+        swapController.driverLng.value = lng;
+        swapController.update();
+         // swapController.update(["map"]); // 🔥 important
 
         isLoading.value = false;
 
-        // debugPrint("Driver Lat: $lat");
-        // debugPrint("Driver Lng: $lng");
+        debugPrint("Driver Lat: $lat");
+        debugPrint("Driver Lng: $lng");
 
 
         debugPrint("Booking Status: ${bookingStatus.value}");

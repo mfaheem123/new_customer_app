@@ -519,7 +519,7 @@ class Aboutscreen extends StatelessWidget {
                               }
                             },
 
-                            // 👇 Yahan icon + text add kiya hai
+                            // icon + text add
                             textWidget: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

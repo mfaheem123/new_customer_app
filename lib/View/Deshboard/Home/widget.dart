@@ -39,7 +39,7 @@ class _containerWidgetState extends State<containerWidget> {
             children: [
               // ================================================ Address / Airoplane / Train  Coloum
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 15),
+                margin: EdgeInsets.symmetric(horizontal: 6),
                 height: 100,
                 width: MediaQuery.of(context).size.width * 0.93,
                 decoration: BoxDecoration(
@@ -330,6 +330,9 @@ class _containerWidgetState extends State<containerWidget> {
                                   ),
 
                                   ListTile(
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    minLeadingWidth: 0,
+                                    horizontalTitleGap: 12,
                                     onTap: () {
                                       print("Baby note ");
                                       showBabyNoteDialog();

@@ -11,9 +11,7 @@ import '../../View/Deshboard/map_widget/map_controller.dart';
 import '../../api_servies/api_servies.dart';
 import 'model/pickuplocationmodel.dart';
 
-
 class SwapController extends GetxController {
-
   // final mapWedgit =OpenStreetMapWidget();
   final mapC = Get.isRegistered<PickLocationController>()
       ? Get.find<PickLocationController>()
@@ -21,40 +19,33 @@ class SwapController extends GetxController {
 
   @override
   void onClose() {
-   // mapC.dispose();
+    // mapC.dispose();
     super.onClose();
   }
-
 
   final TextEditingController pickUp = TextEditingController();
   final TextEditingController dropOff = TextEditingController();
   final TextEditingController viaController1 = TextEditingController();
   final TextEditingController viaController2 = TextEditingController();
-  final TextEditingController babyNoteController   = TextEditingController();
-
+  final TextEditingController babyNoteController = TextEditingController();
 
   var babyNote = "";
 
-  void babynoteText(){
+  void babynoteText() {
     babyNote = babyNoteController.text;
     Get.back();
-     babyNoteController.clear();
+    babyNoteController.clear();
     print(babyNote);
   }
 
-
-
-
-
-//===============================================   pick UP location
-
+  //===============================================   pick UP location
 
   void pickupCurrentLocation() async {
     final loc = mapC.selectedLocation.value;
 
     if (loc == null) {
       // 🔥 fallback fix
-      await mapC.address  ; // if available
+      await mapC.address; // if available
     }
 
     final updatedLoc = mapC.selectedLocation.value;
@@ -65,6 +56,7 @@ class SwapController extends GetxController {
 
     await setPickup(updatedLoc.latitude, updatedLoc.longitude);
   }
+
   void resetRouteState() {
     selectedPickUPLat = 0;
     selectedPickUPLon = 0;
@@ -88,8 +80,6 @@ class SwapController extends GetxController {
     {"name": "Plane", "icon": Icons.directions_bus},
   ];
 
-
-
   /// 🔹 THIS list UI me show ho rahi hai
   List<String> busStops = [];
 
@@ -105,9 +95,6 @@ class SwapController extends GetxController {
     // "Faisalabad Station",
   ];
 
-
-
-
   RxBool airportLoading = false.obs;
 
   Future<void> fetchAirports() async {
@@ -115,11 +102,11 @@ class SwapController extends GetxController {
     update();
 
     var response = await ApiService.get(
-      "airports/get?company_id=1",   //  base url ApiService me hoga
+      "airports/get?company_id=1", //  base url ApiService me hoga
       auth: true,
     );
 
-    if ( response!.statusCode == 200) {
+    if (response!.statusCode == 200) {
       final data = AirportList.fromJson(response.data);
 
       airportLocations = data.locations ?? [];
@@ -135,9 +122,7 @@ class SwapController extends GetxController {
     update();
   }
 
-
-
-///
+  ///
   void changeIndex(int index) {
     selectedIndex.value = index;
 
@@ -161,7 +146,8 @@ class SwapController extends GetxController {
   }
 
   RxString activeField = "pickup".obs;
- /// field focus
+
+  /// field focus
   void selectLocationFromList(int index) {
     String address = "";
     double lat = 0.0;
@@ -174,12 +160,10 @@ class SwapController extends GetxController {
       lat = double.tryParse(loc.latitude ?? "0") ?? 0;
       lng = double.tryParse(loc.longitude ?? "0") ?? 0;
     }
-
     /// 🚆 TRAIN (static — lat/lng nahi)
     else if (selectedIndex.value == 2) {
       address = trainStops[index];
     }
-
     /// 🏠 ADDRESS (home/work)
     else {
       address = busStops[index];
@@ -218,17 +202,11 @@ class SwapController extends GetxController {
         break;
     }
 
-
     fetchRoute();
-      update(["map", "distance"]);
-
+    update(["map", "distance"]);
   }
 
-
-
-
   ///----------------------------------------------------------------------------------------  where to go
-
 
   // void swapField() {
   //   String temp = pickUp.text;
@@ -259,10 +237,8 @@ class SwapController extends GetxController {
     update(["map", "distance"]);
   }
 
-
   // Swap button show/hide logic
   bool get canShowSwap => !showVia1.value && !showVia2.value;
-
 
   // Show/hide fields
   var showVia1 = false.obs;
@@ -307,8 +283,6 @@ class SwapController extends GetxController {
     Get.toNamed('/RideInfoScreen');
   }
 
-
-
   void showAppSnackBar(String message) {
     BotToast.showCustomText(
       duration: const Duration(seconds: 2),
@@ -336,20 +310,16 @@ class SwapController extends GetxController {
     );
   }
 
-
-
-
   ///   ///============================= ======================== ================ ============  Pick Up location search
 
   RxBool searchloading = false.obs;
   RxList<Result> searchList = <Result>[].obs;
 
-Future<void> pickupLocation(String text) async {
+  Future<void> pickupLocation(String text) async {
     if (text.isEmpty) {
       searchList.clear();
       return;
     }
-
 
     searchloading.value = true;
     var response = await ApiService.get(
@@ -359,9 +329,7 @@ Future<void> pickupLocation(String text) async {
       auth: true,
       isProgressShow: false,
 
-      queryParameters: {
-        'search':pickUp.text
-      }
+      queryParameters: {'search': pickUp.text},
     );
 
     if (response!.statusCode == 200) {
@@ -373,13 +341,10 @@ Future<void> pickupLocation(String text) async {
     searchloading.value = false;
   }
 
-
-
   ///   ///============================= ======================== ================ ============   drop off location search
-// DropOff related
+  // DropOff related
   RxBool dropSearchLoading = false.obs;
   RxList<Result> dropSearchList = <Result>[].obs;
-
 
   Future<void> dropOffLocation(String text) async {
     // Agar text field empty ho toh list clear karo
@@ -400,9 +365,7 @@ Future<void> pickupLocation(String text) async {
       auth: true,
       isProgressShow: false,
 
-      queryParameters: {
-        'search':dropOff.text
-      }
+      queryParameters: {'search': dropOff.text},
     );
 
     if (response!.statusCode == 200) {
@@ -416,20 +379,16 @@ Future<void> pickupLocation(String text) async {
     dropSearchLoading.value = false;
   }
 
-
   ///   ///============================= ======================== ================ ============   via 1 location search
-
 
   RxBool viaSearchloading1 = false.obs;
   RxList<Result> viaSearchList1 = <Result>[].obs;
-
 
   Future<void> viaLocation1(String text) async {
     if (text.isEmpty) {
       viaSearchList1.clear();
       return;
     }
-
 
     viaSearchloading1.value = true;
 
@@ -439,12 +398,8 @@ Future<void> pickupLocation(String text) async {
       // fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController1.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
-      queryParameters: {
-        'search':viaController1.text
-      }
+      queryParameters: {'search': viaController1.text},
     );
-
-
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -457,10 +412,8 @@ Future<void> pickupLocation(String text) async {
 
   ///   ///============================= ======================== ================ ============   via 2 location search
 
-
   RxBool viaSearchloading2 = false.obs;
   RxList<Result> viaSearchList2 = <Result>[].obs;
-
 
   Future<void> viaLocation2(String text) async {
     if (text.isEmpty) {
@@ -468,9 +421,7 @@ Future<void> pickupLocation(String text) async {
       return;
     }
 
-
     viaSearchloading2.value = true;
-
 
     var response = await ApiService.get(
       'services/search',
@@ -478,11 +429,8 @@ Future<void> pickupLocation(String text) async {
       // fullUrl: 'http://192.168.110.5:5000/api/services/search?search=${viaController2.text.toUpperCase()}',
       auth: true,
       isProgressShow: false,
-      queryParameters: {
-        'search':viaController2.text
-      }
+      queryParameters: {'search': viaController2.text},
     );
-
 
     if (response!.statusCode == 200) {
       LocationModel model = LocationModel.fromJson(response.data);
@@ -493,13 +441,10 @@ Future<void> pickupLocation(String text) async {
     viaSearchloading2.value = false;
   }
 
-
   ///-========================================================== ==============================     map Working
-
 
   MapController? mapController;
   int _routeRequestId = 0;
-
 
   bool isMapReady = false;
   List<LatLng> routePoints = [];
@@ -516,7 +461,7 @@ Future<void> pickupLocation(String text) async {
   double via1Lat = 0.0;
   double via1Lon = 0.0;
 
-// VIA STOP 2
+  // VIA STOP 2
   double via2Lat = 0.0;
   double via2Lon = 0.0;
 
@@ -531,19 +476,22 @@ Future<void> pickupLocation(String text) async {
   Future<void> setPickup(double lat, double lon) async {
     selectedPickUPLat = lat;
     selectedPickUPLon = lon;
-    print("pickUp ====================================${selectedPickUPLat }   , ${selectedPickUPLon }");
+    print(
+      "pickUp ====================================${selectedPickUPLat}   , ${selectedPickUPLon}",
+    );
     await fetchRoute();
     update();
   }
-  
-    void setDrop(double lat, double  lon) {
-      selectedDropLat = lat;
-      selectedDropLon = lon;
-      print("Dropoff================================================${selectedDropLat }   , ${selectedDropLon }");
-      fetchRoute();
-      update();
-    }
 
+  void setDrop(double lat, double lon) {
+    selectedDropLat = lat;
+    selectedDropLon = lon;
+    print(
+      "Dropoff================================================${selectedDropLat}   , ${selectedDropLon}",
+    );
+    fetchRoute();
+    update();
+  }
 
   void setVia1(double lat, double lon) {
     via1Lat = lat;
@@ -561,6 +509,7 @@ Future<void> pickupLocation(String text) async {
     fetchRoute();
     update(["map"]);
   }
+
   RxBool isPickupEmpty = true.obs;
   void removePickUpField() {
     pickUp.clear();
@@ -578,7 +527,6 @@ Future<void> pickupLocation(String text) async {
     selectedDropLat = 0.0;
     selectedDropLon = 0.0;
 
-
     fetchRoute();
     update(["map"]);
   }
@@ -586,10 +534,9 @@ Future<void> pickupLocation(String text) async {
   double totalRouteDistanceMiles = 0.0; // miles
   LatLng? routeCenterPoint;
 
-
   // estimate time working
   double estimatedTimeMinutes = 0.0; // minutes
-  String estimatedTimeText = "";     // 2 hours 3 minutes
+  String estimatedTimeText = ""; // 2 hours 3 minutes
 
   String formatDuration(double totalMinutes) {
     int hours = totalMinutes ~/ 60;
@@ -605,7 +552,6 @@ Future<void> pickupLocation(String text) async {
     }
   }
 
-
   // void calculateRouteCenter() {
   //   if (routePoints.isEmpty) {
   //     routeCenterPoint = null;
@@ -616,9 +562,6 @@ Future<void> pickupLocation(String text) async {
   //   routeCenterPoint = routePoints[routePoints.length ~/ 2];
   //   update(["distance"]);
   // }
-
-
-
 
   void removeVia1() {
     via1Lat = 0;
@@ -638,12 +581,12 @@ Future<void> pickupLocation(String text) async {
     update(["map", "distance"]);
   }
 
-
   Future<void> fetchRoute() async {
     if (selectedPickUPLat == 0.0 ||
         selectedPickUPLon == 0.0 ||
         selectedDropLat == 0.0 ||
-        selectedDropLon == 0.0) return;
+        selectedDropLon == 0.0)
+      return;
 
     // Track latest API call
     final requestId = ++_routeRequestId;
@@ -655,7 +598,6 @@ Future<void> pickupLocation(String text) async {
 
     if (via1Lat != 0.0 && via1Lon != 0.0) {
       url += '&point=$via1Lat,$via1Lon';
-
     }
 
     if (via2Lat != 0.0 && via2Lon != 0.0) {
@@ -676,10 +618,7 @@ Future<void> pickupLocation(String text) async {
         /// 🟣 POLYLINE POINTS
         final coords = route['points']['coordinates'];
         routePoints = coords.map<LatLng>((p) {
-          return LatLng(
-            (p[1] as num).toDouble(),
-            (p[0] as num).toDouble(),
-          );
+          return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
         }).toList();
 
         /// DISTANCE (meters → miles)
@@ -693,7 +632,6 @@ Future<void> pickupLocation(String text) async {
         double durationMs = (route['time'] as num).toDouble();
         estimatedTimeMinutes = durationMs / 1000 / 60;
         estimatedTimeText = formatDuration(estimatedTimeMinutes);
-
 
         /// CENTER POINT FOR DISTANCE LABEL
         if (routePoints.isNotEmpty) {
@@ -721,9 +659,9 @@ Future<void> pickupLocation(String text) async {
       print("Route error: $e");
     }
   }
-/// ==============================================  History booking
-  void setRouteFromBooking(dynamic trip)  {
 
+  /// ==============================================  History booking
+  void setRouteFromBooking(dynamic trip) {
     /// Pickup
     selectedPickUPLat = double.tryParse(trip.pickupLatitude ?? "0") ?? 0.0;
     selectedPickUPLon = double.tryParse(trip.pickupLongitude ?? "0") ?? 0.0;
@@ -742,7 +680,6 @@ Future<void> pickupLocation(String text) async {
 
     /// VIA points
     if (trip.viapoints != null && trip.viapoints!.isNotEmpty) {
-
       /// 👉 VIA 1
       if (trip.viapoints!.length >= 1) {
         var v1 = trip.viapoints![0];
@@ -768,31 +705,86 @@ Future<void> pickupLocation(String text) async {
     update(["map"]);
   }
 
-
-
-
-
   ///============================================================  map funtion driver detail screen
   RxDouble driverLat = 0.0.obs;
   RxDouble driverLng = 0.0.obs;
 
+  bool hasFittedMap = false;
+  RxList<LatLng> routePointsTraking = <LatLng>[].obs;
+
+  Future<void> fetchRouteTracking() async {
+    if (selectedPickUPLat == 0.0 ||
+        selectedPickUPLon == 0.0 ||
+        selectedDropLat == 0.0 ||
+        selectedDropLon == 0.0) return;
+
+    final requestId = ++_routeRequestId;
+
+    String url =
+        'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=YOUR_KEY'
+        '&point=$selectedPickUPLat,$selectedPickUPLon';
+
+    if (via1Lat != 0.0 && via1Lon != 0.0) {
+      url += '&point=$via1Lat,$via1Lon';
+    }
+
+    if (via2Lat != 0.0 && via2Lon != 0.0) {
+      url += '&point=$via2Lat,$via2Lon';
+    }
+
+    url += '&point=$selectedDropLat,$selectedDropLon';
+
+    try {
+      final response = await Dio().get(url);
+
+      if (requestId != _routeRequestId) return;
+
+      if (response.statusCode == 200 &&
+          response.data != null &&
+          response.data['paths'] != null &&
+          (response.data['paths'] as List).isNotEmpty) {
+
+        final route = response.data['paths'][0];
+
+        final List coords = route['points']?['coordinates'] ?? [];
+
+        if (coords.isEmpty) {
+          routePointsTraking.clear();
+          routePointsTraking.refresh();
+          return;
+        }
+
+        final newRoute = coords.map<LatLng>((p) {
+          return LatLng(
+            (p[1] as num).toDouble(),
+            (p[0] as num).toDouble(),
+          );
+        }).toList();
+
+        routePointsTraking
+          ..clear()
+          ..addAll(newRoute);
+
+        routePointsTraking.refresh();
+        update();
+      }
+    } catch (e) {
+      print("Route error: $e");
+    }
+  }
+
   void setBookingRoute(booking) {
-
     /// 🔵 PICKUP
-    selectedPickUPLat =
-        double.tryParse(booking.pickupLatitude ?? "0") ?? 0.0;
+    selectedPickUPLat = double.tryParse(booking.pickupLatitude ?? "0") ?? 0.0;
 
-    selectedPickUPLon =
-        double.tryParse(booking.pickupLongitude ?? "0") ?? 0.0;
+    selectedPickUPLon = double.tryParse(booking.pickupLongitude ?? "0") ?? 0.0;
 
     pickUp.text = booking.pickup ?? "";
 
     /// 🔴 DROP
-    selectedDropLat =
-        double.tryParse(booking.dropoffLatitude ?? "0") ?? 0.0;
+    selectedDropLat = double.tryParse(booking.dropoffLatitude ?? "0") ?? 0.0;
 
-    selectedDropLon =
-        double.tryParse(booking.dropoffLongitude ?? "0") ?? 0.0;
+    selectedDropLon = double.tryParse(booking.dropoffLongitude ?? "0") ?? 0.0;
 
     dropOff.text = booking.dropoff ?? "";
 
@@ -807,16 +799,13 @@ Future<void> pickupLocation(String text) async {
 
     /// 🟡 VIA POINTS
     if (booking.viapoints != null && booking.viapoints.isNotEmpty) {
-
       /// VIA 1
       if (booking.viapoints.length >= 1) {
         var v1 = booking.viapoints[0];
 
-        via1Lat =
-            double.tryParse(v1['latitude']?.toString() ?? "0") ?? 0.0;
+        via1Lat = double.tryParse(v1['latitude']?.toString() ?? "0") ?? 0.0;
 
-        via1Lon =
-            double.tryParse(v1['longitude']?.toString() ?? "0") ?? 0.0;
+        via1Lon = double.tryParse(v1['longitude']?.toString() ?? "0") ?? 0.0;
 
         viaController1.text = v1['viapoint'] ?? "";
 
@@ -827,11 +816,9 @@ Future<void> pickupLocation(String text) async {
       if (booking.viapoints.length >= 2) {
         var v2 = booking.viapoints[1];
 
-        via2Lat =
-            double.tryParse(v2['latitude']?.toString() ?? "0") ?? 0.0;
+        via2Lat = double.tryParse(v2['latitude']?.toString() ?? "0") ?? 0.0;
 
-        via2Lon =
-            double.tryParse(v2['longitude']?.toString() ?? "0") ?? 0.0;
+        via2Lon = double.tryParse(v2['longitude']?.toString() ?? "0") ?? 0.0;
 
         viaController2.text = v2['viapoint'] ?? "";
 
@@ -839,12 +826,16 @@ Future<void> pickupLocation(String text) async {
       }
     }
 
+    // reset route
+    routePointsTraking.clear();
+
+    // 🔥 CALL ROUTE API HERE
+    fetchRouteTracking();
+
     /// 🚀 ROUTE CALL
-    fetchRoute();
+    // fetchRoute();
 
     /// UI UPDATE
-    update(["map", "distance"]);
+    //  update(["map", "distance"]);
   }
-
-
 }
