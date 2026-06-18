@@ -128,10 +128,10 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(18),
-                   child: TrackingMap( c: Get.isRegistered<SwapController>()
-                       ? Get.find<SwapController>()
-                       : Get.put(SwapController())),
-                   //  child: MapScreen(),
+                   // child: TrackingMap( c: Get.isRegistered<SwapController>()
+                   //     ? Get.find<SwapController>()
+                   //     : Get.put(SwapController())),
+                     child: MapScreen(),
                   ),
                 ),
               ),

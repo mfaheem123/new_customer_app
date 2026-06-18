@@ -708,9 +708,10 @@ class SwapController extends GetxController {
   ///============================================================  map funtion driver detail screen
   RxDouble driverLat = 0.0.obs;
   RxDouble driverLng = 0.0.obs;
+  /// ================= ROUTE TRACKING =================
+  RxList<LatLng> routePointsTraking = <LatLng>[].obs;
 
   bool hasFittedMap = false;
-  RxList<LatLng> routePointsTraking = <LatLng>[].obs;
 
   Future<void> fetchRouteTracking() async {
     if (selectedPickUPLat == 0.0 ||
@@ -745,14 +746,7 @@ class SwapController extends GetxController {
           (response.data['paths'] as List).isNotEmpty) {
 
         final route = response.data['paths'][0];
-
         final List coords = route['points']?['coordinates'] ?? [];
-
-        if (coords.isEmpty) {
-          routePointsTraking.clear();
-          routePointsTraking.refresh();
-          return;
-        }
 
         final newRoute = coords.map<LatLng>((p) {
           return LatLng(
@@ -761,81 +755,172 @@ class SwapController extends GetxController {
           );
         }).toList();
 
-        routePointsTraking
-          ..clear()
-          ..addAll(newRoute);
+        // 🔥 FIX (IMPORTANT)
+        routePointsTraking.clear();
+        routePointsTraking.addAll(newRoute);
 
         routePointsTraking.refresh();
-        update();
+        update(["map"]);
       }
     } catch (e) {
       print("Route error: $e");
     }
   }
 
-  void setBookingRoute(booking) {
-    /// 🔵 PICKUP
-    selectedPickUPLat = double.tryParse(booking.pickupLatitude ?? "0") ?? 0.0;
 
+  void setBookingRoute(booking) {
+    selectedPickUPLat = double.tryParse(booking.pickupLatitude ?? "0") ?? 0.0;
     selectedPickUPLon = double.tryParse(booking.pickupLongitude ?? "0") ?? 0.0;
 
-    pickUp.text = booking.pickup ?? "";
-
-    /// 🔴 DROP
     selectedDropLat = double.tryParse(booking.dropoffLatitude ?? "0") ?? 0.0;
-
     selectedDropLon = double.tryParse(booking.dropoffLongitude ?? "0") ?? 0.0;
 
+    pickUp.text = booking.pickup ?? "";
     dropOff.text = booking.dropoff ?? "";
 
-    /// RESET VIA
     via1Lat = 0;
     via1Lon = 0;
     via2Lat = 0;
     via2Lon = 0;
 
-    showVia1.value = false;
-    showVia2.value = false;
-
-    /// 🟡 VIA POINTS
-    if (booking.viapoints != null && booking.viapoints.isNotEmpty) {
-      /// VIA 1
-      if (booking.viapoints.length >= 1) {
-        var v1 = booking.viapoints[0];
-
-        via1Lat = double.tryParse(v1['latitude']?.toString() ?? "0") ?? 0.0;
-
-        via1Lon = double.tryParse(v1['longitude']?.toString() ?? "0") ?? 0.0;
-
-        viaController1.text = v1['viapoint'] ?? "";
-
-        showVia1.value = true;
-      }
-
-      /// VIA 2
-      if (booking.viapoints.length >= 2) {
-        var v2 = booking.viapoints[1];
-
-        via2Lat = double.tryParse(v2['latitude']?.toString() ?? "0") ?? 0.0;
-
-        via2Lon = double.tryParse(v2['longitude']?.toString() ?? "0") ?? 0.0;
-
-        viaController2.text = v2['viapoint'] ?? "";
-
-        showVia2.value = true;
-      }
-    }
-
-    // reset route
     routePointsTraking.clear();
+    hasFittedMap = false;
 
-    // 🔥 CALL ROUTE API HERE
     fetchRouteTracking();
-
-    /// 🚀 ROUTE CALL
-    // fetchRoute();
-
-    /// UI UPDATE
-    //  update(["map", "distance"]);
   }
+
+
+
+
+
+
+  // bool hasFittedMap = false;
+  // RxList<LatLng> routePointsTraking = <LatLng>[].obs;
+  //
+  // Future<void> fetchRouteTracking() async {
+  //   if (selectedPickUPLat == 0.0 ||
+  //       selectedPickUPLon == 0.0 ||
+  //       selectedDropLat == 0.0 ||
+  //       selectedDropLon == 0.0) return;
+  //
+  //   final requestId = ++_routeRequestId;
+  //
+  //   String url =
+  //       'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=YOUR_KEY'
+  //       '&point=$selectedPickUPLat,$selectedPickUPLon';
+  //
+  //   if (via1Lat != 0.0 && via1Lon != 0.0) {
+  //     url += '&point=$via1Lat,$via1Lon';
+  //   }
+  //
+  //   if (via2Lat != 0.0 && via2Lon != 0.0) {
+  //     url += '&point=$via2Lat,$via2Lon';
+  //   }
+  //
+  //   url += '&point=$selectedDropLat,$selectedDropLon';
+  //
+  //   try {
+  //     final response = await Dio().get(url);
+  //
+  //     if (requestId != _routeRequestId) return;
+  //
+  //     if (response.statusCode == 200 &&
+  //         response.data != null &&
+  //         response.data['paths'] != null &&
+  //         (response.data['paths'] as List).isNotEmpty) {
+  //
+  //       final route = response.data['paths'][0];
+  //
+  //       final List coords = route['points']?['coordinates'] ?? [];
+  //
+  //       if (coords.isEmpty) {
+  //         routePointsTraking.clear();
+  //         routePointsTraking.refresh();
+  //         return;
+  //       }
+  //
+  //       final newRoute = coords.map<LatLng>((p) {
+  //         return LatLng(
+  //           (p[1] as num).toDouble(),
+  //           (p[0] as num).toDouble(),
+  //         );
+  //       }).toList();
+  //
+  //       routePointsTraking
+  //         ..clear()
+  //         ..addAll(newRoute);
+  //
+  //       routePointsTraking.refresh();
+  //       update();
+  //     }
+  //   } catch (e) {
+  //     print("Route error: $e");
+  //   }
+  // }
+/// ====================================================== set booking
+//   void setBookingRoute(booking) {
+//     /// 🔵 PICKUP
+//     selectedPickUPLat = double.tryParse(booking.pickupLatitude ?? "0") ?? 0.0;
+//
+//     selectedPickUPLon = double.tryParse(booking.pickupLongitude ?? "0") ?? 0.0;
+//
+//     pickUp.text = booking.pickup ?? "";
+//
+//     /// 🔴 DROP
+//     selectedDropLat = double.tryParse(booking.dropoffLatitude ?? "0") ?? 0.0;
+//
+//     selectedDropLon = double.tryParse(booking.dropoffLongitude ?? "0") ?? 0.0;
+//
+//     dropOff.text = booking.dropoff ?? "";
+//
+//     /// RESET VIA
+//     via1Lat = 0;
+//     via1Lon = 0;
+//     via2Lat = 0;
+//     via2Lon = 0;
+//
+//     showVia1.value = false;
+//     showVia2.value = false;
+//
+//     /// 🟡 VIA POINTS
+//     if (booking.viapoints != null && booking.viapoints.isNotEmpty) {
+//       /// VIA 1
+//       if (booking.viapoints.length >= 1) {
+//         var v1 = booking.viapoints[0];
+//
+//         via1Lat = double.tryParse(v1['latitude']?.toString() ?? "0") ?? 0.0;
+//
+//         via1Lon = double.tryParse(v1['longitude']?.toString() ?? "0") ?? 0.0;
+//
+//         viaController1.text = v1['viapoint'] ?? "";
+//
+//         showVia1.value = true;
+//       }
+//
+//       /// VIA 2
+//       if (booking.viapoints.length >= 2) {
+//         var v2 = booking.viapoints[1];
+//
+//         via2Lat = double.tryParse(v2['latitude']?.toString() ?? "0") ?? 0.0;
+//
+//         via2Lon = double.tryParse(v2['longitude']?.toString() ?? "0") ?? 0.0;
+//
+//         viaController2.text = v2['viapoint'] ?? "";
+//
+//         showVia2.value = true;
+//       }
+//     }
+//
+//     // reset route
+//     routePointsTraking.clear();
+//
+//     // 🔥 CALL ROUTE API HERE
+//     fetchRouteTracking();
+//
+//     /// 🚀 ROUTE CALL
+//     // fetchRoute();
+//     //
+//     // // UI UPDATE
+//     //  update(["map", "distance"]);
+//   }
 }

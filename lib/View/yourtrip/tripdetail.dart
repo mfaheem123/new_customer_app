@@ -73,32 +73,34 @@ class TripDetail extends StatelessWidget {
                     width: MediaQuery.of(context).size.width*0.5,
                     height: 100,
                     padding: const EdgeInsets.only(left: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-          
-          
-                        Text("Booking Status",
-                          style: AppTextStyles.regular(
-                            color: CustomColor.textColor
-                        ),
-                        ),
-                        Text(
-                          (data["status"]).toUpperCase() ?? "",
-                          style: AppTextStyles.medium(
-                            color: Colors.green,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                                
+                                
+                          Text("Booking Status",
+                            style: AppTextStyles.regular(
+                              color: CustomColor.textColor
                           ),
-                        ),
-          
-                        Text(
-                          "Booking REF : ${data["referenceNo"] ?? ""}",
-                          style: AppTextStyles.regular(
-                            color: CustomColor.textColor
                           ),
-                        ),
-          
-          
-                      ],
+                          Text(
+                            (data["status"]).toUpperCase() ?? "",
+                            style: AppTextStyles.medium(
+                              color: Colors.green,
+                            ),
+                          ),
+                                
+                          Text(
+                            "Booking REF : ${data["referenceNo"] ?? ""}",
+                            style: AppTextStyles.regular(
+                              color: CustomColor.textColor
+                            ),
+                          ),
+                                
+                                
+                        ],
+                      ),
                     ),
                   ),
                   Container(
