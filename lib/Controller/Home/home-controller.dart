@@ -706,66 +706,73 @@ class SwapController extends GetxController {
   }
 
   ///============================================================  map funtion driver detail screen
+
+
+
   RxDouble driverLat = 0.0.obs;
   RxDouble driverLng = 0.0.obs;
   /// ================= ROUTE TRACKING =================
-  RxList<LatLng> routePointsTraking = <LatLng>[].obs;
+
+
+
+
 
   bool hasFittedMap = false;
-
-  Future<void> fetchRouteTracking() async {
-    if (selectedPickUPLat == 0.0 ||
-        selectedPickUPLon == 0.0 ||
-        selectedDropLat == 0.0 ||
-        selectedDropLon == 0.0) return;
-
-    final requestId = ++_routeRequestId;
-
-    String url =
-        'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=YOUR_KEY'
-        '&point=$selectedPickUPLat,$selectedPickUPLon';
-
-    if (via1Lat != 0.0 && via1Lon != 0.0) {
-      url += '&point=$via1Lat,$via1Lon';
-    }
-
-    if (via2Lat != 0.0 && via2Lon != 0.0) {
-      url += '&point=$via2Lat,$via2Lon';
-    }
-
-    url += '&point=$selectedDropLat,$selectedDropLon';
-
-    try {
-      final response = await Dio().get(url);
-
-      if (requestId != _routeRequestId) return;
-
-      if (response.statusCode == 200 &&
-          response.data != null &&
-          response.data['paths'] != null &&
-          (response.data['paths'] as List).isNotEmpty) {
-
-        final route = response.data['paths'][0];
-        final List coords = route['points']?['coordinates'] ?? [];
-
-        final newRoute = coords.map<LatLng>((p) {
-          return LatLng(
-            (p[1] as num).toDouble(),
-            (p[0] as num).toDouble(),
-          );
-        }).toList();
-
-        // 🔥 FIX (IMPORTANT)
-        routePointsTraking.clear();
-        routePointsTraking.addAll(newRoute);
-
-        routePointsTraking.refresh();
-        update(["map"]);
-      }
-    } catch (e) {
-      print("Route error: $e");
-    }
-  }
+  // RxList<LatLng> routePointsTraking = <LatLng>[].obs;
+  //
+  // Future<void> fetchRouteTracking() async {
+  //   if (selectedPickUPLat == 0.0 ||
+  //       selectedPickUPLon == 0.0 ||
+  //       selectedDropLat == 0.0 ||
+  //       selectedDropLon == 0.0) return;
+  //
+  //   final requestId = ++_routeRequestId;
+  //
+  //   String url =
+  //       'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=YOUR_KEY'
+  //       '&point=$selectedPickUPLat,$selectedPickUPLon';
+  //
+  //   if (via1Lat != 0.0 && via1Lon != 0.0) {
+  //     url += '&point=$via1Lat,$via1Lon';
+  //   }
+  //
+  //   if (via2Lat != 0.0 && via2Lon != 0.0) {
+  //     url += '&point=$via2Lat,$via2Lon';
+  //   }
+  //
+  //   url += '&point=$selectedDropLat,$selectedDropLon';
+  //
+  //   try {
+  //     final response = await Dio().get(url);
+  //
+  //     if (requestId != _routeRequestId) return;
+  //
+  //     if (response.statusCode == 200 &&
+  //         response.data != null &&
+  //         response.data['paths'] != null &&
+  //         (response.data['paths'] as List).isNotEmpty) {
+  //
+  //       final route = response.data['paths'][0];
+  //       final List coords = route['points']?['coordinates'] ?? [];
+  //
+  //       final newRoute = coords.map<LatLng>((p) {
+  //         return LatLng(
+  //           (p[1] as num).toDouble(),
+  //           (p[0] as num).toDouble(),
+  //         );
+  //       }).toList();
+  //
+  //       // 🔥 FIX (IMPORTANT)
+  //       routePointsTraking.clear();
+  //       routePointsTraking.addAll(newRoute);
+  //
+  //       routePointsTraking.refresh();
+  //       update(["map"]);
+  //     }
+  //   } catch (e) {
+  //     print("Route error: $e");
+  //   }
+  // }
 
 
   void setBookingRoute(booking) {
@@ -783,10 +790,15 @@ class SwapController extends GetxController {
     via2Lat = 0;
     via2Lon = 0;
 
-    routePointsTraking.clear();
+    //routePointsTraking.clear();
     hasFittedMap = false;
+    /// 🚀 ROUTE CALL
+    fetchRoute();
 
-    fetchRouteTracking();
+    // UI UPDATE
+     update(["map", "distance"]);
+    //fetchRouteTracking();
+
   }
 
 

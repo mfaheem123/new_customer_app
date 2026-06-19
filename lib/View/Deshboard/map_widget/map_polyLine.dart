@@ -512,7 +512,6 @@ class _MapScreenState extends State<MapScreen> {
             ///
             Obx(() {
               if (c.driverLat.value == 0.0) return const SizedBox();
-
               return MarkerLayer(
                 markers: [
                   Marker(
@@ -528,6 +527,33 @@ class _MapScreenState extends State<MapScreen> {
                 ],
               );
             }),
+
+            Positioned(
+              bottom: 20,
+              right: 15,
+              child: FloatingActionButton(
+                mini: true,
+                backgroundColor: Colors.blueGrey,
+                onPressed: () {
+                  final points = <LatLng>[
+                    pickupLatLng,
+                    dropLatLng,
+                    ...c.routePoints,
+                  ];
+
+                  mapController.fitCamera(
+                    CameraFit.bounds(
+                      bounds: LatLngBounds.fromPoints(points),
+                      padding: const EdgeInsets.all(70),
+                    ),
+                  );
+                },
+                child: const Icon(
+                  Icons.center_focus_strong_rounded,
+                  color: Colors.black,
+                ),
+              ),
+            ),
           ],
         );
       },

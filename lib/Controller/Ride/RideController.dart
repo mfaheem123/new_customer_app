@@ -545,7 +545,7 @@ class RideController extends GetxController {
         swapController.driverLat.value = lat;
         swapController.driverLng.value = lng;
         // swapController.update();
-        //  swapController.update(["map"]); // 🔥 important
+       // swapController.update(["map"]); // 🔥 important
 
         isLoading.value = false;
 

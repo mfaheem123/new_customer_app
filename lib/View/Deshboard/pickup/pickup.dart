@@ -119,7 +119,7 @@ class PickupScreen extends StatelessWidget {
                         // ),
                       ),
             
-                      SizedBox(height: 10),
+                      SizedBox(height: 15),
             
                       // Container(
                       //   color: Colors.green,
@@ -132,6 +132,7 @@ class PickupScreen extends StatelessWidget {
                       // OpenStreetMapWidget(),//==== map
                       Container(
                         height: MediaQuery.of(context).size.height * 0.55,
+                        clipBehavior: Clip.antiAlias, // 👈 Important
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: Colors.grey, width: 2),
