@@ -50,9 +50,20 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
               const SizedBox(height: 30),
               Row(
                 children: [
-                  IconButton(
-                    onPressed: Get.back,
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blueGrey,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: CustomColor.Icon_Color,
+                      ),
+                      onPressed: () {
+                        Get.back();
+                      },
+                    ),
                   ),
                   const Spacer(),
                   const Text(
@@ -78,6 +89,13 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                       hintText: "Search Home Address",
                       borderRadius: 15,
                       onChanged: mydeshcontroller.addhomeLocation,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          mydeshcontroller.HomeController.clear();
+                          mydeshcontroller.addhomeLocation("");
+                        },
+                      ),
                     ),
                   ),
                   Obx(() {

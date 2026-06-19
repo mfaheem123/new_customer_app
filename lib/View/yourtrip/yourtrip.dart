@@ -61,85 +61,37 @@ class _YourtripState extends State<Yourtrip> {
                 ),
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: 25,
-                        // size: MediaQuery.of(context).size.width * 0.06,
-                        color: CustomColor.Icon_Color,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: CustomColor.Icon_Color,
+                        ),
+                        onPressed: () {
+                          Get.back();
+                        },
                       ),
                     ),
-
-                    SizedBox(width: 5),
 
                     Expanded(
                       child: Center(
                         child: Text(
                           CustomText.Your_Trip,
-                          style: AppTextStyles.heading(
-                            // size: MediaQuery.of(context).size.width * 0.06,
-                          ),
+                          style: AppTextStyles.heading(),
                         ),
                       ),
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.06,)
 
-                    // IconButton(
-                    //   onPressed: () {
-                    //    //   Get.back();
-                    //   },
-                      // icon: Icon(
-                      //   Icons.edit_notifications_sharp,
-                      //   size: MediaQuery.of(context).size.width * 0.06,
-                      //   color: Colors.yellow,
-                      // ),
-                    // ),
+                    // Back button ke barabar empty space
+                    const SizedBox(width: 48),
                   ],
                 ),
               ),
-            // Row(
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //
-            //     // Back Button
-            //     Padding(
-            //       padding: const EdgeInsets.only(left: 15),
-            //       child: IconButton(
-            //         onPressed: () {
-            //           Get.back();
-            //         },
-            //         icon: const Icon(Icons.arrow_back, color: CustomColor.Icon_Color),
-            //         iconSize: MediaQuery.of(context).size.width * 0.06,
-            //       ),
-            //     ),
-            //
-            //     // Gap
-            //     SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-            //
-            //     // Title (Perfectly Centered)
-            //     Expanded(
-            //       child: Center(
-            //         child: Text(
-            //           CustomText.Your_Trip,
-            //           style: TextStyle(
-            //             fontSize: MediaQuery.of(context).size.width * 0.065,
-            //             fontWeight: FontWeight.bold,
-            //             color: CustomColor.Text_Color,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //
-            //
-            //     SizedBox(
-            //       width: MediaQuery.of(context).size.width * 0.11 + 15, // equal to back button width
-            //     ),
-            //   ],
-            // ),
-            //
+
 
 
 

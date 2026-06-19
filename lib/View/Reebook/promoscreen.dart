@@ -33,15 +33,43 @@ class PromoScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 15,),
-            Padding(
-              padding: EdgeInsets.only(left: 15),
-              child:  IconButton(
-                onPressed: () {
-                  Get.back();
-                },
-                icon: Icon(Icons.arrow_back, size: 25, color: CustomColor.Icon_Color  ),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: CustomColor.Icon_Color,
+                    ),
+                    onPressed: () {
+                      Get.back();
+                    },
+                  ),
+                ),
+
+
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      "Promo ",
+                      style: AppTextStyles.heading(
+                        // size: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // RIGHT SIDE DUMMY BOX
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.1,
+                ),
+              ],
             ),
             SizedBox(height: 20,),
 

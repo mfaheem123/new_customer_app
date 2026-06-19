@@ -47,14 +47,26 @@ class HomeDriver extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            onPressed: () => Get.back(),
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: CustomColor.Icon_Color,
-                              size: 25,
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blueGrey,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_back, color: CustomColor.Icon_Color),
+                              onPressed: () {
+                                Get.back();
+                              },
                             ),
                           ),
+                          // IconButton(
+                          //   onPressed: () => Get.back(),
+                          //   icon: Icon(
+                          //     Icons.arrow_back,
+                          //     color: CustomColor.Icon_Color,
+                          //     size: 25,
+                          //   ),
+                          // ),
                           const SizedBox(height: 10),
 
                           /// MAIN AREA WITH SWAP BUTTON

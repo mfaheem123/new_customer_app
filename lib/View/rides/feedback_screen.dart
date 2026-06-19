@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../Deshboard/dashboard.dart';
 import '../Widgets/all_text.dart';
+import '../Widgets/color.dart';
 import '../Widgets/elevat_button.dart';
 import 'model/booking_get_by_id/booking_get_model.dart';
 
@@ -64,14 +65,22 @@ class ThanksScreen extends StatelessWidget {
                           /// ================= TOP BAR =================
                           Row(
                             children: [
-                              IconButton(
-                                onPressed: () => Get.back(),
-                                icon: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                  size: isTablet ? 32 : 26,
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.blueGrey,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_back,
+                                    color: CustomColor.Icon_Color,
+                                  ),
+                                  onPressed: () {
+                                    Get.back();
+                                  },
                                 ),
                               ),
+
                               Expanded(
                                 child: Center(
                                   child: Text(
@@ -84,6 +93,9 @@ class ThanksScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
+
+                              // right side balance space (same as back button)
+                              const SizedBox(width: 48),
                             ],
                           ),
 

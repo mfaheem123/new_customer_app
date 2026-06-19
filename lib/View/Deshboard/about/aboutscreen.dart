@@ -332,15 +332,21 @@ class Aboutscreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 0),
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () => Get.back(),
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: 25,
-                        color: CustomColor.Icon_Color,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: CustomColor.Icon_Color,
+                        ),
+                        onPressed: () {
+                          Get.back();
+                        },
                       ),
                     ),
-
                     Expanded(
                       child: Center(
                         child: Text(
@@ -407,7 +413,7 @@ class Aboutscreen extends StatelessWidget {
                       child: IconButton(
                         onPressed: () async {
                           final Uri phoneUri = Uri.parse(
-                            "tel://01424202020",
+                            "tel:01424202020",
                           );
 
                           await launchUrl(

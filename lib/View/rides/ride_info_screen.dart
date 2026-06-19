@@ -72,55 +72,107 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                             bottomRight: Radius.circular(20),
                           ),
                         ),
+
                         child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                FocusManager.instance.primaryFocus
-                                    ?.unfocus(); // keyboard close
-                                Future.delayed(
-                                  const Duration(milliseconds: 50),
-                                      () {
-                                    Get.back();
-                                  },
-                                );
-                              },
-                              icon: Icon(
-                                Icons.arrow_back,
-                                // size: MediaQuery.of(context).size.width * 0.07,
-                                size: 25,
-                                color: CustomColor.Icon_Color,
-                              ),
-                            ),
+                children: [
+                Container(
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: CustomColor.Icon_Color,
+                  ),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ),
 
-                            const SizedBox(width: 5),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    CustomText.Ride_Info,
+                    style: AppTextStyles.heading(
+                      weight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
 
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  CustomText.Ride_Info,
-                                  style: AppTextStyles.heading(
-                                    // size: MediaQuery.of(context).size.width * 0.06,
-                                    weight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.06,
-                            )
-
-                            // IconButton(
-                            //   onPressed: () {},
-                            //   icon: Icon(
-                            //     Icons.edit_notifications_sharp,
-                            //     size:
-                            //         MediaQuery.of(context).size.width * 0.06,
-                            //     color: Colors.yellow,
-                            //   ),
-                            // ),
-                          ],
-                        ),
+              // Back button ke barabar khali jagah
+              const SizedBox(
+                width: 48,
+              ),
+            ],
+          ),
+                        // Row(
+                        //   children: [
+                        //
+                        //     Container(
+                        //       decoration: BoxDecoration(
+                        //         color: Colors.blueGrey,
+                        //         borderRadius: BorderRadius.circular(30),
+                        //       ),
+                        //       child: IconButton(
+                        //         icon: Icon(
+                        //           Icons.arrow_back,
+                        //           color: CustomColor.Icon_Color,
+                        //         ),
+                        //         onPressed: () {
+                        //           Get.back();
+                        //         },
+                        //       ),
+                        //     ),
+                        //     // IconButton(
+                        //     //   onPressed: () {
+                        //     //     FocusManager.instance.primaryFocus
+                        //     //         ?.unfocus(); // keyboard close
+                        //     //     Future.delayed(
+                        //     //       const Duration(milliseconds: 50),
+                        //     //           () {
+                        //     //         Get.back();
+                        //     //       },
+                        //     //     );
+                        //     //   },
+                        //     //   icon: Icon(
+                        //     //     Icons.arrow_back,
+                        //     //     // size: MediaQuery.of(context).size.width * 0.07,
+                        //     //     size: 25,
+                        //     //     color: CustomColor.Icon_Color,
+                        //     //   ),
+                        //     // ),
+                        //
+                        //     const SizedBox(width: 5),
+                        //
+                        //     Expanded(
+                        //       child: Center(
+                        //         child: Text(
+                        //           CustomText.Ride_Info,
+                        //           style: AppTextStyles.heading(
+                        //             // size: MediaQuery.of(context).size.width * 0.06,
+                        //             weight: FontWeight.bold,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     SizedBox(
+                        //       width: MediaQuery.of(context).size.width * 0.06,
+                        //     )
+                        //
+                        //     // IconButton(
+                        //     //   onPressed: () {},
+                        //     //   icon: Icon(
+                        //     //     Icons.edit_notifications_sharp,
+                        //     //     size:
+                        //     //         MediaQuery.of(context).size.width * 0.06,
+                        //     //     color: Colors.yellow,
+                        //     //   ),
+                        //     // ),
+                        //   ],
+                        // ),
                       ),
 
                       //SizedBox(height: 10,),

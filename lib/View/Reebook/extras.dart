@@ -48,13 +48,19 @@ class ExtrasScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
 
-                      IconButton(
-                        onPressed: () => Get.back(),
-                        icon: Icon(
-                          Icons.arrow_back,
-                          // size: MediaQuery.of(context).size.width * 0.06,
-                          size: 25,
-                          color: CustomColor.Icon_Color,
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: CustomColor.Icon_Color,
+                          ),
+                          onPressed: () {
+                            Get.back();
+                          },
                         ),
                       ),
 

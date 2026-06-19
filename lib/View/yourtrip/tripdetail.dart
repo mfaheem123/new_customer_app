@@ -38,30 +38,46 @@ class TripDetail extends StatelessWidget {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(7)),
+                      color: Colors.blueGrey,
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                    height: 40,
-                    width: 40,
                     child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: CustomColor.Icon_Color,
+                      ),
                       onPressed: () {
                         Get.back();
                       },
-                      icon: Icon(Icons.arrow_back, size: 25, color:CustomColor.Icon_Color),
                     ),
                   ),
-                  SizedBox(width: MediaQuery.of(context).size.width*0.22,),
-                  Text(
-                    CustomText.Trip_Detail,
-                    style: AppTextStyles.heading(
+
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        CustomText.Trip_Detail,
+                        style: AppTextStyles.heading(),
+                      ),
                     ),
                   ),
-          
+
+                  // Back button ke size jitni empty space
+                  const SizedBox(width: 48),
                 ],
               ),
+             SizedBox(height: 10,),
           
              ///=========================  Map
               Container(
-
+                  clipBehavior: Clip.antiAlias, // 👈 Important
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey, width: 2),
+                    image: const DecorationImage(
+                      image: AssetImage("assets/images/map_image.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   height: 300,
                   child:  MapScreen()
           

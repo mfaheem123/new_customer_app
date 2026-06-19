@@ -29,7 +29,7 @@ class PickupScreen extends StatelessWidget {
         body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          //padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -59,12 +59,20 @@ class PickupScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          IconButton(
-                            onPressed: () => Get.back(),
-                            icon: Icon(
-                              Icons.arrow_back,
-                              size: MediaQuery.of(context).size.width * 0.06,
-                              color: CustomColor.Icon_Color,
+                          SizedBox(width: 10,),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blueGrey,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: CustomColor.Icon_Color,
+                              ),
+                              onPressed: () {
+                                Get.back();
+                              },
                             ),
                           ),
             
@@ -80,7 +88,7 @@ class PickupScreen extends StatelessWidget {
                           ),
             
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.12,
                           ),
                         ],
                       ),
@@ -131,16 +139,16 @@ class PickupScreen extends StatelessWidget {
                       // )
                       // OpenStreetMapWidget(),//==== map
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.55,
-                        clipBehavior: Clip.antiAlias, // 👈 Important
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.grey, width: 2),
-                          image: const DecorationImage(
-                            image: AssetImage("assets/images/map_image.png"),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                        height: MediaQuery.of(context).size.height * 0.57,
+                        //clipBehavior: Clip.antiAlias, // 👈 Important
+                        // decoration: BoxDecoration(
+                        //   borderRadius: BorderRadius.circular(20),
+                        //   border: Border.all(color: Colors.grey, width: 2),
+                        //   image: const DecorationImage(
+                        //     image: AssetImage("assets/images/map_image.png"),
+                        //     fit: BoxFit.cover,
+                        //   ),
+                        // ),
                         //  child: Image(image: AssetImage("assets/images/map2.png"),fit: BoxFit.cover,),
                         child: PickupLocationScreen(),
                       ),

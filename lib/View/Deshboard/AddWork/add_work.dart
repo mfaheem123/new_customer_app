@@ -51,9 +51,20 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                 const SizedBox(height: 30),
                 Row(
                   children: [
-                    IconButton(
-                      onPressed: Get.back,
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: CustomColor.Icon_Color,
+                        ),
+                        onPressed: () {
+                          Get.back();
+                        },
+                      ),
                     ),
                     const Spacer(),
                     const Text(
@@ -79,6 +90,13 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                         hintText: "Search Home Address",
                         borderRadius: 15,
                         onChanged:  mydeshcontroller.addworkLocation,
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            mydeshcontroller.WorkAdressController.clear();
+                            mydeshcontroller.addworkLocation('');
+                          },
+                        ),
                       ),
                     ),
                     Obx(() {

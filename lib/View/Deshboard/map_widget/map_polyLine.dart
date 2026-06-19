@@ -535,19 +535,41 @@ class _MapScreenState extends State<MapScreen> {
                 mini: true,
                 backgroundColor: Colors.blueGrey,
                 onPressed: () {
-                  final points = <LatLng>[
-                    pickupLatLng,
-                    dropLatLng,
-                    ...c.routePoints,
-                  ];
+                  if (c.driverLat.value != null &&
+                      c.driverLng.value != null &&
+                      c.driverLat.value != 0.0 &&
+                      c.driverLng.value != 0.0) {
 
-                  mapController.fitCamera(
-                    CameraFit.bounds(
-                      bounds: LatLngBounds.fromPoints(points),
-                      padding: const EdgeInsets.all(70),
-                    ),
-                  );
+                    mapController.move(
+                      LatLng(c.driverLat.value, c.driverLng.value),
+                      13,
+                    );
+                  } else {
+                    mapController.fitCamera(
+                      CameraFit.bounds(
+                        bounds: LatLngBounds.fromPoints([
+                          pickupLatLng,
+                          dropLatLng,
+                        ]),
+                        padding: const EdgeInsets.all(70),
+                      ),
+                    );
+                  }
                 },
+                // onPressed: () {
+                //   final points = <LatLng>[
+                //     pickupLatLng,
+                //     dropLatLng,
+                //     ...c.routePoints,
+                //   ];
+                //
+                //   mapController.fitCamera(
+                //     CameraFit.bounds(
+                //       bounds: LatLngBounds.fromPoints(points),
+                //       padding: const EdgeInsets.all(70),
+                //     ),
+                //   );
+                // },
                 child: const Icon(
                   Icons.center_focus_strong_rounded,
                   color: Colors.black,
