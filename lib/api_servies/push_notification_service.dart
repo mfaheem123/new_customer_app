@@ -22,7 +22,7 @@ class PushNotificationService {
     await requestPermission();
     await _initLocal();
 
-    // 🔥 FCM TOKEN
+    //  FCM TOKEN
     String? token = await _firebaseMessaging.getToken();
     debugPrint("FCM Token: $token");
 
@@ -30,7 +30,7 @@ class PushNotificationService {
       debugPrint("Token refreshed: $newToken");
     });
 
-    // ✅ FOREGROUND
+    //  FOREGROUND
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint("Foreground notification");
 
@@ -38,14 +38,14 @@ class PushNotificationService {
       _handleNotification(message);
     });
 
-    // ✅ BACKGROUND CLICK
+    //  BACKGROUND CLICK
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint("Background click");
 
       _handleNotification(message);
     });
 
-    // ✅ TERMINATED STATE
+    //  TERMINATED STATE
     RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
     if (initialMessage != null) {
@@ -55,7 +55,7 @@ class PushNotificationService {
     }
   }
 
-  // ✅ PERMISSION
+  //  PERMISSION
   Future<void> requestPermission() async {
     await _firebaseMessaging.requestPermission(
       alert: true,
@@ -64,7 +64,7 @@ class PushNotificationService {
     );
   }
 
-  // ✅ LOCAL INIT
+  //  LOCAL INIT
   Future<void> _initLocal() async {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios = DarwinInitializationSettings();
@@ -75,7 +75,7 @@ class PushNotificationService {
     );
 
     await _localNotificationsPlugin.initialize(
-      settings: initSettings, // ✅ FIX
+      settings: initSettings, //  FIX
       onDidReceiveNotificationResponse: (response) {
         if (response.payload != null) {
           Map data = jsonDecode(response.payload!);
@@ -85,12 +85,12 @@ class PushNotificationService {
     );
   }
 
-  // ✅ SHOW LOCAL NOTIFICATION
+  //  SHOW LOCAL NOTIFICATION
   Future<void> _showNotification(RemoteMessage message) async {
     if (message.notification == null) return;
 
     await _localNotificationsPlugin.show(
-      id: message.hashCode, // ✅ FIX
+      id: message.hashCode, //  FIX
       title: message.notification!.title,
       body: message.notification!.body,
       notificationDetails: const NotificationDetails(
@@ -105,12 +105,12 @@ class PushNotificationService {
     );
   }
 
-  // 🔥 HANDLE MESSAGE
+  //  HANDLE MESSAGE
   void _handleNotification(RemoteMessage message) {
     _handleData(message.data);
   }
 
-  // 🔥 CORE
+  //  CORE
   String? driverId;
   String? bookingId;
   String? type;
@@ -118,17 +118,17 @@ class PushNotificationService {
   Future<void> _handleData(Map data) async {
     try {
        bookingId = data['booking_id']?.toString();
-      driverId = data['driver_id']?.toString(); // ✅ correct
+      driverId = data['driver_id']?.toString(); //  correct
        type = data['type']?.toString();
 
       debugPrint("bookingId: $bookingId");
       debugPrint("driverId: $driverId");
       debugPrint("type: $type");
 
-      // ❌ required fields check
+      //  required fields check
       if (driverId == null) return;
 
-      // ❌ NOT LOGIN
+      // NOT LOGIN
       if (!TokenManager.isLogin) {
         debugPrint("User NOT logged in → ignore");
         await _localNotificationsPlugin.cancelAll();
@@ -138,37 +138,44 @@ class PushNotificationService {
       // ✅ TYPE HANDLE
       switch (type) {
 
-        case "Available":
-          Scaffold(
-            body:Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 30, 1, 44),
-                      Color.fromARGB(255, 227, 194, 242),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: Center(
-                  child:SizedBox(
-                    height: 50,
-                    width: 250,
-                    child: MyElevatedButton(text: "Go to Deshboard", onPressed: ()=>Get.offAllNamed(routesName.SigIn_Screen)
-                    ),
-                  ),
-                ),
-            ) ,
-          );
-          break;
+        // case "Available":
+        //   // Scaffold(
+        //   //   body:Container(
+        //   //       decoration: const BoxDecoration(
+        //   //         gradient: LinearGradient(
+        //   //           colors: [
+        //   //             Color.fromARGB(255, 30, 1, 44),
+        //   //             Color.fromARGB(255, 227, 194, 242),
+        //   //           ],
+        //   //           begin: Alignment.topCenter,
+        //   //           end: Alignment.bottomCenter,
+        //   //         ),
+        //   //       ),
+        //   //       child: Center(
+        //   //         child:SizedBox(
+        //   //           height: 50,
+        //   //           width: 250,
+        //   //           child: MyElevatedButton(text: "Go to Deshboard", onPressed: ()=>Get.offAllNamed(routesName.SigIn_Screen)
+        //   //           ),
+        //   //         ),
+        //   //       ),
+        //   //   ) ,
+        //   // );
+        //   break;
+
         case "RIDE_ACCEPTED":
-          // await _hitDriverApi(driverId!); // 🔥 FIX (driverId pass// )
+          // await _hitDriverApi(driverId!); // FIX (driverId pass// )
+          final rideController = Get.isRegistered<RideController>()
+              ? Get.find<RideController>()
+              : Get.put(RideController());
 
-
+          // if (bookingId != null) {
+          //   await rideController.checkBookingStatus(bookingId!); // 🔥 ADD THIS
+          //
+          // }
 
           if (bookingId != null) {
-            await _getBookingById(bookingId!); // 🔥 ADD THIS
+            await _getBookingById(bookingId!);
           }
           if (driverId != null) {
             // await _hitDriverApi(driverId!);
@@ -178,9 +185,7 @@ class PushNotificationService {
           }
 
           // //  ADD THIS
-          final rideController = Get.isRegistered<RideController>()
-              ? Get.find<RideController>()
-              : Get.put(RideController());
+
           rideController. startPolling(driverId!);
 
 
@@ -234,7 +239,7 @@ class PushNotificationService {
       debugPrint("Calling Booking API: $bookingId");
 
       var response = await ApiService.get(
-        "bookings/getbyid/$bookingId", // ✅ correct endpoint
+        "bookings/getbyid/$bookingId", // correct endpoint
         auth: true,
       );
 
@@ -243,7 +248,7 @@ class PushNotificationService {
 
         debugPrint("Booking Data: $data");
 
-        // 👉 Controller me store karo
+        //  Controller me store karo
         final rideController = Get.isRegistered<RideController>()
             ? Get.find<RideController>()
             : Get.put(RideController());
@@ -263,21 +268,6 @@ class PushNotificationService {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

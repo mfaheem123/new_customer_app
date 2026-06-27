@@ -294,7 +294,7 @@ class RideController extends GetxController {
       "pickup_latitude": swapController.selectedPickUPLat,
       "pickup_longitude": swapController.selectedPickUPLon,
       "pickup_door_number": swapController.babyNote,
-      "dropoff_door_number": "",
+      "dropoff_door-number":"",
       "dropoff": swapController.dropOff.text,
       "dropoff_latitude": swapController.selectedDropLat,
       "dropoff_longitude": swapController.selectedDropLon,
@@ -351,7 +351,6 @@ class RideController extends GetxController {
       final List bookings = data['bookings'];
 
       bookingId = bookings[0]['id'].toString();
-      GetStorage().write("booking_id", bookingId);
 
       print("BOOKING ID ✅ => $bookingId");
 
@@ -422,7 +421,7 @@ class RideController extends GetxController {
 
     var response = await ApiService.post(
       formData,
-      "bookings/status/${GetStorage().read("booking_id")}",
+      "bookings/status/$bookingId",
 
       multiPart: false,
       auth: false,
@@ -431,7 +430,6 @@ class RideController extends GetxController {
     if (response!.statusCode == 200) {
       BotToast.showText(text: "Booking Cancel Success");
       print(bookingId);
-      GetStorage().remove("booking_id");
       isFromHistory = false;
       Get.offAllNamed('/DeshBoard_Screen');
       return;
@@ -585,6 +583,37 @@ class RideController extends GetxController {
   //   stopPolling();
   //   super.onClose();
   // }
+///  ===========================================  booking status check
+///
+//   Future<void> checkBookingStatus(String bookingId) async {
+//     var response = await ApiService.get(
+//       "bookings/check-status-customer/$bookingId",
+//       auth: true,
+//     );
+//
+//     if (response != null && response.statusCode == 200) {
+//       var data = response.data;
+//
+//       bool bookingStatus = data["booking_status"] ?? false;
+//       int bookingStatusId = data["booking_status_id"] ?? 0;
+//
+//       debugPrint("booking_status = $bookingStatus, booking_status_id = $bookingStatusId",);
+//
+//       // Ride Complete
+//       if (bookingStatus == true && bookingStatusId == 11 ){
+//
+//         Get.offAllNamed(routesName.DeshBoard_Screen);
+//
+//       }
+//
+//       // Driver already assigned
+//       else if (bookingStatus == false && bookingStatusId == 15) {
+//         debugPrint("DriverDetailScreen already opened from notification");
+//       }
+//     }
+//   }
+
+
 }
 ///
 
