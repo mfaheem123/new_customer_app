@@ -139,7 +139,7 @@ class PickupScreen extends StatelessWidget {
                       // )
                       // OpenStreetMapWidget(),//==== map
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.57,
+                        height: MediaQuery.of(context).size.height * 0.55,
                         //clipBehavior: Clip.antiAlias, // 👈 Important
                         // decoration: BoxDecoration(
                         //   borderRadius: BorderRadius.circular(20),

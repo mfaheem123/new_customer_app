@@ -138,34 +138,41 @@ class PushNotificationService {
       // ✅ TYPE HANDLE
       switch (type) {
 
-        case "Available":
-          Scaffold(
-            body:Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 30, 1, 44),
-                      Color.fromARGB(255, 227, 194, 242),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: Center(
-                  child:SizedBox(
-                    height: 50,
-                    width: 250,
-                    child: MyElevatedButton(text: "Go to Deshboard", onPressed: ()=>Get.offAllNamed(routesName.SigIn_Screen)
-                    ),
-                  ),
-                ),
-            ) ,
-          );
-          break;
+        // case "Available":
+        //   // Scaffold(
+        //   //   body:Container(
+        //   //       decoration: const BoxDecoration(
+        //   //         gradient: LinearGradient(
+        //   //           colors: [
+        //   //             Color.fromARGB(255, 30, 1, 44),
+        //   //             Color.fromARGB(255, 227, 194, 242),
+        //   //           ],
+        //   //           begin: Alignment.topCenter,
+        //   //           end: Alignment.bottomCenter,
+        //   //         ),
+        //   //       ),
+        //   //       child: Center(
+        //   //         child:SizedBox(
+        //   //           height: 50,
+        //   //           width: 250,
+        //   //           child: MyElevatedButton(text: "Go to Deshboard", onPressed: ()=>Get.offAllNamed(routesName.SigIn_Screen)
+        //   //           ),
+        //   //         ),
+        //   //       ),
+        //   //   ) ,
+        //   // );
+        //   break;
+
         case "RIDE_ACCEPTED":
           // await _hitDriverApi(driverId!); // 🔥 FIX (driverId pass// )
+          final rideController = Get.isRegistered<RideController>()
+              ? Get.find<RideController>()
+              : Get.put(RideController());
 
-
+          // if (bookingId != null) {
+          //   await rideController.checkBookingStatus(bookingId!); // 🔥 ADD THIS
+          //
+          // }
 
           if (bookingId != null) {
             await _getBookingById(bookingId!); // 🔥 ADD THIS
@@ -178,9 +185,7 @@ class PushNotificationService {
           }
 
           // //  ADD THIS
-          final rideController = Get.isRegistered<RideController>()
-              ? Get.find<RideController>()
-              : Get.put(RideController());
+
           rideController. startPolling(driverId!);
 
 

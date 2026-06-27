@@ -582,6 +582,37 @@ class RideController extends GetxController {
   //   stopPolling();
   //   super.onClose();
   // }
+///  ===========================================  booking status check
+///
+//   Future<void> checkBookingStatus(String bookingId) async {
+//     var response = await ApiService.get(
+//       "bookings/check-status-customer/$bookingId",
+//       auth: true,
+//     );
+//
+//     if (response != null && response.statusCode == 200) {
+//       var data = response.data;
+//
+//       bool bookingStatus = data["booking_status"] ?? false;
+//       int bookingStatusId = data["booking_status_id"] ?? 0;
+//
+//       debugPrint("booking_status = $bookingStatus, booking_status_id = $bookingStatusId",);
+//
+//       // Ride Complete
+//       if (bookingStatus == true && bookingStatusId == 11 ){
+//
+//         Get.offAllNamed(routesName.DeshBoard_Screen);
+//
+//       }
+//
+//       // Driver already assigned
+//       else if (bookingStatus == false && bookingStatusId == 15) {
+//         debugPrint("DriverDetailScreen already opened from notification");
+//       }
+//     }
+//   }
+
+
 }
 ///
 
