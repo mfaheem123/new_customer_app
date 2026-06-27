@@ -87,6 +87,7 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                     Expanded(
                       child: CustomTextField(
                         controller: mydeshcontroller.WorkAdressController,
+                        textCapitalization: TextCapitalization.characters,
                         hintText: "Search Home Address",
                         borderRadius: 15,
                         onChanged:  mydeshcontroller.addworkLocation,

@@ -86,6 +86,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                   Expanded(
                     child: CustomTextField(
                       controller: mydeshcontroller.HomeController,
+                      textCapitalization: TextCapitalization.characters,
                       hintText: "Search Home Address",
                       borderRadius: 15,
                       onChanged: mydeshcontroller.addhomeLocation,
@@ -348,7 +349,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
               color: CustomColor.Icon_Color,
             ),
             title: Text(
-              "${item.name ?? ""} ${item.postcode ?? ""}",
+             ( "${item.name ?? ""} ${item.postcode ?? ""}").toUpperCase(),
               style: AppTextStyles.regular(),
             ),
             onTap: () => onTap(item),

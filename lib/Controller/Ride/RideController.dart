@@ -294,6 +294,7 @@ class RideController extends GetxController {
       "pickup_latitude": swapController.selectedPickUPLat,
       "pickup_longitude": swapController.selectedPickUPLon,
       "pickup_door_number": swapController.babyNote,
+      "dropoff_door_number": "",
       "dropoff": swapController.dropOff.text,
       "dropoff_latitude": swapController.selectedDropLat,
       "dropoff_longitude": swapController.selectedDropLon,
@@ -350,6 +351,7 @@ class RideController extends GetxController {
       final List bookings = data['bookings'];
 
       bookingId = bookings[0]['id'].toString();
+      GetStorage().write("booking_id", bookingId);
 
       print("BOOKING ID ✅ => $bookingId");
 
@@ -420,7 +422,7 @@ class RideController extends GetxController {
 
     var response = await ApiService.post(
       formData,
-      "bookings/status/$bookingId",
+      "bookings/status/${GetStorage().read("booking_id")}",
 
       multiPart: false,
       auth: false,
@@ -429,6 +431,7 @@ class RideController extends GetxController {
     if (response!.statusCode == 200) {
       BotToast.showText(text: "Booking Cancel Success");
       print(bookingId);
+      GetStorage().remove("booking_id");
       isFromHistory = false;
       Get.offAllNamed('/DeshBoard_Screen');
       return;

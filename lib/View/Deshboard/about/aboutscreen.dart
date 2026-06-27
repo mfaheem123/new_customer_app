@@ -330,34 +330,37 @@ class Aboutscreen extends StatelessWidget {
               // ================= HEADER
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: CustomColor.Icon_Color,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey,
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        onPressed: () {
-                          Get.back();
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          CustomText.About,
-                          style: AppTextStyles.heading(),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: CustomColor.Icon_Color,
+                          ),
+                          onPressed: () {
+                            Get.back();
+                          },
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            CustomText.About,
+                            style: AppTextStyles.heading(),
+                          ),
+                        ),
+                      ),
 
-                    const SizedBox(width: 48),
-                  ],
+                      const SizedBox(width: 48),
+                    ],
+                  ),
                 ),
               ),
 
