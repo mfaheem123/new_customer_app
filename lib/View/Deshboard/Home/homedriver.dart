@@ -102,6 +102,7 @@ class HomeDriver extends StatelessWidget {
                                         homeC.pickupLocation(v);
                                       },
                                       onTap: () {
+
                                         homeC.activeField.value = "pickup";
 
                                       },
@@ -327,7 +328,7 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.searchList,
                                 onTap: (item) {
-                                  homeC.pickUp.text = (item.name ?? "").toUpperCase();
+                                  homeC.pickUp.text ="${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
 
                                   homeC.setPickup(
                                     item.lat ?? 0.0,
@@ -346,7 +347,7 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.dropSearchList,
                                 onTap: (item) {
-                                  homeC.dropOff.text = (item.name ?? "").toUpperCase();
+                                  homeC.dropOff.text = "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
                                   homeC.setDrop(
                                     item.lat ?? 0.0,
                                     item.lon ?? 0.0,
@@ -364,7 +365,7 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.viaSearchList1,
                                 onTap: (item) {
-                                  homeC.viaController1.text = (item.name ?? "").toUpperCase();
+                                  homeC.viaController1.text = "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
                                   homeC.setVia1(
                                     item.lat ?? 0.0,
                                     item.lon ?? 0.0,
@@ -385,7 +386,7 @@ class HomeDriver extends StatelessWidget {
                                     item.lon ?? 0.0,
 
                                   );
-                                  homeC.viaController2.text = (item.name ?? "").toUpperCase();
+                                  homeC.viaController2.text ="${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
 
                                   controller.viaSearchList2.clear();
                                 },
@@ -463,34 +464,6 @@ class HomeDriver extends StatelessWidget {
 
                         ///
 
-                        // Center(
-                        //   child: InkWell(
-                        //     onTap: () {
-                        //       Get.toNamed('/PickupScreen');
-                        //     },
-                        //     child: Padding(
-                        //       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                        //       child: Row(
-                        //         mainAxisAlignment: MainAxisAlignment.center,
-                        //         mainAxisSize: MainAxisSize.min,
-                        //         children: [
-                        //           const Icon(
-                        //             Icons.location_on,
-                        //             size: 25,
-                        //             color: Colors.red,
-                        //           ),
-                        //           const SizedBox(width: 5),
-                        //           Text(
-                        //             "SET LOCATION ON MAP",
-                        //             style: AppTextStyles.medium(
-                        //               weight: FontWeight.bold,
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ),
-                        // )
                       ],
                     ),
                   ),

@@ -295,7 +295,7 @@ class RideController extends GetxController {
       "pickup_latitude": swapController.selectedPickUPLat,
       "pickup_longitude": swapController.selectedPickUPLon,
       "pickup_door_number": swapController.babyNote,
-      "dropoff_door-number":"",
+      "dropoff_door_number":"",
       "dropoff": swapController.dropOff.text,
       "dropoff_latitude": swapController.selectedDropLat,
       "dropoff_longitude": swapController.selectedDropLon,
@@ -476,20 +476,7 @@ class RideController extends GetxController {
   }
 
 
-  // void setBookingData(Map data) {
-  //   try {
-  //     bookingData = BookingGetById.fromJson(Map<String, dynamic>.from(data), // ✅ FIX
-  //     );
-  //
-  //     debugPrint("Booking Stored ✅ ID: ${bookingData?.booking?.id}");
-  //     update();
-  //
-  //   } catch (e) {
-  //     debugPrint("Booking Parse Error: $e");
-  //   }
-  // }
 
-  // 🔥 Reactive variables
   var isLoading = true.obs;
   var bookingStatus = "".obs;
   var driverName = "".obs;
@@ -520,6 +507,12 @@ class RideController extends GetxController {
   bool hasNavigated = false;
 // 🔥 API CALL
   Future<void> _hitDriverApi(String driverId) async {
+    // Dashboard par ja chuke hain to polling ignore karo
+    if (hasNavigatedToDashboard) {
+      stopPolling();
+      return;
+    }
+
     try {
       var response = await ApiService.get(
         "drivers/getbyid/$driverId",
@@ -532,87 +525,150 @@ class RideController extends GetxController {
         final driver = driverGetbyId!.driver;
         final vehicle = driver.vehicle;
 
-        // ✅ SAFE UPDATE (NO NULL CRASH)
         driverName.value = driver.name ?? "";
         bookingStatus.value = driver.bookingStatus ?? "";
         vehicleColor.value = vehicle.color ?? "";
         vehicleNumber.value = vehicle.vehicleNumber ?? "";
 
-        // ==============================
-        // 🔥 LOCATION FIX (STRING → DOUBLE)
-        // ==============================
         double lat = double.tryParse(driver.latitude.toString()) ?? 0.0;
         double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
 
         swapController.driverLat.value = lat;
         swapController.driverLng.value = lng;
-        // swapController.update();
-       // swapController.update(["map"]); // 🔥 important
 
         isLoading.value = false;
 
         debugPrint("Driver Lat: $lat");
         debugPrint("Driver Lng: $lng");
-
-
         debugPrint("Booking Status: ${bookingStatus.value}");
-        print("image ==================================== >>>> ${driver.image}");
 
-        // ==============================
-        // RIDE COMPLETE CONDITION
-        // ==============================
-        if (bookingStatus.value.trim() == "Available" && !hasNavigated) {
+        // Agar Dashboard par nahi gaye aur pehle navigate nahi hua
+        if (!hasNavigatedToDashboard &&
+            !hasNavigated &&
+            bookingStatus.value.trim() == "Available") {
+
           hasNavigated = true;
           stopPolling();
+
           Get.offAllNamed(routesName.RideCompleteScreen);
         }
-        // if (bookingStatus.value.trim() == "Available") {
-        //
-        //   stopPolling();
-        //
-        //   Get.offAllNamed(routesName.RideCompleteScreen);
-        // }
       }
     } catch (e, s) {
       debugPrint("Polling API error: $e");
       debugPrint("Stack trace: $s");
     }
   }
-  //
-  // @override
-  // void onClose() {
-  //   stopPolling();
-  //   super.onClose();
-  // }
-///  ===========================================  booking status check
-///
-//   Future<void> checkBookingStatus(String bookingId) async {
-//     var response = await ApiService.get(
-//       "bookings/check-status-customer/$bookingId",
-//       auth: true,
-//     );
+//   Future<void> _hitDriverApi(String driverId) async {
+//     try {
+//       var response = await ApiService.get(
+//         "drivers/getbyid/$driverId",
+//         auth: true,
+//       );
 //
-//     if (response != null && response.statusCode == 200) {
-//       var data = response.data;
+//       if (response != null && response.statusCode == 200) {
+//         driverGetbyId = DriverGetbyId.fromJson(response.data);
 //
-//       bool bookingStatus = data["booking_status"] ?? false;
-//       int bookingStatusId = data["booking_status_id"] ?? 0;
+//         final driver = driverGetbyId!.driver;
+//         final vehicle = driver.vehicle;
 //
-//       debugPrint("booking_status = $bookingStatus, booking_status_id = $bookingStatusId",);
+//         // ✅ SAFE UPDATE (NO NULL CRASH)
+//         driverName.value = driver.name ?? "";
+//         bookingStatus.value = driver.bookingStatus ?? "";
+//         vehicleColor.value = vehicle.color ?? "";
+//         vehicleNumber.value = vehicle.vehicleNumber ?? "";
 //
-//       // Ride Complete
-//       if (bookingStatus == true && bookingStatusId == 11 ){
+//         // ==============================
+//         // 🔥 LOCATION FIX (STRING → DOUBLE)
+//         // ==============================
+//         double lat = double.tryParse(driver.latitude.toString()) ?? 0.0;
+//         double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
 //
-//         Get.offAllNamed(routesName.DeshBoard_Screen);
+//         swapController.driverLat.value = lat;
+//         swapController.driverLng.value = lng;
+//         // swapController.update();
+//        // swapController.update(["map"]); // 🔥 important
 //
+//         isLoading.value = false;
+//
+//         debugPrint("Driver Lat: $lat");
+//         debugPrint("Driver Lng: $lng");
+//
+//
+//         debugPrint("Booking Status: ${bookingStatus.value}");
+//         print("image ==================================== >>>> ${driver.image}");
+//
+//         // ==============================
+//         // RIDE COMPLETE CONDITION
+//         // ==============================
+//         if (bookingStatus.value.trim() == "Available" && !hasNavigated) {
+//           hasNavigated = true;
+//           stopPolling();
+//           Get.offAllNamed(routesName.RideCompleteScreen);
+//         }
+//         // if (bookingStatus.value.trim() == "Available") {
+//         //
+//         //   stopPolling();
+//         //
+//         //   Get.offAllNamed(routesName.RideCompleteScreen);
+//         // }
 //       }
-//
-//       // Driver already assigned
-//       else if (bookingStatus == false && bookingStatusId == 15) {
-//         debugPrint("DriverDetailScreen already opened from notification");
-//       }
+//     } catch (e, s) {
+//       debugPrint("Polling API error: $e");
+//       debugPrint("Stack trace: $s");
 //     }
 //   }
+
+///  ===========================================  booking status check
+///
+  ///
+  bool hasNavigatedToDashboard = false;
+  Future<int?> checkBookingStatus(String bookingId) async {
+    var response = await ApiService.get(
+      "bookings/check-status-customer/$bookingId",
+      auth: true,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      bool bookingStatus = response.data["booking_status"] ?? false;
+      int bookingStatusId = response.data["booking_status_id"] ?? 0;
+
+      if (bookingStatus == true && bookingStatusId == 11 && !hasNavigatedToDashboard) {
+
+        hasNavigatedToDashboard = true;
+
+        stopPolling();      // polling band
+        hasNavigated = true; // RideComplete navigation bhi band
+
+        Get.offAllNamed(routesName.DeshBoard_Screen);
+
+        return bookingStatusId;
+      }
+
+      return bookingStatusId;
+    }
+
+    return null;
+  }
+  // Future<int?> checkBookingStatus(String bookingId) async {
+  //   var response = await ApiService.get(
+  //     "bookings/check-status-customer/$bookingId",
+  //     auth: true,
+  //   );
+  //
+  //   if (response != null && response.statusCode == 200) {
+  //     bool bookingStatus = response.data["booking_status"] ?? false;
+  //     int bookingStatusId = response.data["booking_status_id"] ?? 0;
+  //
+  //     if (bookingStatus == true && bookingStatusId == 11) {
+  //       Get.offAllNamed(routesName.DeshBoard_Screen);
+  //     }
+  //
+  //     return bookingStatusId;
+  //   }
+  //
+  //   return null;
+  // }
+
 
 
 }

@@ -163,28 +163,64 @@ class PushNotificationService {
         //   // );
         //   break;
 
+
+
         case "RIDE_ACCEPTED":
-          // await _hitDriverApi(driverId!); // FIX (driverId pass// )
+
           final rideController = Get.isRegistered<RideController>()
               ? Get.find<RideController>()
               : Get.put(RideController());
 
+          if (bookingId != null) {
+
+            final statusId = await rideController.checkBookingStatus(bookingId!);
+
+            if (rideController.hasNavigatedToDashboard) {
+              return;
+            }
+
+
+            if (statusId == 15) {
+
+              await _getBookingById(bookingId!);
+
+              if (driverId != null) {
+                Get.offAllNamed(
+                  routesName.Driverdetailscreen,
+                  arguments: {
+                    "id": driverId,
+                  },
+                );
+              }
+            }
+          }
+
+          if (driverId != null) {
+            rideController.startPolling(driverId!);
+          }
+
+          break;
+
+          // final rideController = Get.isRegistered<RideController>()
+          //     ? Get.find<RideController>()
+          //     : Get.put(RideController());
+          //
           // if (bookingId != null) {
           //   await rideController.checkBookingStatus(bookingId!); // 🔥 ADD THIS
           //
           // }
+          //
+          // if (bookingId != null) {
+          //   await _getBookingById(bookingId!);
+          // }
+          // if (driverId != null) {
+          //   // await _hitDriverApi(driverId!);
+          //   Get.offAllNamed(routesName.Driverdetailscreen, arguments: {
+          //     "id": driverId
+          //   });
+          // }
 
-          if (bookingId != null) {
-            await _getBookingById(bookingId!);
-          }
-          if (driverId != null) {
-            // await _hitDriverApi(driverId!);
-            Get.offAllNamed(routesName.Driverdetailscreen, arguments: {
-              "id": driverId
-            });
-          }
-
-          // //  ADD THIS
+          //  ADD THIS
 
           rideController. startPolling(driverId!);
 

@@ -859,12 +859,21 @@ class V5Registration {
     required this.v5RegistrationDocument,
   });
 
-  factory V5Registration.fromJson(Map<String, dynamic> json) => V5Registration(
-    v5RegistrationNumber: json["v5_registration_number"]?? "",
-    v5RegistrationExpiry: DateTime.parse(json["v5_registration_expiry"]?? ""),
-    v5RegistrationExpiryTime: json["v5_registration_expiry_time"]?? "",
-    v5RegistrationDocument: json["v5_registration_document"]?? "",
-  );
+  factory V5Registration.fromJson(Map<String, dynamic> json) =>
+      V5Registration(
+        v5RegistrationNumber: json["v5_registration_number"],
+        v5RegistrationExpiry:
+        json["v5_registration_expiry"] == null ||
+            json["v5_registration_expiry"].toString().isEmpty
+            ? DateTime.now()
+            : DateTime.tryParse(
+            json["v5_registration_expiry"].toString()) ??
+            DateTime.now(),
+        v5RegistrationExpiryTime:
+        json["v5_registration_expiry_time"] ?? "",
+        v5RegistrationDocument:
+        json["v5_registration_document"] ?? "",
+      );
 
   Map<String, dynamic> toJson() => {
     "v5_registration_number": v5RegistrationNumber,

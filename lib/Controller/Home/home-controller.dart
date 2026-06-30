@@ -542,8 +542,8 @@ class SwapController extends GetxController {
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes.round() % 60;
 
-    String h = hours == 1 ? "h" : "h";
-    String m = minutes == 1 ? "min" : "min";
+    String h = hours == 1 ? "hours" : "hours";
+    String m = minutes == 1 ? "mins" : "mins";
 
     if (hours > 0) {
       return "$hours $h $minutes $m";
