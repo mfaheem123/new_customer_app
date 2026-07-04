@@ -44,7 +44,7 @@ class PickupScreen extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.85,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   decoration: BoxDecoration(
                     //color: CustomColor.background,
                     borderRadius: BorderRadius.only(
@@ -185,7 +185,10 @@ class PickupScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-            
+
+                SizedBox(height: 50,)
+
+
                 // Container(
                 //   height: MediaQuery.of(context).size.height*0.1,
                 //   padding: const EdgeInsets.all(20.0),

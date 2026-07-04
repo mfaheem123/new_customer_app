@@ -29,6 +29,7 @@ class changePasswordController extends GetxController {
   }
 
   /// ====================================================================  change password
+  ///
   Future<void> changePasswordApi() async {
     if (CurrentpasswordtlController.text.isEmpty ||
         newpasswordController.text.isEmpty ||
@@ -54,12 +55,53 @@ class changePasswordController extends GetxController {
       auth: true,
     );
 
-    if (response!.statusCode == 200) {
-      BotToast.showText(text: "Password Updated Successfully");
-      Get.back();
+    if (response == null) {
+      BotToast.showText(text: "Something went wrong");
       return;
     }
+
+    if (response.statusCode == 200) {
+      BotToast.showText(text: "Password Updated Successfully");
+      Get.back();
+    } else {
+      print(response.data);
+
+      BotToast.showText(
+        text: response.data["message"]?.toString() ?? "Something went wrong",
+      );
+    }
   }
+  // Future<void> changePasswordApi() async {
+  //   if (CurrentpasswordtlController.text.isEmpty ||
+  //       newpasswordController.text.isEmpty ||
+  //       ConfirmpasswordController.text.isEmpty) {
+  //     BotToast.showText(text: "Please fill all fields");
+  //     return;
+  //   }
+  //
+  //   if (newpasswordController.text != ConfirmpasswordController.text) {
+  //     BotToast.showText(text: "Passwords do not match");
+  //     return;
+  //   }
+  //
+  //   var data = FormData.fromMap({
+  //     "currentPassword": CurrentpasswordtlController.text,
+  //     "newPassword": newpasswordController.text,
+  //     "confirmPassword": ConfirmpasswordController.text,
+  //   });
+  //
+  //   var response = await ApiService.post(
+  //     data,
+  //     "customers/change-password/${TokenManager.userId}",
+  //     auth: true,
+  //   );
+  //
+  //   if (response!.statusCode == 200) {
+  //     BotToast.showText(text: "Password Updated Successfully");
+  //     Get.back();
+  //     return;
+  //   }
+  // }
 
   ///= ================================================================  change phone number
 

@@ -102,63 +102,144 @@ class SignUp_Controller extends GetxController {
 
 
 
-
-
   Future<void> registerUser() async {
-
-    // VALIDATION FIRST
+    // Validation
     if (!validateRegisterForm()) {
-       return; // agar validation fail ho jaye
+      return;
     }
 
     FormData formData = FormData.fromMap({
       "sms_flag": true,
-      "name":"${firstNameController.text} ${lastNameController.text}",
+      "name": "${firstNameController.text} ${lastNameController.text}",
       "mobile": phoneNoController.text,
+      "telephone": phoneNoController.text,
       "email": emailController.text,
-    "telephone":phoneNoController.text,
-      //door_number:123
-      //address1:test
-      //address2:test
-      //notes:test
-    "blacklist":false,
-    "password":passwordController.text,
-
-
-      // "first_name": firstNameController.text,
-      // "last_name": lastNameController.text,
-      // "email": emailController.text,
-      // "phone_number": phoneNoController.text,
-      // "password": passwordController.text,
+      "blacklist": false,
+      "password": passwordController.text,
     });
 
-    Response? response = await ApiService.post(
-      formData,
-      "customers/add",
-      multiPart: true,
-      auth: false,
-    );
-
-
-    // if (response == null) {
-    //   BotToast.showText(text: "Server not responding ❌");
-    //   return;
-    // }
-    // SUCCESS
-    if (response!.statusCode == 200 ) {
-      BotToast.showText(text: "Registered Successfully ✅");
-      Get.toNamed("/SignupOtpoPassword",
-        arguments: {
-          "email": emailController.text,
-        },
+    try {
+      Response? response = await ApiService.post(
+        formData,
+        "customers/add",
+        multiPart: true,
+        auth: false,
       );
-      //clearFields();
-      print("====================================================== ............. >>>>>>>>>>>>>>>>>>>>>>    ${response.data}");
-      return;
+
+      if (response == null) {
+        BotToast.showText(text: "Server not responding");
+        return;
+      }
+
+      // Success
+      if (response.statusCode == 200) {
+        BotToast.showText(
+          text: response.data["message"] ?? "Registered Successfully ✅",
+        );
+
+        Get.toNamed(
+          "/SignupOtpoPassword",
+          arguments: {
+            "email": emailController.text,
+          },
+        );
+
+        print("Success Response: ${response.data}");
+        return;
+      }
+
+      // Error Response
+      String errorMessage = "Something went wrong";
+
+      if (response.data != null) {
+        if (response.data is Map<String, dynamic>) {
+          if (response.data["message"] != null) {
+            errorMessage = response.data["message"].toString();
+          } else if (response.data["error"] != null) {
+            errorMessage = response.data["error"].toString();
+          } else if (response.data["errors"] != null) {
+            final errors = response.data["errors"];
+
+            if (errors is Map && errors.isNotEmpty) {
+              final firstError = errors.values.first;
+
+              if (firstError is List && firstError.isNotEmpty) {
+                errorMessage = firstError.first.toString();
+              } else {
+                errorMessage = firstError.toString();
+              }
+            }
+          }
+        } else {
+          errorMessage = response.data.toString();
+        }
+      }
+
+      BotToast.showText(text: errorMessage);
+
+      print("Status Code: ${response.statusCode}");
+      print("Error Response: ${response.data}");
+    } catch (e) {
+      BotToast.showText(text: e.toString());
+      print("Register Exception: $e");
     }
-
-
   }
+
+  // Future<void> registerUser() async {
+  //
+  //   // VALIDATION FIRST
+  //   if (!validateRegisterForm()) {
+  //      return; // agar validation fail ho jaye
+  //   }
+  //
+  //   FormData formData = FormData.fromMap({
+  //     "sms_flag": true,
+  //     "name":"${firstNameController.text} ${lastNameController.text}",
+  //     "mobile": phoneNoController.text,
+  //     "email": emailController.text,
+  //   "telephone":phoneNoController.text,
+  //     //door_number:123
+  //     //address1:test
+  //     //address2:test
+  //     //notes:test
+  //   "blacklist":false,
+  //   "password":passwordController.text,
+  //
+  //
+  //     // "first_name": firstNameController.text,
+  //     // "last_name": lastNameController.text,
+  //     // "email": emailController.text,
+  //     // "phone_number": phoneNoController.text,
+  //     // "password": passwordController.text,
+  //   });
+  //
+  //   Response? response = await ApiService.post(
+  //     formData,
+  //     "customers/add",
+  //     multiPart: true,
+  //     auth: false,
+  //   );
+  //
+  //
+  //   // if (response == null) {
+  //   //   BotToast.showText(text: "Server not responding ❌");
+  //   //   return;
+  //   // }
+  //   // SUCCESS
+  //   if (response!.statusCode == 200 ) {
+  //     BotToast.showText(text: "Registered Successfully ✅");
+  //     Get.toNamed("/SignupOtpoPassword",
+  //       arguments: {
+  //         "email": emailController.text,
+  //       },
+  //     );
+  //     //clearFields();
+  //     print("====================================================== ............. >>>>>>>>>>>>>>>>>>>>>>    ${response.data}");
+  //     return;
+  //   }
+  //
+  //
+  // }
 
 
 

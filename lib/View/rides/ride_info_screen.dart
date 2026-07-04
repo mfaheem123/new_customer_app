@@ -28,12 +28,23 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<RideController>().getVehicleTypes();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await rideController.getVehicleTypes();
+      await rideController.calculateFareAllVehiclesApi();
     });
   }
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     Get.find<RideController>().getVehicleTypes();
+  //
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,105 +85,38 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                         ),
 
                         child: Row(
-                children: [
-                Container(
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: CustomColor.Icon_Color,
-                  ),
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ),
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: CustomColor.Icon_Color,
+                                ),
+                                onPressed: () {
+                                  Get.back();
+                                },
+                              ),
+                            ),
 
-              Expanded(
-                child: Center(
-                  child: Text(
-                    CustomText.Ride_Info,
-                    style: AppTextStyles.heading(
-                      weight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  CustomText.Ride_Info,
+                                  style: AppTextStyles.heading(
+                                    weight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
 
-              // Back button ke barabar khali jagah
-              const SizedBox(
-                width: 48,
-              ),
-            ],
-          ),
-                        // Row(
-                        //   children: [
-                        //
-                        //     Container(
-                        //       decoration: BoxDecoration(
-                        //         color: Colors.blueGrey,
-                        //         borderRadius: BorderRadius.circular(30),
-                        //       ),
-                        //       child: IconButton(
-                        //         icon: Icon(
-                        //           Icons.arrow_back,
-                        //           color: CustomColor.Icon_Color,
-                        //         ),
-                        //         onPressed: () {
-                        //           Get.back();
-                        //         },
-                        //       ),
-                        //     ),
-                        //     // IconButton(
-                        //     //   onPressed: () {
-                        //     //     FocusManager.instance.primaryFocus
-                        //     //         ?.unfocus(); // keyboard close
-                        //     //     Future.delayed(
-                        //     //       const Duration(milliseconds: 50),
-                        //     //           () {
-                        //     //         Get.back();
-                        //     //       },
-                        //     //     );
-                        //     //   },
-                        //     //   icon: Icon(
-                        //     //     Icons.arrow_back,
-                        //     //     // size: MediaQuery.of(context).size.width * 0.07,
-                        //     //     size: 25,
-                        //     //     color: CustomColor.Icon_Color,
-                        //     //   ),
-                        //     // ),
-                        //
-                        //     const SizedBox(width: 5),
-                        //
-                        //     Expanded(
-                        //       child: Center(
-                        //         child: Text(
-                        //           CustomText.Ride_Info,
-                        //           style: AppTextStyles.heading(
-                        //             // size: MediaQuery.of(context).size.width * 0.06,
-                        //             weight: FontWeight.bold,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     SizedBox(
-                        //       width: MediaQuery.of(context).size.width * 0.06,
-                        //     )
-                        //
-                        //     // IconButton(
-                        //     //   onPressed: () {},
-                        //     //   icon: Icon(
-                        //     //     Icons.edit_notifications_sharp,
-                        //     //     size:
-                        //     //         MediaQuery.of(context).size.width * 0.06,
-                        //     //     color: Colors.yellow,
-                        //     //   ),
-                        //     // ),
-                        //   ],
-                        // ),
+                            // Back button ke barabar khali jagah
+                            const SizedBox(width: 48),
+                          ],
+                        ),
                       ),
 
                       //SizedBox(height: 10,),
@@ -193,7 +137,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                 alignment: Alignment.topCenter,
                                 child: SizedBox(
                                   width:
-                                  MediaQuery.of(context).size.width * 0.9,
+                                      MediaQuery.of(context).size.width * 0.9,
                                   height: 3,
                                   child: LinearProgressIndicator(
                                     minHeight: 3,
@@ -231,6 +175,9 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                 final vehicle = rideController
                                     .vehicleData!
                                     .vehicleTypes![index];
+                                final fare =
+                                    rideController.vehicleFareMap[vehicle.id] ??
+                                    0.0;
 
                                 return GestureDetector(
                                   onTap: () {
@@ -245,30 +192,33 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? CustomColor
-                                          .Container_Colors.withOpacity(0.4,
-                                      )
+                                                .Container_Colors.withOpacity(
+                                              0.4,
+                                            )
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(15),
                                       border: Border.all(
                                         color: isSelected
                                             ? CustomColor
-                                            .Button_background_Color
+                                                  .Button_background_Color
                                             : Colors.grey.shade400,
                                         width: 2,
                                       ),
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         /// 🔹 Vehicle Info
                                         Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               "${vehicle.name ?? ""}",
-                                              style: AppTextStyles.regular(),
+                                              style: AppTextStyles.regular(
+                                                weight: FontWeight.bold,
+                                              ),
                                             ),
 
                                             SizedBox(height: 5),
@@ -277,30 +227,26 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                               children: [
                                                 Icon(
                                                   Icons.person,
-                                                  color:
-                                                  CustomColor.Icon_Color,
+                                                  color: CustomColor.Icon_Color,
                                                   size: 18,
                                                 ),
                                                 Text(
                                                   " x${vehicle.passengers ?? 0}",
-                                                  style:
-                                                  AppTextStyles.medium(),
+                                                  style: AppTextStyles.medium(),
                                                 ),
 
                                                 SizedBox(width: 10),
 
                                                 Icon(
                                                   Icons.work,
-                                                  color:
-                                                  CustomColor.Icon_Color,
+                                                  color: CustomColor.Icon_Color,
                                                   size: 18,
                                                 ),
                                                 Text(
                                                   " x${vehicle.luggages ?? 0}",
-                                                  style:
-                                                  AppTextStyles.regular(
-                                                    color: CustomColor
-                                                        .Text_Color,
+                                                  style: AppTextStyles.regular(
+                                                    color:
+                                                        CustomColor.Text_Color,
                                                   ),
                                                 ),
                                               ],
@@ -317,67 +263,40 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                               size: 32,
                                             ),
 
-                                            SizedBox(width: 10),
-                                            //
-                                            // Text(
-                                            //   "${vehicle.minimumFares ?? 0}£",
-                                            //   style: AppTextStyles.regular(),
-                                            // ),
+                                            const SizedBox(width: 12),
+
+                                            rideController.fareLoading
+                                                ? const SizedBox(
+                                                    width: 18,
+                                                    height: 18,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                        ),
+                                                  )
+                                                : Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        "£${fare.toStringAsFixed(2)}",
+                                                        style:
+                                                            AppTextStyles.regular(
+                                                              weight: FontWeight.bold,
+                                                              size: 16,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        "Estimated",
+                                                        style:
+                                                        AppTextStyles.regular(),
+                                                      ),
+                                                    ],
+                                                  ),
                                           ],
                                         ),
                                       ],
                                     ),
                                   ),
-                                  // child: Container(
-                                  //   height: 120,
-                                  //   margin: const EdgeInsets.all(8),
-                                  //   padding: const EdgeInsets.all(10),
-                                  //   decoration: BoxDecoration(
-                                  //     borderRadius: BorderRadius.circular(20),
-                                  //     color: isSelected
-                                  //         ? CustomColor.Container_Colors.withOpacity(0.4)
-                                  //         : Colors.transparent,
-                                  //     border: Border.all(
-                                  //       color: isSelected
-                                  //           ? CustomColor.Button_background_Color
-                                  //           : Colors.grey.shade400,
-                                  //       width: 2,
-                                  //     ),
-                                  //   ),
-                                  //   child: Column(
-                                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                                  //     children: [
-                                  //       Text(
-                                  //         vehicle.name ?? "",
-                                  //         style: AppTextStyles.medium(
-                                  //           weight: FontWeight.bold,
-                                  //           color: CustomColor.Text_Color,
-                                  //         ),
-                                  //       ),
-                                  //       const SizedBox(height: 15),
-                                  //       Row(
-                                  //         children: [
-                                  //           const SizedBox(width: 20),
-                                  //           Icon(Icons.directions_car,
-                                  //               size: 30,
-                                  //               color: CustomColor.Icon_Color),
-                                  //           const SizedBox(width: 5),
-                                  //           Icon(Icons.person,
-                                  //               size: 18,
-                                  //               color: CustomColor.Icon_Color),
-                                  //           const SizedBox(width: 5),
-                                  //           Text(
-                                  //             "${vehicle.passengers ?? 0}",
-                                  //             style: AppTextStyles.medium(
-                                  //               weight: FontWeight.bold,
-                                  //               color: CustomColor.Text_Color,
-                                  //             ),
-                                  //           ),
-                                  //         ],
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
                                 );
                               },
                             );
@@ -448,9 +367,8 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
 
                                 // ---------- Time Buttons ----------
                                 Obx(
-                                      () => Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                  () => Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       // ----- ASAP -----
                                       SizedBox(
@@ -463,27 +381,27 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
 
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                            rideController
-                                                .selectedTimeOption
-                                                .value ==
-                                                "ASAP"
+                                                rideController
+                                                        .selectedTimeOption
+                                                        .value ==
+                                                    "ASAP"
                                                 ? CustomColor
-                                                .Button_background_Color
+                                                      .Button_background_Color
                                                 : Colors.black54,
                                             elevation: 2,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                              BorderRadius.circular(8),
+                                                  BorderRadius.circular(8),
                                             ),
                                           ),
                                           child: Text(
                                             "Asap",
                                             style: AppTextStyles.small(
                                               weight:
-                                              rideController
-                                                  .selectedTimeOption
-                                                  .value ==
-                                                  "Asap"
+                                                  rideController
+                                                          .selectedTimeOption
+                                                          .value ==
+                                                      "Asap"
                                                   ? FontWeight.bold
                                                   : FontWeight.normal,
                                             ),
@@ -503,27 +421,27 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                            rideController
-                                                .selectedTimeOption
-                                                .value ==
-                                                "15 min"
+                                                rideController
+                                                        .selectedTimeOption
+                                                        .value ==
+                                                    "15 min"
                                                 ? CustomColor
-                                                .Button_background_Color
+                                                      .Button_background_Color
                                                 : Colors.black54,
                                             elevation: 2,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                              BorderRadius.circular(8),
+                                                  BorderRadius.circular(8),
                                             ),
                                           ),
                                           child: Text(
                                             "15 min",
                                             style: AppTextStyles.small(
                                               weight:
-                                              rideController
-                                                  .selectedTimeOption
-                                                  .value ==
-                                                  "15 min"
+                                                  rideController
+                                                          .selectedTimeOption
+                                                          .value ==
+                                                      "15 min"
                                                   ? FontWeight.bold
                                                   : FontWeight.normal,
                                             ),
@@ -541,27 +459,27 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                               rideController.addMinutes(30),
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                            rideController
-                                                .selectedTimeOption
-                                                .value ==
-                                                "30 min"
+                                                rideController
+                                                        .selectedTimeOption
+                                                        .value ==
+                                                    "30 min"
                                                 ? CustomColor
-                                                .Button_background_Color
+                                                      .Button_background_Color
                                                 : Colors.black54,
                                             elevation: 2,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                              BorderRadius.circular(8),
+                                                  BorderRadius.circular(8),
                                             ),
                                           ),
                                           child: Text(
                                             "30 min",
                                             style: AppTextStyles.small(
                                               weight:
-                                              rideController
-                                                  .selectedTimeOption
-                                                  .value ==
-                                                  "30 min"
+                                                  rideController
+                                                          .selectedTimeOption
+                                                          .value ==
+                                                      "30 min"
                                                   ? FontWeight.bold
                                                   : FontWeight.normal,
                                               color: Colors.white,
@@ -577,29 +495,27 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
 
                                 Center(
                                   child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       // ----- Date Picker -----
                                       Obx(
-                                            () => GestureDetector(
-                                          onTap: () => rideController
-                                              .pickDate(context),
+                                        () => GestureDetector(
+                                          onTap: () =>
+                                              rideController.pickDate(context),
                                           child: Container(
                                             width: 150,
-                                            padding:
-                                            const EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                               horizontal: 10,
                                               vertical: 12,
                                             ),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                              BorderRadius.circular(10),
+                                                  BorderRadius.circular(10),
                                               color: Colors.black,
                                             ),
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 const Icon(
                                                   Icons.calendar_today,
@@ -619,11 +535,11 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                     style: const TextStyle(
                                                       fontSize: 15,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       color: Colors.white,
                                                     ),
                                                     overflow:
-                                                    TextOverflow.ellipsis,
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
                                               ],
@@ -633,44 +549,39 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                       ),
                                       const SizedBox(width: 15),
 
-                                      // ----- Time Picker (24-hour format) -----
+                                      ///----- Time Picker (24-hour format) -----
+
+
                                       Obx(
                                             () => GestureDetector(
-                                          onTap: () => rideController
-                                              .pickTime(context),
+                                          onTap: () => rideController.pickTime(context),
                                           child: Container(
                                             width: 150,
-                                            padding:
-                                            const EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                               horizontal: 10,
                                               vertical: 12,
                                             ),
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(10),
                                               color: Colors.black,
+                                              borderRadius: BorderRadius.circular(10),
                                             ),
                                             child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
                                                 const Icon(
                                                   Icons.access_time_outlined,
                                                   color: Colors.white,
                                                   size: 20,
                                                 ),
-                                                const SizedBox(width: 6),
-                                                Flexible(
+                                                const SizedBox(width: 8),
+                                                Expanded(
                                                   child: Text(
-                                                    rideController
-                                                        .formattedTime24(), // FIXED: now 24-hour time
-                                                    style:
-                                                    AppTextStyles.regular(
-                                                      weight:
-                                                      FontWeight.bold,
+                                                    "${rideController.selectedTime.value.hour.toString().padLeft(2, '0')}:${rideController.selectedTime.value.minute.toString().padLeft(2, '0')}",
+                                                    textAlign: TextAlign.center,
+                                                    style: AppTextStyles.regular(
+                                                      weight: FontWeight.bold,
                                                     ),
-                                                    overflow:
-                                                    TextOverflow.ellipsis,
+                                                    overflow: TextOverflow.ellipsis,
                                                   ),
                                                 ),
                                               ],
@@ -678,6 +589,50 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                           ),
                                         ),
                                       ),
+
+                                      // Obx(
+                                      //   () => GestureDetector(
+                                      //     onTap: () =>
+                                      //         rideController.pickTime(context),
+                                      //     child: Container(
+                                      //       width: 150,
+                                      //       padding: const EdgeInsets.symmetric(
+                                      //         horizontal: 10,
+                                      //         vertical: 12,
+                                      //       ),
+                                      //       decoration: BoxDecoration(
+                                      //         borderRadius:
+                                      //             BorderRadius.circular(10),
+                                      //         color: Colors.black,
+                                      //       ),
+                                      //       child: Row(
+                                      //         mainAxisAlignment:
+                                      //             MainAxisAlignment.center,
+                                      //         children: [
+                                      //           const Icon(
+                                      //             Icons.access_time_outlined,
+                                      //             color: Colors.white,
+                                      //             size: 20,
+                                      //           ),
+                                      //           const SizedBox(width: 6),
+                                      //           Flexible(
+                                      //             child: Text(
+                                      //               rideController
+                                      //                   .formattedTime24(), // FIXED: now 24-hour time
+                                      //               style:
+                                      //                   AppTextStyles.regular(
+                                      //                     weight:
+                                      //                         FontWeight.bold,
+                                      //                   ),
+                                      //               overflow:
+                                      //                   TextOverflow.ellipsis,
+                                      //             ),
+                                      //           ),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -691,23 +646,21 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                   child: MyElevatedButton(
                                     text: '',
                                     onPressed: () {
-
-
                                       Get.dialog(
                                         Dialog(
                                           backgroundColor: Colors.transparent,
                                           insetPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 20,
-                                          ),
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 20,
+                                              ),
                                           child: Container(
                                             height: 300,
                                             padding: const EdgeInsets.all(20),
                                             decoration: BoxDecoration(
-                                              color: CustomColor
-                                                  .Container_Colors,
+                                              color:
+                                                  CustomColor.Container_Colors,
                                               borderRadius:
-                                              BorderRadius.circular(20),
+                                                  BorderRadius.circular(20),
                                             ),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
@@ -717,7 +670,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                   "Book Ride",
                                                   textAlign: TextAlign.center,
                                                   style:
-                                                  AppTextStyles.heading(),
+                                                      AppTextStyles.heading(),
                                                 ),
 
                                                 const SizedBox(height: 12),
@@ -732,8 +685,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                     shape: BoxShape.circle,
                                                   ),
                                                   child: const Icon(
-                                                    Icons
-                                                        .check_circle_rounded,
+                                                    Icons.check_circle_rounded,
                                                     color: Colors.yellow,
                                                     size: 34,
                                                   ),
@@ -756,18 +708,17 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                 //   ),
                                                 // ),
                                                 /// DESCRIPTION
-
                                                 Padding(
                                                   padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 10,
-                                                  ),
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                      ),
                                                   child: Text(
-                                                    CustomText.Ride_book_ride_alert,
-                                                    textAlign:
-                                                    TextAlign.center,
+                                                    CustomText
+                                                        .Ride_book_ride_alert,
+                                                    textAlign: TextAlign.center,
                                                     style:
-                                                    AppTextStyles.regular(),
+                                                        AppTextStyles.regular(),
                                                   ),
                                                 ),
 
@@ -776,8 +727,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                 /// BUTTONS
                                                 Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .center,
+                                                      MainAxisAlignment.center,
                                                   children: [
                                                     /// YES BUTTON
                                                     CustomTextButton(
@@ -786,19 +736,20 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                       text: 'Yes',
 
                                                       textAlign:
-                                                      TextAlign.center,
+                                                          TextAlign.center,
                                                       rowMainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
+                                                          MainAxisAlignment
+                                                              .center,
                                                       columnCrossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .center,
+                                                          CrossAxisAlignment
+                                                              .center,
 
                                                       onPressed: () {
-                                                        rideController.getBookingApi();
+                                                        rideController
+                                                            .getBookingApi();
                                                         if (rideController
-                                                            .selectedTimeOption
-                                                            .value ==
+                                                                .selectedTimeOption
+                                                                .value ==
                                                             "ASAP") {
                                                           Get.offAllNamed(
                                                             routesName
@@ -810,14 +761,29 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                                 .DeshBoard_Screen,
                                                           );
                                                         }
-                                                        final profileController = Get.isRegistered<profileModelController>()
-                                                            ? Get.find<profileModelController>()
-                                                            : Get.put(profileModelController());
-                                                        profileController.getuserProfile();
+                                                        final profileController =
+                                                            Get.isRegistered<
+                                                              profileModelController
+                                                            >()
+                                                            ? Get.find<
+                                                                profileModelController
+                                                              >()
+                                                            : Get.put(
+                                                                profileModelController(),
+                                                              );
+                                                        profileController
+                                                            .getuserProfile();
 
-                                                        final homeC = Get.isRegistered<SwapController>()
-                                                            ? Get.find<SwapController>()
-                                                            : Get.put(SwapController());
+                                                        final homeC =
+                                                            Get.isRegistered<
+                                                              SwapController
+                                                            >()
+                                                            ? Get.find<
+                                                                SwapController
+                                                              >()
+                                                            : Get.put(
+                                                                SwapController(),
+                                                              );
                                                         // homeC.resetRouteState();homeC.resetRouteState();
                                                         // homeC.dropOff.clear();
                                                         // homeC.pickUp.clear();
@@ -825,17 +791,16 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                         // homeC.viaController2.clear();
                                                         // homeC.activeField.value = "";
                                                         homeC.update();
-
                                                       },
                                                       backgroundColor:
-                                                      Colors.red,
-                                                      textColor: CustomColor
-                                                          .textColor,
+                                                          Colors.red,
+                                                      textColor:
+                                                          CustomColor.textColor,
                                                       borderRadius: 10,
                                                       elevation: 2,
                                                       fontSize: 14,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                     ),
 
                                                     const SizedBox(width: 15),
@@ -847,13 +812,13 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                       text: ' No ',
 
                                                       textAlign:
-                                                      TextAlign.center,
+                                                          TextAlign.center,
                                                       rowMainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
+                                                          MainAxisAlignment
+                                                              .center,
                                                       columnCrossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .center,
+                                                          CrossAxisAlignment
+                                                              .center,
 
                                                       onPressed: () {
                                                         Get.back();
@@ -861,13 +826,13 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
 
                                                       backgroundColor: CustomColor
                                                           .Button_background_Color,
-                                                      textColor: CustomColor
-                                                          .textColor,
+                                                      textColor:
+                                                          CustomColor.textColor,
                                                       borderRadius: 10,
                                                       elevation: 2,
                                                       fontSize: 14,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                     ),
                                                   ],
                                                 ),
@@ -876,7 +841,6 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                           ),
                                         ),
                                       );
-
 
                                       rideController.calculateFareApi();
                                     },

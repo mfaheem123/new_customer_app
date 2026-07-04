@@ -15,11 +15,17 @@ class TokenManager {
     _box.write("user_id", userId);
   }
 
-  static clearSession() {
-    _box.erase();
+  static clearSession() async {
+    final email = _box.read("email");
+
+    await _box.erase();
+
+    if (email != null) {
+      await _box.write("email", email);
+    }
+
     Get.offAllNamed('/SigIn_Screen');
   }
-
   static clearAfterDelete() {
     _box.remove("token");
     _box.remove("user_id");

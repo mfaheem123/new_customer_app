@@ -2,9 +2,16 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../api_servies/api_servies.dart';
+import 'login_controller.dart';
 
 class OtpController extends GetxController {
+
+  final loginController = Get.isRegistered<LoginController>()
+      ? Get.find<LoginController>()
+      : Get.put(LoginController());
+
   final String email = Get.arguments['email'];
 
   final List<TextEditingController> otpControllers =
@@ -104,6 +111,11 @@ class OtpController extends GetxController {
       if (response!.statusCode == 200) {
         BotToast.showText(text: "OTP Verified ✅");
         Get.offAllNamed("/SigIn_Screen");
+
+        final _box = GetStorage();
+        _box.write("email", email);
+        print("Stored Email: ${_box.read("email")}");
+        loginController.emailController.text = _box.read("email");
         return;
       }
 

@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -17,9 +18,18 @@ class SwapController extends GetxController {
       ? Get.find<PickLocationController>()
       : Get.put(PickLocationController());
 
+  final pickupFocus = FocusNode();
+  final via1Focus = FocusNode();
+  final via2Focus = FocusNode();
+  final dropFocus = FocusNode();
+
   @override
   void onClose() {
-    // mapC.dispose();
+    pickupFocus.dispose();
+
+    via1Focus.dispose();
+    via2Focus.dispose();
+    dropFocus.dispose();
     super.onClose();
   }
 
@@ -148,63 +158,137 @@ class SwapController extends GetxController {
   RxString activeField = "pickup".obs;
 
   /// field focus
-  void selectLocationFromList(int index) {
+  Future<void> selectLocationFromList(int index) async {
     String address = "";
     double lat = 0.0;
     double lng = 0.0;
 
-    /// ✈️ AIRPORT
     if (selectedIndex.value == 1) {
       final loc = airportLocations[index];
       address = loc.name ?? loc.address ?? "";
       lat = double.tryParse(loc.latitude ?? "0") ?? 0;
       lng = double.tryParse(loc.longitude ?? "0") ?? 0;
-    }
-    /// 🚆 TRAIN (static — lat/lng nahi)
-    else if (selectedIndex.value == 2) {
+    } else if (selectedIndex.value == 2) {
       address = trainStops[index];
-    }
-    /// 🏠 ADDRESS (home/work)
-    else {
+    } else {
       address = busStops[index];
     }
 
-    /// 🔥 FIELD TARGETING
-    switch (activeField.value) {
-      case "pickup":
-        pickUp.text = address;
-        selectedPickUPLat = lat;
-        selectedPickUPLon = lng;
-        print("🟢 PICKUP SET → $address | Lat: $lat | Lng: $lng");
-        break;
-
-      case "via1":
-        viaController1.text = address;
-        via1Lat = lat;
-        via1Lon = lng;
-        showVia1.value = true;
-        print("🟡 VIA 1 SET → $address | Lat: $lat | Lng: $lng");
-        break;
-
-      case "via2":
-        viaController2.text = address;
-        via2Lat = lat;
-        via2Lon = lng;
-        showVia2.value = true;
-        print("🟠 VIA 2 SET → $address | Lat: $lat | Lng: $lng");
-        break;
-
-      case "drop":
-        dropOff.text = address;
-        selectedDropLat = lat;
-        selectedDropLon = lng;
-        print("🔴 DROP SET → $address | Lat: $lat | Lng: $lng");
-        break;
+    if (pickupFocus.hasFocus) {
+      pickUp.text = address;
+      setPickup(lat, lng);
+    } else if (via1Focus.hasFocus) {
+      viaController1.text = address;
+      setVia1(lat, lng);
+    } else if (via2Focus.hasFocus) {
+      viaController2.text = address;
+      setVia2(lat, lng);
+    } else if (dropFocus.hasFocus) {
+      dropOff.text = address;
+      setDrop(lat, lng);
     }
 
     fetchRoute();
     update(["map", "distance"]);
+
+    // Keyboard hide
+    await Future.delayed(const Duration(milliseconds: 100));
+    await SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
+  ///
+  // void selectLocationFromList(int index) {
+  //   String address = "";
+  //   double lat = 0.0;
+  //   double lng = 0.0;
+  //
+  //   if (selectedIndex.value == 1) {
+  //     final loc = airportLocations[index];
+  //     address = loc.name ?? loc.address ?? "";
+  //     lat = double.tryParse(loc.latitude ?? "0") ?? 0;
+  //     lng = double.tryParse(loc.longitude ?? "0") ?? 0;
+  //   } else if (selectedIndex.value == 2) {
+  //     address = trainStops[index];
+  //   } else {
+  //     address = busStops[index];
+  //   }
+  //
+  //   if (pickupFocus.hasFocus) {
+  //     pickUp.text = address;
+  //     setPickup(lat, lng);
+  //   } else if (via1Focus.hasFocus) {
+  //     viaController1.text = address;
+  //     setVia1(lat, lng);
+  //   } else if (via2Focus.hasFocus) {
+  //     viaController2.text = address;
+  //     setVia2(lat, lng);
+  //   } else if (dropFocus.hasFocus) {
+  //     dropOff.text = address;
+  //     setDrop(lat, lng);
+  //   }
+  //
+  //   fetchRoute();
+  //   update(["map", "distance"]);
+  // }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//   void selectLocationFromList(int index) {
+//     String address = "";
+//     double lat = 0.0;
+//     double lng = 0.0;
+//
+//     /// ✈️ AIRPORT
+//     if (selectedIndex.value == 1) {
+//       final loc = airportLocations[index];
+//       address = loc.name ?? loc.address ?? "";
+//       lat = double.tryParse(loc.latitude ?? "0") ?? 0;
+//       lng = double.tryParse(loc.longitude ?? "0") ?? 0;
+//     }
+//     /// 🚆 TRAIN (static — lat/lng nahi)
+//     else if (selectedIndex.value == 2) {
+//       address = trainStops[index];
+//     }
+//     /// 🏠 ADDRESS (home/work)
+//     else {
+//       address = busStops[index];
+//     }
+//
+//     /// 🔥 FIELD TARGETING
+//     switch (activeField.value) {
+//       case "pickup":
+//         pickUp.text = address;
+//         selectedPickUPLat = lat;
+//         selectedPickUPLon = lng;
+//         print("🟢 PICKUP SET → $address | Lat: $lat | Lng: $lng");
+//         break;
+//
+//       case "via1":
+//         viaController1.text = address;
+//         via1Lat = lat;
+//         via1Lon = lng;
+//         showVia1.value = true;
+//         print("🟡 VIA 1 SET → $address | Lat: $lat | Lng: $lng");
+//         break;
+//
+//       case "via2":
+//         viaController2.text = address;
+//         via2Lat = lat;
+//         via2Lon = lng;
+//         showVia2.value = true;
+//         print("🟠 VIA 2 SET → $address | Lat: $lat | Lng: $lng");
+//         break;
+//
+//       case "drop":
+//         dropOff.text = address;
+//         selectedDropLat = lat;
+//         selectedDropLon = lng;
+//         print("🔴 DROP SET → $address | Lat: $lat | Lng: $lng");
+//         break;
+//     }
+//
+//     fetchRoute();
+//     update(["map", "distance"]);
+//   }
 
   ///----------------------------------------------------------------------------------------  where to go
 
@@ -477,7 +561,7 @@ class SwapController extends GetxController {
     selectedPickUPLat = lat;
     selectedPickUPLon = lon;
     print(
-      "pickUp ====================================${selectedPickUPLat}   , ${selectedPickUPLon}",
+      "pickUp ================================================${selectedPickUPLat}   , ${selectedPickUPLon}",
     );
     await fetchRoute();
     update();

@@ -115,6 +115,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
+
   final String hintText;
   final Widget? lable;
   final TextEditingController? controller;
@@ -175,6 +176,7 @@ class CustomTextField extends StatelessWidget {
     );
 
     return TextFormField(
+      focusNode: focusNode,
       maxLength: maxlength,
       enabled: enabled,
       controller: controller,

@@ -238,7 +238,7 @@ class ProfileScreen extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.person, size: 25, color: Colors.white),
                       title: Text(CustomText.Name, style: AppTextStyles.medium()),
-                      subtitle: Text("${user.name}", style: AppTextStyles.medium()),
+                      subtitle: Text(("${user.name}").toUpperCase(), style: AppTextStyles.medium()),
                     ),
                     ListTile(
                       leading: const Icon(Icons.phone, size: 25, color: Colors.white),

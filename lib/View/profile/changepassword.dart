@@ -62,11 +62,11 @@ class _ChangepasswordState extends State<Changepassword> {
                 ),
                 SizedBox(height: 150,),
                 Column(
-                 mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                 mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    SizedBox(height: 10,),
+                   // SizedBox(height: 200,),
                     Center(
                       child: Text(
                         "Change Password",
@@ -209,6 +209,7 @@ class _ChangepasswordState extends State<Changepassword> {
                       ),
                       ),
 
+                    SizedBox(height: 70,)
                   ],
                 ),
               ],

@@ -14,7 +14,10 @@ class PickupLocationScreen extends StatefulWidget {
 }
 
 class _PickupLocationScreenState extends State<PickupLocationScreen> {
-  final c = Get.put(PickLocationController());
+  // final c = Get.put(PickLocationController());
+  final c = Get.isRegistered<PickLocationController>()
+      ? Get.find<PickLocationController>()
+      : Get.put(PickLocationController());
   late final MapController mapController;
 
   @override

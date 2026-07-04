@@ -7,6 +7,7 @@ import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../Controller/Auth_Controller/login_controller.dart';
 
 class SigIn_Screen extends StatefulWidget {
@@ -21,9 +22,20 @@ class _SigIn_ScreenState extends State<SigIn_Screen> {
   final loginController = Get.isRegistered<LoginController>()
       ? Get.find<LoginController>()
       : Get.put(LoginController());
+  @override
+  void initState() {
+    super.initState();
+    print(GetStorage().read("email") ?? "");
+    loginController.emailController.text =
+        GetStorage().read("email") ?? "";
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
+
 
     return GetBuilder<LoginController>(
       builder: (controller) {

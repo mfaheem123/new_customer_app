@@ -1,6 +1,7 @@
 ///===================================================== === >>   (Address/ Airport / station) container and list hai ini teeno ki
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../Controller/Home/home-controller.dart';
@@ -102,9 +103,26 @@ class _containerWidgetState extends State<containerWidget> {
                     // =================== Airport ===================
                     Obx(
                       () => GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           homeC.selectedItem(1);
                           homeC.changeIndex(1);
+
+                          // Future.delayed(const Duration(milliseconds: 10), () {
+                          //   switch (homeC.activeField.value) {
+                          //     case "pickup":
+                          //       homeC.pickupFocus.requestFocus();
+                          //       break;
+                          //     case "via1":
+                          //       homeC.via1Focus.requestFocus();
+                          //       break;
+                          //     case "via2":
+                          //       homeC.via2Focus.requestFocus();
+                          //       break;
+                          //     case "drop":
+                          //       homeC.dropFocus.requestFocus();
+                          //       break;
+                          //   }
+                          // });
                         },
                         child: Container(
                           height: 70,
@@ -339,7 +357,9 @@ class _containerWidgetState extends State<containerWidget> {
                                     },
                                     title: Text(
                                       "Baby Note",
-                                      style: AppTextStyles.medium(weight: FontWeight.bold),
+                                      style: AppTextStyles.medium(
+                                        weight: FontWeight.bold,
+                                      ),
                                     ),
                                     leading: Icon(
                                       Icons.note_alt_outlined,
@@ -473,7 +493,6 @@ class _containerWidgetState extends State<containerWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               /// YES BUTTON
               CustomTextButton(
                 width: 75,
@@ -486,7 +505,7 @@ class _containerWidgetState extends State<containerWidget> {
 
                 onPressed: () async {
                   homeC.babyNoteController.clear();
-                      Get.back();
+                  Get.back();
                 },
 
                 backgroundColor: Colors.red,

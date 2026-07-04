@@ -8,6 +8,7 @@ import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Controller/Home/home-controller.dart';
+import '../../Controller/location_permission/location_permission_controller.dart';
 import '../../Routing/routes_name.dart';
 import '../profile/controller/profile_controller.dart';
 import '../yourtrip/yourtrip.dart';
@@ -33,6 +34,9 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
       ? Get.find<SwapController>()
       : Get.put(SwapController());
 
+  final locationController =
+  Get.put(LocationPermissionController());
+
   final deshboard_controller = Get.isRegistered<DeshBoardAddHome_Controller>()
       ? Get.find<DeshBoardAddHome_Controller>()
       : Get.put(DeshBoardAddHome_Controller());
@@ -43,6 +47,12 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
   Widget build(BuildContext context) {
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
+    @override
+    void initState() {
+      super.initState();
+
+      Get.put(LocationPermissionController());
+    }
     return GetBuilder<profileModelController>(
       builder: (profileController) {
         return SafeArea(

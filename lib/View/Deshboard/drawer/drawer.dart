@@ -169,6 +169,7 @@ class appDrawer extends StatelessWidget {
                       ),
                       title: Text("Logout", style: AppTextStyles.medium()),
                       onTap: () {
+
                         TokenManager.clearSession();
                         Get.offAllNamed('/SigIn_Screen');
                       },

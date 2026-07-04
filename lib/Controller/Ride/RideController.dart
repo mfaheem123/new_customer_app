@@ -1,24 +1,27 @@
 import 'dart:async';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:customer/Routing/routes_name.dart';
-import 'package:customer/View/rides/model/booking_get_by_id/booking_get_model.dart' hide VehicleType;
+import 'package:customer/View/rides/model/booking_get_by_id/booking_get_model.dart'
+    hide VehicleType;
 import 'package:dio/dio.dart';
-import 'package:dio/src/response.dart'  ;
+import 'package:dio/src/response.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:get/get.dart' hide FormData, Response;
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import '../../View/Widgets/color.dart';
 import '../../View/profile/controller/profile_controller.dart';
-import '../../View/rides/model/get_driver_by_id/driver_detail_model.dart' hide VehicleType;
+import '../../View/rides/model/get_driver_by_id/driver_detail_model.dart'
+    hide VehicleType;
 import '../../View/rides/model/ride_model/get_vehicle_model.dart';
+import '../../View/textstyle/apptextstyle.dart';
 import '../../api_servies/api_servies.dart';
 import '../Home/home-controller.dart';
 import 'dart:convert';
 
-
 class RideController extends GetxController {
-
-
   final swapController = Get.isRegistered<SwapController>()
       ? Get.find<SwapController>()
       : Get.put(SwapController());
@@ -64,9 +67,9 @@ class RideController extends GetxController {
     update();
 
     var response = await ApiService.get(
-        "vehicle-type/get",
-        auth: true,
-        isProgressShow: false
+      "vehicle-type/get",
+      auth: true,
+      isProgressShow: false,
     );
 
     if (response != null && response.statusCode == 200) {
@@ -82,33 +85,60 @@ class RideController extends GetxController {
     update();
   }
 
-  // final List<String> CarName = [
-  //   "Any Car",
-  //   "Saloon Car",
-  //   "Estate Car",
-  //   "Seven Seater Van",
-  //   "Saloon Car",
-  //   "Estate Car",
-  //   "Seven seater Van"
-  // ];
-  // final List<String> seats = ["4", "3", "4", "6", "3", "4", "6"];
+  ///==========   estimated fare calculation
+  Map<int, double> vehicleFareMap = {};
+  bool fareLoading = false;
 
+  Future<void> calculateFareAllVehiclesApi() async {
+    fareLoading = true;
+    update();
+
+    Map<String, dynamic> dataMap = {
+      "miles": swapController.totalRouteDistanceMiles,
+      "pickup_date": DateFormat('yyyy-M-d').format(DateTime.now()),
+      "pickup_time": DateFormat('HH:mm').format(DateTime.now()),
+      "pickup": swapController.pickUp.text,
+      "dropoff": swapController.dropOff.text,
+      "journey_type_id": 1,
+      "pickup_latitude": swapController.selectedPickUPLat,
+      "pickup_longitude": swapController.selectedPickUPLon,
+    };
+
+    FormData formData = FormData.fromMap(dataMap);
+
+    Response<dynamic>? response = await ApiService.post(
+      formData,
+      "fares/calculate-fare-all-vehicles",
+      multiPart: true,
+      auth: true,
+      isProgressShow: true,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      final res = response.data;
+
+      vehicleFareMap.clear();
+
+      for (var item in res["data"]) {
+        vehicleFareMap[item["vehicle_type_id"]] = (item["total_fare"] as num)
+            .toDouble();
+      }
+    }
+
+    fareLoading = false;
+    update();
+  }
 
   ///===============================================================================================  Schedule Working
 
+  // ----------------- Date & Time -----------------
+  var selectedDate = DateTime.now().obs;
+  var selectedTime = TimeOfDay.now().obs;
 
-// ----------------- Date & Time -----------------
-  var selectedDate = DateTime
-      .now()
-      .obs;
-  var selectedTime = TimeOfDay
-      .now()
-      .obs;
-
-// Track which quick-time button is selected ("ASAP", "15 min", "30 min")
+  // Track which quick-time button is selected ("ASAP", "15 min", "30 min")
   var selectedTimeOption = 'ASAP'.obs;
 
-// ----------------- Pick Date -----------------
+  // ----------------- Pick Date -----------------
   Future<void> pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -123,47 +153,194 @@ class RideController extends GetxController {
     }
   }
 
-// ----------------- Pick Time -----------------
-
+  // ----------------- Pick Time -----------------
   Future<void> pickTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: selectedTime.value,
+    int hour = selectedTime.value.hour;
+    int minute = selectedTime.value.minute;
 
-      builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
-        );
-      },
+    Get.bottomSheet(
+      StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            height: 350,
+            decoration: const BoxDecoration(
+              color: CustomColor.Container_Colors,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
 
+                /// Drag Handle
+                Container(
+                  width: 45,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade600,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+
+                Text(
+                  "Select Pickup Time",
+                  style: AppTextStyles.medium(
+                    size: 24,
+                    weight: FontWeight.bold,
+                    color: CustomColor.Text_Color,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                Expanded(
+                  child: Row(
+                    children: [
+                      /// Hour
+                      Expanded(
+                        child: CupertinoPicker(
+                          backgroundColor: Colors.transparent,
+                          itemExtent: 45,
+                          scrollController: FixedExtentScrollController(
+                            initialItem: hour,
+                          ),
+                          onSelectedItemChanged: (value) {
+                            setState(() => hour = value);
+                          },
+                          children: List.generate(
+                            24,
+                                (index) => Center(
+                              child: Text(
+                                index.toString().padLeft(2, '0'),
+                                style: AppTextStyles.medium(
+                                  size: 22,
+                                  weight: FontWeight.bold,
+                                  color: CustomColor.Text_Color,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      Text(
+                        ":",
+                        style: AppTextStyles.medium(
+                          size: 28,
+                          weight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      /// Minute
+                      Expanded(
+                        child: CupertinoPicker(
+                          backgroundColor: Colors.transparent,
+                          itemExtent: 45,
+                          scrollController: FixedExtentScrollController(
+                            initialItem: minute,
+                          ),
+                          onSelectedItemChanged: (value) {
+                            setState(() => minute = value);
+                          },
+                          children: List.generate(
+                            60,
+                                (index) => Center(
+                              child: Text(
+                                index.toString().padLeft(2, '0'),
+                                style: AppTextStyles.medium(
+                                  size: 22,
+                                  weight: FontWeight.bold,
+                                  color: CustomColor.Text_Color,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
+                  ),
+                  child: SizedBox(
+                    width: 250,
+                    height: 52,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                        CustomColor.Button_background_Color,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        selectedTime.value = TimeOfDay(
+                          hour: hour,
+                          minute: minute,
+                        );
+
+                        selectedTimeOption.value = "";
+
+                        Get.back();
+                      },
+                      child: Text(
+                        "Confirm Time",
+                        style: AppTextStyles.medium(
+                          size: 18,
+                          weight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      isScrollControlled: true,
     );
-
-    if (picked != null && picked != selectedTime.value) {
-      selectedTime.value = picked;
-      selectedTimeOption.value = '';
-    }
   }
+  // Future<void> pickTime(BuildContext context) async {
+  //   final TimeOfDay? picked = await showTimePicker(
+  //     context: context,
+  //     initialTime: selectedTime.value,
+  //
+  //     builder: (BuildContext context, Widget? child) {
+  //       return MediaQuery(
+  //         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+  //         child: child!,
+  //       );
+  //     },
+  //
+  //   );
+  //
+  //   if (picked != null && picked != selectedTime.value) {
+  //     selectedTime.value = picked;
+  //     selectedTimeOption.value = '';
+  //   }
+  // }
 
-
-// ----------------- Add Minutes (15 / 30) -----------------
-
+  // ----------------- Add Minutes (15 / 30) -----------------
 
   void addMinutes(int minutesToAdd) {
     final now = DateTime.now(); // 👈 ALWAYS current time
 
     final newTime = now.add(Duration(minutes: minutesToAdd));
 
-    selectedDate.value = DateTime(
-      newTime.year,
-      newTime.month,
-      newTime.day,
-    );
+    selectedDate.value = DateTime(newTime.year, newTime.month, newTime.day);
 
-    selectedTime.value = TimeOfDay(
-      hour: newTime.hour,
-      minute: newTime.minute,
-    );
+    selectedTime.value = TimeOfDay(hour: newTime.hour, minute: newTime.minute);
 
     selectedTimeOption.value = "$minutesToAdd min"; // highlight selected
 
@@ -171,33 +348,31 @@ class RideController extends GetxController {
     print("UPDATED TIME: ${DateFormat('HH:mm').format(newTime)}");
   }
 
-//   void addMinutes(int minutesToAdd) {
-//     final now = DateTime.now();
-//     final newTime = now.add(Duration(minutes: minutesToAdd));
-//     final dateTime = DateTime(
-//       now.year,
-//       now.month,
-//       now.day,
-//       selectedTime.value.hour,
-//       selectedTime.value.minute,
-//     );
-//
-//
-//     selectedTime.value = TimeOfDay(hour: newTime.hour, minute: newTime.minute);
-//
-//     selectedTimeOption.value = "$minutesToAdd min"; // highlight selected
-//   }
+  //   void addMinutes(int minutesToAdd) {
+  //     final now = DateTime.now();
+  //     final newTime = now.add(Duration(minutes: minutesToAdd));
+  //     final dateTime = DateTime(
+  //       now.year,
+  //       now.month,
+  //       now.day,
+  //       selectedTime.value.hour,
+  //       selectedTime.value.minute,
+  //     );
+  //
+  //
+  //     selectedTime.value = TimeOfDay(hour: newTime.hour, minute: newTime.minute);
+  //
+  //     selectedTimeOption.value = "$minutesToAdd min"; // highlight selected
+  //   }
 
-// ----------------- Set ASAP (Current Time) -----------------
+  // ----------------- Set ASAP (Current Time) -----------------
 
   void setASAP() {
     selectedTime.value = TimeOfDay.now();
     selectedTimeOption.value = "ASAP"; // highlight ASAP
-
-
   }
 
-// ----------------- Format for Display -----------------
+  // ----------------- Format for Display -----------------
   String formattedTime24() {
     final now = DateTime.now();
     final dt = DateTime(
@@ -228,7 +403,6 @@ class RideController extends GetxController {
 
     return DateFormat('HH:mm').format(dt); // 24-hour time
   }
-
 
   List<Map<String, dynamic>> viaPointsList = [];
 
@@ -270,7 +444,6 @@ class RideController extends GetxController {
     }
   }
 
-
   Future<void> getBookingApi() async {
     prepareViaPoints();
 
@@ -295,7 +468,7 @@ class RideController extends GetxController {
       "pickup_latitude": swapController.selectedPickUPLat,
       "pickup_longitude": swapController.selectedPickUPLon,
       "pickup_door_number": swapController.babyNote,
-      "dropoff_door_number":"",
+      "dropoff_door_number": "",
       "dropoff": swapController.dropOff.text,
       "dropoff_latitude": swapController.selectedDropLat,
       "dropoff_longitude": swapController.selectedDropLon,
@@ -320,7 +493,6 @@ class RideController extends GetxController {
       "fares": baseFare,
       "total_charges": totalFare,
 
-
       // Customer ko stringify kar dein agar indexing masla kar rahi hai
       "customer": jsonEncode([
         {
@@ -329,7 +501,7 @@ class RideController extends GetxController {
           "mobile": profileController.profileData!.customer!.mobile,
           "telephone": profileController.profileData!.customer!.mobile,
           "blacklist": false,
-        }
+        },
       ]),
 
       // VIAPOINTS ko jsonEncode karein - Yeh nulls ko preserve karega
@@ -402,7 +574,7 @@ class RideController extends GetxController {
       baseFare = (data['fare'] ?? 0).toDouble();
       totalFare = (data['total_fare'] ?? 0).toDouble();
 
-      print("FARE CALCULATED ✅ => $data" );
+      print("FARE CALCULATED ✅ => $data");
       print("BASE FARE => $baseFare");
       print("TOTAL FARE => $totalFare");
 
@@ -412,13 +584,9 @@ class RideController extends GetxController {
 
   ///================================================   booking cancel api
 
-
   Future<void> rideCancelApi() async {
     print(bookingId);
-    FormData formData = FormData.fromMap({
-      "booking_status_id": 12,
-
-    });
+    FormData formData = FormData.fromMap({"booking_status_id": 12});
 
     var response = await ApiService.post(
       formData,
@@ -442,18 +610,14 @@ class RideController extends GetxController {
   Timer? _timer;
   String? currentDriverId;
 
-//
+  //
   BookingGetById? bookingData;
   Booking? currentBooking;
   String? getBookingId;
 
-
-
   void setBookingData(Map data) {
     try {
-      bookingData = BookingGetById.fromJson(
-        Map<String, dynamic>.from(data),
-      );
+      bookingData = BookingGetById.fromJson(Map<String, dynamic>.from(data));
 
       final booking = bookingData?.booking;
 
@@ -461,21 +625,20 @@ class RideController extends GetxController {
         swapController.setBookingRoute(booking);
 
         // 2. Ride Complete ke liye save
-         currentBooking = booking;
-       GetStorage().write("booking", booking.toJson());
-
+        currentBooking = booking;
+        GetStorage().write("booking", booking.toJson());
       }
 
       getBookingId = booking?.id;
       debugPrint("Booking Stored ✅ ID: $getBookingId");
-      debugPrint("=======================================Current Booking Stored ✅ ID: ${currentBooking?.totalCharges}");
+      debugPrint(
+        "=======================================Current Booking Stored ✅ ID: ${currentBooking?.totalCharges}",
+      );
       update();
     } catch (e) {
       debugPrint("Booking Parse Error: $e");
     }
   }
-
-
 
   var isLoading = true.obs;
   var bookingStatus = "".obs;
@@ -483,12 +646,9 @@ class RideController extends GetxController {
   var vehicleColor = "".obs;
   var vehicleNumber = "".obs;
 
+  DriverGetbyId? driverGetbyId;
 
-
- DriverGetbyId? driverGetbyId;
-
-
-// 🔥 START POLLING
+  // 🔥 START POLLING
   void startPolling(String driverId) {
     currentDriverId = driverId;
 
@@ -499,13 +659,14 @@ class RideController extends GetxController {
     });
   }
 
-// 🔥 STOP POLLING
+  // 🔥 STOP POLLING
   void stopPolling() {
     _timer?.cancel();
     _timer = null;
   }
+
   bool hasNavigated = false;
-// 🔥 API CALL
+  // 🔥 API CALL
   Future<void> _hitDriverApi(String driverId) async {
     // Dashboard par ja chuke hain to polling ignore karo
     if (hasNavigatedToDashboard) {
@@ -546,7 +707,6 @@ class RideController extends GetxController {
         if (!hasNavigatedToDashboard &&
             !hasNavigated &&
             bookingStatus.value.trim() == "Available") {
-
           hasNavigated = true;
           stopPolling();
 
@@ -558,68 +718,68 @@ class RideController extends GetxController {
       debugPrint("Stack trace: $s");
     }
   }
-//   Future<void> _hitDriverApi(String driverId) async {
-//     try {
-//       var response = await ApiService.get(
-//         "drivers/getbyid/$driverId",
-//         auth: true,
-//       );
-//
-//       if (response != null && response.statusCode == 200) {
-//         driverGetbyId = DriverGetbyId.fromJson(response.data);
-//
-//         final driver = driverGetbyId!.driver;
-//         final vehicle = driver.vehicle;
-//
-//         // ✅ SAFE UPDATE (NO NULL CRASH)
-//         driverName.value = driver.name ?? "";
-//         bookingStatus.value = driver.bookingStatus ?? "";
-//         vehicleColor.value = vehicle.color ?? "";
-//         vehicleNumber.value = vehicle.vehicleNumber ?? "";
-//
-//         // ==============================
-//         // 🔥 LOCATION FIX (STRING → DOUBLE)
-//         // ==============================
-//         double lat = double.tryParse(driver.latitude.toString()) ?? 0.0;
-//         double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
-//
-//         swapController.driverLat.value = lat;
-//         swapController.driverLng.value = lng;
-//         // swapController.update();
-//        // swapController.update(["map"]); // 🔥 important
-//
-//         isLoading.value = false;
-//
-//         debugPrint("Driver Lat: $lat");
-//         debugPrint("Driver Lng: $lng");
-//
-//
-//         debugPrint("Booking Status: ${bookingStatus.value}");
-//         print("image ==================================== >>>> ${driver.image}");
-//
-//         // ==============================
-//         // RIDE COMPLETE CONDITION
-//         // ==============================
-//         if (bookingStatus.value.trim() == "Available" && !hasNavigated) {
-//           hasNavigated = true;
-//           stopPolling();
-//           Get.offAllNamed(routesName.RideCompleteScreen);
-//         }
-//         // if (bookingStatus.value.trim() == "Available") {
-//         //
-//         //   stopPolling();
-//         //
-//         //   Get.offAllNamed(routesName.RideCompleteScreen);
-//         // }
-//       }
-//     } catch (e, s) {
-//       debugPrint("Polling API error: $e");
-//       debugPrint("Stack trace: $s");
-//     }
-//   }
+  //   Future<void> _hitDriverApi(String driverId) async {
+  //     try {
+  //       var response = await ApiService.get(
+  //         "drivers/getbyid/$driverId",
+  //         auth: true,
+  //       );
+  //
+  //       if (response != null && response.statusCode == 200) {
+  //         driverGetbyId = DriverGetbyId.fromJson(response.data);
+  //
+  //         final driver = driverGetbyId!.driver;
+  //         final vehicle = driver.vehicle;
+  //
+  //         // ✅ SAFE UPDATE (NO NULL CRASH)
+  //         driverName.value = driver.name ?? "";
+  //         bookingStatus.value = driver.bookingStatus ?? "";
+  //         vehicleColor.value = vehicle.color ?? "";
+  //         vehicleNumber.value = vehicle.vehicleNumber ?? "";
+  //
+  //         // ==============================
+  //         // 🔥 LOCATION FIX (STRING → DOUBLE)
+  //         // ==============================
+  //         double lat = double.tryParse(driver.latitude.toString()) ?? 0.0;
+  //         double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
+  //
+  //         swapController.driverLat.value = lat;
+  //         swapController.driverLng.value = lng;
+  //         // swapController.update();
+  //        // swapController.update(["map"]); // 🔥 important
+  //
+  //         isLoading.value = false;
+  //
+  //         debugPrint("Driver Lat: $lat");
+  //         debugPrint("Driver Lng: $lng");
+  //
+  //
+  //         debugPrint("Booking Status: ${bookingStatus.value}");
+  //         print("image ==================================== >>>> ${driver.image}");
+  //
+  //         // ==============================
+  //         // RIDE COMPLETE CONDITION
+  //         // ==============================
+  //         if (bookingStatus.value.trim() == "Available" && !hasNavigated) {
+  //           hasNavigated = true;
+  //           stopPolling();
+  //           Get.offAllNamed(routesName.RideCompleteScreen);
+  //         }
+  //         // if (bookingStatus.value.trim() == "Available") {
+  //         //
+  //         //   stopPolling();
+  //         //
+  //         //   Get.offAllNamed(routesName.RideCompleteScreen);
+  //         // }
+  //       }
+  //     } catch (e, s) {
+  //       debugPrint("Polling API error: $e");
+  //       debugPrint("Stack trace: $s");
+  //     }
+  //   }
 
-///  ===========================================  booking status check
-///
+  ///  ===========================================  booking status check
+  ///
   ///
   bool hasNavigatedToDashboard = false;
   Future<int?> checkBookingStatus(String bookingId) async {
@@ -632,11 +792,12 @@ class RideController extends GetxController {
       bool bookingStatus = response.data["booking_status"] ?? false;
       int bookingStatusId = response.data["booking_status_id"] ?? 0;
 
-      if (bookingStatus == true && bookingStatusId == 11 && !hasNavigatedToDashboard) {
-
+      if (bookingStatus == true &&
+          bookingStatusId == 11 &&
+          !hasNavigatedToDashboard) {
         hasNavigatedToDashboard = true;
 
-        stopPolling();      // polling band
+        stopPolling(); // polling band
         hasNavigated = true; // RideComplete navigation bhi band
 
         Get.offAllNamed(routesName.DeshBoard_Screen);
@@ -668,20 +829,6 @@ class RideController extends GetxController {
   //
   //   return null;
   // }
-
-
-
 }
+
 ///
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,7 +3,9 @@ import 'package:customer/View/Widgets/image_path.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 
+import '../../../Controller/Auth_Controller/login_controller.dart';
 import '../../../api_servies/session.dart';
 
 class Splash_Screen extends StatefulWidget {
@@ -14,7 +16,13 @@ class Splash_Screen extends StatefulWidget {
 }
 
 class _Splash_ScreenState extends State<Splash_Screen> {
-    void initState() {
+  final loginController = Get.isRegistered<LoginController>()
+      ? Get.find<LoginController>()
+      : Get.put(LoginController());
+  final _box = GetStorage();
+
+
+  void initState() {
     super.initState();
 
     Future.delayed(const Duration(seconds: 2), () {
@@ -22,7 +30,14 @@ class _Splash_ScreenState extends State<Splash_Screen> {
       if (TokenManager.isLogin) {
         Get.offAllNamed('/DeshBoard_Screen');   // already logged in
       } else {
-        Get.offAllNamed('/SigIn_Screen');       // not logged in
+
+        // print( _box.read("email")) ;
+        // String email = _box.read("email") ?? "";
+        // loginController.emailController.text = email;
+        Get.offAllNamed('/SigIn_Screen');// not logged in
+
+
+
       }
      //Get.offAllNamed('/SigIn_Screen');
       //Get.offAllNamed('/DeshBoard_Screen');

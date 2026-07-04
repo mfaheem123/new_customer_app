@@ -18,6 +18,7 @@ class HomeDriver extends StatelessWidget {
       ? Get.find<profileModelController>()
       : Get.put(profileModelController());
 
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -78,6 +79,7 @@ class HomeDriver extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(right: 25.0),
                                     child: CustomTextField(
+                                      focusNode: homeC.pickupFocus,
                                       controller: homeC.pickUp,
                                       textCapitalization: TextCapitalization.characters,
                                       hintText: "Pick Up",
@@ -119,6 +121,7 @@ class HomeDriver extends StatelessWidget {
                                             children: [
                                               Expanded(
                                                 child: CustomTextField(
+                                                  focusNode: homeC.via1Focus,
                                                   textCapitalization: TextCapitalization.characters,
                                                   controller:
                                                       homeC.viaController1,
@@ -171,6 +174,7 @@ class HomeDriver extends StatelessWidget {
                                             children: [
                                               Expanded(
                                                 child: CustomTextField(
+                                                  focusNode: homeC.via2Focus,
                                                   textCapitalization: TextCapitalization.characters,
                                                   controller:
                                                       homeC.viaController2,
@@ -223,6 +227,7 @@ class HomeDriver extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(right: 25.0),
                                     child: CustomTextField(
+                                      focusNode: homeC.dropFocus,
                                       controller: homeC.dropOff,
                                       textCapitalization: TextCapitalization.characters,
                                       hintText: "Destination",
@@ -328,16 +333,31 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.searchList,
                                 onTap: (item) {
-                                  homeC.pickUp.text ="${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
+                                  homeC.pickUp.text =
+                                      "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
 
-                                  homeC.setPickup(
-                                    item.lat ?? 0.0,
-                                    item.lon ?? 0.0,
-                                  );
+                                  homeC.setPickup(item.lat ?? 0.0, item.lon ?? 0.0);
                                   controller.searchList.clear();
 
-
+                                  Future.delayed(const Duration(milliseconds: 100), () {
+                                    if (homeC.showVia1.value) {
+                                      homeC.via1Focus.requestFocus();
+                                    } else {
+                                      homeC.dropFocus.requestFocus();
+                                    }
+                                  });
                                 },
+                                // onTap: (item) {
+                                //   homeC.pickUp.text ="${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
+                                //
+                                //   homeC.setPickup(
+                                //     item.lat ?? 0.0,
+                                //     item.lon ?? 0.0,
+                                //   );
+                                //   controller.searchList.clear();
+                                //
+                                //
+                                // },
                               );
                             }
 
@@ -347,15 +367,24 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.dropSearchList,
                                 onTap: (item) {
-                                  homeC.dropOff.text = "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
-                                  homeC.setDrop(
-                                    item.lat ?? 0.0,
-                                    item.lon ?? 0.0,
-                                  );
+                                  homeC.dropOff.text =
+                                      "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
+
+                                  homeC.setDrop(item.lat ?? 0.0, item.lon ?? 0.0);
                                   controller.dropSearchList.clear();
 
-
+                                  FocusScope.of(context).unfocus();
                                 },
+                                // onTap: (item) {
+                                //   homeC.dropOff.text = "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
+                                //   homeC.setDrop(
+                                //     item.lat ?? 0.0,
+                                //     item.lon ?? 0.0,
+                                //   );
+                                //   controller.dropSearchList.clear();
+                                //
+                                //
+                                // },
                               );
                             }
 
@@ -365,13 +394,28 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.viaSearchList1,
                                 onTap: (item) {
-                                  homeC.viaController1.text = "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
-                                  homeC.setVia1(
-                                    item.lat ?? 0.0,
-                                    item.lon ?? 0.0,
-                                  );
+                                  homeC.viaController1.text =
+                                      "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
+
+                                  homeC.setVia1(item.lat ?? 0.0, item.lon ?? 0.0);
                                   controller.viaSearchList1.clear();
+
+                                  Future.delayed(const Duration(milliseconds: 100), () {
+                                    if (homeC.showVia2.value) {
+                                      homeC.via2Focus.requestFocus();
+                                    } else {
+                                      homeC.dropFocus.requestFocus();
+                                    }
+                                  });
                                 },
+                                // onTap: (item) {
+                                //   homeC.viaController1.text = "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
+                                //   homeC.setVia1(
+                                //     item.lat ?? 0.0,
+                                //     item.lon ?? 0.0,
+                                //   );
+                                //   controller.viaSearchList1.clear();
+                                // },
                               );
                             }
 
@@ -381,15 +425,26 @@ class HomeDriver extends StatelessWidget {
                                 context: context,
                                 list: controller.viaSearchList2,
                                 onTap: (item) {
-                                  homeC.setVia2(
-                                    item.lat ?? 0.0,
-                                    item.lon ?? 0.0,
+                                  homeC.viaController2.text =
+                                      "${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
 
-                                  );
-                                  homeC.viaController2.text ="${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
-
+                                  homeC.setVia2(item.lat ?? 0.0, item.lon ?? 0.0);
                                   controller.viaSearchList2.clear();
+
+                                  Future.delayed(const Duration(milliseconds: 100), () {
+                                    homeC.dropFocus.requestFocus();
+                                  });
                                 },
+                                // onTap: (item) {
+                                //   homeC.setVia2(
+                                //     item.lat ?? 0.0,
+                                //     item.lon ?? 0.0,
+                                //
+                                //   );
+                                //   homeC.viaController2.text ="${item.name ?? ""} ${item.postcode ?? ""}".toUpperCase();
+                                //
+                                //   controller.viaSearchList2.clear();
+                                // },
                               );
                             }
 

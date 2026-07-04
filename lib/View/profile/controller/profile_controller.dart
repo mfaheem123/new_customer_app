@@ -41,7 +41,7 @@ class profileModelController extends GetxController {
       auth: true,
     );
 
-    if (response!.statusCode == 200) {
+    if (response !.statusCode == 200) {
       profileData= GetProfileModel. fromJson(response.data);
     } else {
       profileData = null;

@@ -189,12 +189,30 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
                                     border: Border.all(color: Colors.grey, width: 1.5),
                                   ),
                                   child: CircleAvatar(
-                                    radius: 25, // 👈 choti profile image
-                                    backgroundImage: NetworkImage(
+                                    radius: 25,
+                                    backgroundImage:
+                                    (controller.driverGetbyId?.driver.image == null ||
+                                        controller.driverGetbyId!.driver.image.isEmpty)
+                                        ? const AssetImage("assets/images/profileimage.png")
+                                        : NetworkImage(
                                       Uri.encodeFull(controller.driverGetbyId!.driver.image),
-                                    ),
+                                    ) as ImageProvider,
                                   ),
                                 ),
+                                // Container(
+                                //   padding: const EdgeInsets.all(2),
+                                //   decoration: BoxDecoration(
+                                //     shape: BoxShape.circle,
+                                //     border: Border.all(color: Colors.grey, width: 1.5),
+                                //   ),
+                                //   child:
+                                //   CircleAvatar(
+                                //     radius: 25, // 👈 choti profile image
+                                //     backgroundImage: NetworkImage(
+                                //       Uri.encodeFull(controller.driverGetbyId!.driver.image),
+                                //     ),
+                                //   ),
+                                // ),
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: Text(

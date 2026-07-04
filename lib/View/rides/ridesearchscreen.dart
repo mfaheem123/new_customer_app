@@ -10,12 +10,18 @@ import '../Widgets/elevat_button.dart';
 import '../Widgets/text_button.dart';
 import 'DriverDetailscreen.dart';
 
-class RideSearchScreen extends StatelessWidget {
+class RideSearchScreen extends StatefulWidget {
    RideSearchScreen({super.key});
 
+  @override
+  State<RideSearchScreen> createState() => _RideSearchScreenState();
+}
+
+class _RideSearchScreenState extends State<RideSearchScreen> {
   final rideController = Get.isRegistered<RideController>()
       ? Get.find<RideController>()
       : Get.put(RideController());
+
   final reebookingController = Get.isRegistered<BookingController>()
       ? Get.find<BookingController>()
       : Get.put(BookingController());

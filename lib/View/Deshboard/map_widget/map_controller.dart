@@ -14,29 +14,75 @@ class PickLocationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _getUserLocation();
+    getUserLocation();
   }
 
-  Future<void> _getUserLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
+  Future<void> getUserLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
+      if (!serviceEnabled) {
+        print("GPS OFF");
+        return;
+      }
+
+      LocationPermission permission =
+      await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+
+        if (permission == LocationPermission.denied) {
+          print("Permission Denied");
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        print("Permission Denied Forever");
+        return;
+      }
+
+      final pos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      final latLng = LatLng(pos.latitude, pos.longitude);
+
+      selectedLocation.value = latLng;
+
+      await _updateAddress(latLng);
+
+      update();
+
+      print("Current Location : $latLng");
+    } catch (e) {
+      print("Location Error : $e");
     }
-    if (permission == LocationPermission.deniedForever) return;
-
-    final pos = await Geolocator.getCurrentPosition(
-      locationSettings:
-      const LocationSettings(accuracy: LocationAccuracy.high),
-    );
-
-    final latLng = LatLng(pos.latitude, pos.longitude);
-    selectedLocation.value = latLng;
-    _updateAddress(latLng);
   }
+
+  // Future<void> _getUserLocation() async {
+  //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) return;
+  //
+  //   LocationPermission permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) return;
+  //   }
+  //   if (permission == LocationPermission.deniedForever) return;
+  //
+  //   final pos = await Geolocator.getCurrentPosition(
+  //     locationSettings:
+  //     const LocationSettings(accuracy: LocationAccuracy.high),
+  //   );
+  //
+  //   final latLng = LatLng(pos.latitude, pos.longitude);
+  //   selectedLocation.value = latLng;
+  //   _updateAddress(latLng);
+  // }
 
   /// sirf DATA update
   void updateLocation(LatLng latLng) {
