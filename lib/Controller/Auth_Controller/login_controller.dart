@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart' hide Response, FormData;
+import 'package:get_storage/get_storage.dart';
 import '../../View/Widgets/color.dart';
 import '../../View/textstyle/apptextstyle.dart';
 import '../../api_servies/api_servies.dart' hide TokenManager;
@@ -165,47 +166,83 @@ class LoginController extends GetxController {
 
     LocationPermission permission = await Geolocator.checkPermission();
 
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
 
-      if (permission == LocationPermission.denied) {
-        await Get.dialog(
-          AlertDialog(
-            title: const Text("Permission Required"),
-            content: const Text("Location permission is mandatory."),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Get.back();
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          ),
-          barrierDismissible: false,
-        );
 
-        return false;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
+    if (permission == LocationPermission.deniedForever|| permission == LocationPermission.denied) {
       await Get.dialog(
-        AlertDialog(
-          title: const Text("Permission Required"),
-          content: const Text(
-            "Location permission is permanently denied. Please enable it from App Settings.",
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () async {
-                Get.back();
-
-                await Geolocator.openAppSettings();
-              },
-              child: const Text("Open Settings"),
+        Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            decoration: BoxDecoration(
+              color: CustomColor.Container_Colors,
+              borderRadius: BorderRadius.circular(25),
             ),
-          ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Location Icon
+                Container(
+                  height: 60,
+                  width: 60,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.location_off,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                Text(
+                  "Permission Required",
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.heading(),
+                ),
+
+                const SizedBox(height: 15),
+
+                Text(
+                  "Location permission has been permanently denied. Please open App Settings and allow location permission to continue using the app.",
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regular(),
+                ),
+
+                const SizedBox(height: 20),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: CustomColor.Button_background_Color,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    onPressed: () async {
+                      Get.back();
+                      await Geolocator.openAppSettings();
+                    },
+                    child: const Text(
+                      "Open Settings",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         barrierDismissible: false,
       );
@@ -260,6 +297,10 @@ class LoginController extends GetxController {
     if (response!.statusCode == 200) {
       final data = response.data;
       debugPrint("print response with FCM ------: $response");
+
+      final _box = GetStorage();
+      _box.write("email", emailController.text );
+      print("Stored Email: ${_box.read("email")}");
 
       /// 🔐 Save token & id in GetStorage
       TokenManager.saveSession(

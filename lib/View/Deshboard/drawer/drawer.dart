@@ -1,3 +1,4 @@
+import 'package:customer/Routing/routes_name.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:customer/api_servies/session.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,7 @@ class appDrawer extends StatelessWidget {
                         color: Colors.white,
                       ),
                       title: Text("Home", style: AppTextStyles.medium()),
-                      onTap: () => Get.toNamed('/Deshboard'),
+                      onTap: () => Get.back(),
                     ),
                     ListTile(
                       leading: const Icon(

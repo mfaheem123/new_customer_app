@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:customer/api_servies/push_notification_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'Binding/auth_binding.dart';
 import 'Routing/routes.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -19,15 +20,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
 
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await PushNotificationService().init();
   await GetStorage.init();
 
-
+  await PermissionHandler.requestAllPermissions();
 
   runApp(const MyApp());
 }
@@ -47,11 +50,24 @@ class MyApp extends StatelessWidget {
       builder: BotToastInit(),
       navigatorObservers: [BotToastNavigatorObserver()],
 
-
-
       getPages: AppRoutes.appRoutes(),
 
-
     );
+  }
+}
+
+
+class PermissionHandler {
+
+  static Future<void> requestAllPermissions() async {
+
+    await Permission.notification.request();
+    await Permission.location.request();
+
+
+
+    // Agar zarurat ho
+    // await Permission.camera.request();
+    // await Permission.microphone.request();
   }
 }

@@ -272,7 +272,7 @@ class HomeDriver extends StatelessWidget {
                                             child: const Icon(
                                               Icons.compare_arrows,
                                               color: Colors.white,
-                                              size: 30,
+                                              size: 35,
                                             ),
                                           ),
                                         ),

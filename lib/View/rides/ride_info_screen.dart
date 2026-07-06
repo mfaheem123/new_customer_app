@@ -282,13 +282,13 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                         style:
                                                             AppTextStyles.regular(
                                                               weight: FontWeight.bold,
-                                                              size: 16,
+                                                              size: 18,
                                                             ),
                                                       ),
                                                       Text(
                                                         "Estimated",
                                                         style:
-                                                        AppTextStyles.regular(),
+                                                        AppTextStyles.small(),
                                                       ),
                                                     ],
                                                   ),

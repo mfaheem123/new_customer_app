@@ -35,14 +35,23 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
       ? Get.find<RideController>()
       : Get.put(RideController());
   late Booking trip;
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   trip = Get.arguments;
+  //  reebookingController.getVehicleTypes();
+  //
+  // }
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
     trip = Get.arguments;
-   reebookingController.getVehicleTypes();
 
-
+    reebookingController.getVehicleTypes().then((_) {
+      reebookingController.calculateFareAllVehiclesApi(trip);
+    });
   }
 
   @override
@@ -51,22 +60,20 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
       child: Scaffold(
         //backgroundColor: CustomColor.background,
         body: Container(
-          height:MediaQuery.of(context).size.height,
-          width:MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(255, 30, 1, 44),
-                Color.fromARGB(255, 227, 194, 242)
+                Color.fromARGB(255, 227, 194, 242),
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
           ),
           child: Column(
-
             children: [
-
               ///
               Expanded(
                 child: Stack(
@@ -87,7 +94,10 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: IconButton(
-                          icon: Icon(Icons.arrow_back, color: CustomColor.Icon_Color),
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: CustomColor.Icon_Color,
+                          ),
                           onPressed: () {
                             Get.back();
                           },
@@ -98,15 +108,15 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                     // ============================ Draggable Vehicle List
                     DraggableScrollableSheet(
                       initialChildSize: 0.3, // 50% of screen initially
-                      minChildSize: 0.3,     // can shrink to 30%
-                      maxChildSize: 0.8,     // can drag up to 80%
+                      minChildSize: 0.3, // can shrink to 30%
+                      maxChildSize: 0.8, // can drag up to 80%
                       builder: (context, scrollController) {
                         return Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
                                 Color.fromARGB(255, 30, 1, 44).withOpacity(0.9),
-                                Color.fromARGB(255, 227, 194, 242)
+                                Color.fromARGB(255, 227, 194, 242),
                               ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
@@ -128,22 +138,30 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                 child: GetBuilder<BookingController>(
                                   builder: (controller) {
                                     if (controller.loading) {
-                                      return Center(child: CircularProgressIndicator());
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
                                     }
 
                                     if (controller.vehicles.isEmpty) {
-                                      return Center(child: Text("No vehicles found"));
+                                      return Center(
+                                        child: Text("No vehicles found"),
+                                      );
                                     }
 
                                     return ListView.builder(
                                       controller: scrollController,
                                       itemCount: controller.vehicles.length,
                                       itemBuilder: (context, index) {
-                                        var vehicle = controller.vehicles[index];
+                                        var vehicle =
+                                            controller.vehicles[index];
 
                                         return Obx(() {
                                           bool isSelected =
-                                              controller.selectedVehicleIndex.value == index;
+                                              controller
+                                                  .selectedVehicleIndex
+                                                  .value ==
+                                              index;
 
                                           return GestureDetector(
                                             onTap: () {
@@ -151,46 +169,76 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                               controller.selectItem(index);
                                             },
                                             child: Container(
-                                              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                              margin: EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical: 8,
+                                              ),
                                               padding: EdgeInsets.all(16),
                                               decoration: BoxDecoration(
                                                 color: isSelected
-                                                    ? CustomColor.Container_Colors.withOpacity(0.4)
+                                                    ? CustomColor
+                                                          .Container_Colors.withOpacity(
+                                                        0.4,
+                                                      )
                                                     : Colors.transparent,
-                                                borderRadius: BorderRadius.circular(15),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
                                                 border: Border.all(
                                                   color: isSelected
-                                                      ? CustomColor.Button_background_Color
+                                                      ? CustomColor
+                                                            .Button_background_Color
                                                       : Colors.grey.shade400,
                                                   width: 2,
                                                 ),
                                               ),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   /// 🔹 Vehicle Info
                                                   Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
-                                                      Text("${vehicle.name ?? ""}",
-                                                          style: AppTextStyles.regular()),
+                                                      Text(
+                                                        ("${vehicle.name ?? ""}").toUpperCase(),
+                                                        style:
+                                                            AppTextStyles.regular(weight: FontWeight.bold),
+                                                      ),
 
                                                       SizedBox(height: 5),
 
                                                       Row(
                                                         children: [
-                                                          Icon(Icons.person,
-                                                              color: CustomColor.Icon_Color, size: 18),
-                                                          Text(" x${vehicle.passengers ?? 0}",
-                                                              style: AppTextStyles.medium()),
+                                                          Icon(
+                                                            Icons.person,
+                                                            color: CustomColor
+                                                                .Icon_Color,
+                                                            size: 18,
+                                                          ),
+                                                          Text(
+                                                            " x${vehicle.passengers ?? 0}",
+                                                            style:
+                                                                AppTextStyles.medium(),
+                                                          ),
 
                                                           SizedBox(width: 10),
 
-                                                          Icon(Icons.work,
-                                                              color: CustomColor.Icon_Color, size: 18),
-                                                          Text(" x${vehicle.luggages ?? 0}",
-                                                              style: AppTextStyles.regular(
-                                                                  color: CustomColor.Text_Color)),
+                                                          Icon(
+                                                            Icons.work,
+                                                            color: CustomColor
+                                                                .Icon_Color,
+                                                            size: 18,
+                                                          ),
+                                                          Text(
+                                                            " x${vehicle.luggages ?? 0}",
+                                                            style: AppTextStyles.regular(
+                                                              color: CustomColor
+                                                                  .Text_Color,
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
                                                     ],
@@ -199,10 +247,43 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                   /// 🔹 Icon + Price
                                                   Row(
                                                     children: [
-                                                      Icon(Icons.directions_car,
-                                                          color: CustomColor.Icon_Color, size: 32),
+                                                      Icon(
+                                                        Icons.directions_car,
+                                                        color: CustomColor
+                                                            .Icon_Color,
+                                                        size: 32,
+                                                      ),
 
                                                       SizedBox(width: 10),
+
+                                                      controller.fareLoading
+                                                          ? const SizedBox(
+                                                              height: 20,
+                                                              width: 20,
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                    strokeWidth:
+                                                                        2,
+                                                                  ),
+                                                            )
+                                                          : Column(
+                                                            children: [
+                                                              Text(
+                                                                  "£${(controller.vehicleFareMap[vehicle.id] ?? 0).toStringAsFixed(2)}",
+                                                                  style: AppTextStyles.regular(
+                                                                    size: 18,
+                                                                    weight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                              Text(
+                                                               "Estimated",
+                                                                style: AppTextStyles.small(),
+                                                              ),
+                                                            ],
+                                                          ),
+
                                                       //
                                                       // Text(
                                                       //   "${vehicle.minimumFares ?? 0}£",
@@ -218,7 +299,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                       },
                                     );
                                   },
-                                )
+                                ),
                                 // ListView.builder(
                                 //   controller: scrollController,
                                 //   itemCount: reebookingController.vehicleList.length,
@@ -292,12 +373,14 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                 ),
               ),
 
-
               Container(
                 padding: EdgeInsets.symmetric(vertical: 15),
-                height: MediaQuery.of(context).size.height*0.14,
+                height: MediaQuery.of(context).size.height * 0.14,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(20),topLeft: Radius.circular(15)),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20),
+                    topLeft: Radius.circular(15),
+                  ),
                   color: CustomColor.Container_Colors,
                 ),
 
@@ -305,145 +388,202 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                   child: Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         //color: CustomColor.Container_Colors,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children:  [
+                          children: [
                             InkWell(
-                                onTap:(){
-                                  Get.to(PaymentScreen());
-                                },
-                                child: BottomButton(icon: Icons.credit_card, button_name: "Card")),
+                              onTap: () {
+                                Get.to(PaymentScreen());
+                              },
+                              child: BottomButton(
+                                icon: Icons.credit_card,
+                                button_name: "Card",
+                              ),
+                            ),
                             InkWell(
-                                onTap:(){ Get.to(ExtrasScreen());
-                                },
-                                child: BottomButton(icon: Icons.add_circle_outline, button_name: "Extras")),
+                              onTap: () {
+                                Get.to(ExtrasScreen());
+                              },
+                              child: BottomButton(
+                                icon: Icons.add_circle_outline,
+                                button_name: "Extras",
+                              ),
+                            ),
                             InkWell(
-                                onTap:(){
-                  
-                                  print("======================================================================${reebookingController.selectedVehicleId}");
-                                  print("======================================================================${reebookingController.selectedPassengers}");
-                  
-                                  Get.bottomSheet(
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        color: CustomColor.Container_Colors,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(30),
-                                          topRight: Radius.circular(30),
-                                        ),
+                              onTap: () {
+                                print(
+                                  "======================================================================${reebookingController.selectedVehicleId}",
+                                );
+                                print(
+                                  "======================================================================${reebookingController.selectedPassengers}",
+                                );
+
+                                Get.bottomSheet(
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      color: CustomColor.Container_Colors,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30),
+                                        topRight: Radius.circular(30),
                                       ),
-                                      height: 350,
-                                      width: double.infinity,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          SizedBox(height: 8),
-                                          Container(
-                                            height: 5,
-                                            width: 40,
-                                            decoration: BoxDecoration(
-                                              color: CustomColor.Icon_Color,
-                                              borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    height: 350,
+                                    width: double.infinity,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SizedBox(height: 8),
+                                        Container(
+                                          height: 5,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                            color: CustomColor.Icon_Color,
+                                            borderRadius: BorderRadius.circular(
+                                              10,
                                             ),
                                           ),
-                                          SizedBox(height: 10),
-                  
-                                          // ---------- Heading ----------
-                                          Text(
-                                            "Schedule Ride",
-                                            style: AppTextStyles.medium(
-                                              size: 25,
-                                              weight: FontWeight.bold,
-                                              color: CustomColor.Text_Color,
-                                            ),
+                                        ),
+                                        SizedBox(height: 10),
+
+                                        // ---------- Heading ----------
+                                        Text(
+                                          "Schedule Ride",
+                                          style: AppTextStyles.medium(
+                                            size: 25,
+                                            weight: FontWeight.bold,
+                                            color: CustomColor.Text_Color,
                                           ),
-                  
-                                          const SizedBox(height: 20),
-                  
-                                          // ---------- Time Buttons ----------
-                                          Obx(() => Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                        ),
+
+                                        const SizedBox(height: 20),
+
+                                        // ---------- Time Buttons ----------
+                                        Obx(
+                                          () => Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               // ----- ASAP -----
                                               SizedBox(
                                                 width: 100,
                                                 height: 45,
                                                 child: ElevatedButton(
-                                                  onPressed: () => reebookingController.setASAP(),
+                                                  onPressed: () =>
+                                                      reebookingController
+                                                          .setASAP(),
                                                   style: ElevatedButton.styleFrom(
-                                                    backgroundColor: reebookingController.selectedTimeOption.value == "ASAP"
-                                                        ? CustomColor.Button_background_Color
+                                                    backgroundColor:
+                                                        reebookingController
+                                                                .selectedTimeOption
+                                                                .value ==
+                                                            "ASAP"
+                                                        ? CustomColor
+                                                              .Button_background_Color
                                                         : Colors.black54,
                                                     elevation: 2,
                                                     shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
                                                     ),
                                                   ),
                                                   child: Text(
                                                     "ASAP",
                                                     style: AppTextStyles.small(
-                  
-                                                      weight: reebookingController.selectedTimeOption.value == "ASAP"
+                                                      weight:
+                                                          reebookingController
+                                                                  .selectedTimeOption
+                                                                  .value ==
+                                                              "ASAP"
                                                           ? FontWeight.bold
                                                           : FontWeight.normal,
-                  
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               const SizedBox(width: 10),
-                  
+
                                               // ----- 15 min -----
                                               SizedBox(
                                                 width: 100,
                                                 height: 45,
                                                 child: ElevatedButton(
-                                                  onPressed: () => reebookingController.addMinutes(15),
+                                                  onPressed: () =>
+                                                      reebookingController
+                                                          .addMinutes(15),
                                                   style: ElevatedButton.styleFrom(
-                                                    backgroundColor: reebookingController.selectedTimeOption.value == "15 min"
-                                                        ?  CustomColor.Button_background_Color
+                                                    backgroundColor:
+                                                        reebookingController
+                                                                .selectedTimeOption
+                                                                .value ==
+                                                            "15 min"
+                                                        ? CustomColor
+                                                              .Button_background_Color
                                                         : Colors.black54,
                                                     elevation: 2,
                                                     shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
                                                     ),
                                                   ),
                                                   child: Text(
                                                     "15 min",
                                                     style: AppTextStyles.small(
-                  
-                                                      weight: reebookingController.selectedTimeOption.value == "15 min"
+                                                      weight:
+                                                          reebookingController
+                                                                  .selectedTimeOption
+                                                                  .value ==
+                                                              "15 min"
                                                           ? FontWeight.bold
                                                           : FontWeight.normal,
-                  
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               const SizedBox(width: 10),
-                  
+
                                               // ----- 30 min -----
                                               SizedBox(
                                                 width: 100,
                                                 height: 45,
                                                 child: ElevatedButton(
-                                                  onPressed: () => reebookingController.addMinutes(30),
+                                                  onPressed: () =>
+                                                      reebookingController
+                                                          .addMinutes(30),
                                                   style: ElevatedButton.styleFrom(
-                                                    backgroundColor: reebookingController.selectedTimeOption.value == "30 min"
-                                                        ?  CustomColor.Button_background_Color
+                                                    backgroundColor:
+                                                        reebookingController
+                                                                .selectedTimeOption
+                                                                .value ==
+                                                            "30 min"
+                                                        ? CustomColor
+                                                              .Button_background_Color
                                                         : Colors.black54,
                                                     elevation: 2,
                                                     shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
                                                     ),
                                                   ),
                                                   child: Text(
                                                     "30 min",
                                                     style: AppTextStyles.small(
-                  
-                                                      weight: reebookingController.selectedTimeOption.value == "30 min"
+                                                      weight:
+                                                          reebookingController
+                                                                  .selectedTimeOption
+                                                                  .value ==
+                                                              "30 min"
                                                           ? FontWeight.bold
                                                           : FontWeight.normal,
                                                       color: Colors.white,
@@ -452,562 +592,724 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                 ),
                                               ),
                                             ],
-                                          )),
-                  
-                                          const SizedBox(height: 25),
-                  
-                                          // ---------- Date & Time ----------
-                                          // Center(
-                                          //   child: Row(
-                                          //     mainAxisAlignment: MainAxisAlignment.center,
-                                          //     children: [
-                                          //       // ----- Date Picker -----
-                                          //       Obx(() => GestureDetector(
-                                          //         onTap: () => reebookingController.pickDate(context),
-                                          //         child: Container(
-                                          //           width: 150,
-                                          //           padding:
-                                          //           const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                                          //           decoration: BoxDecoration(
-                                          //             borderRadius: BorderRadius.circular(10),
-                                          //             color: Colors.black,
-                                          //           ),
-                                          //           child: Row(
-                                          //             mainAxisAlignment: MainAxisAlignment.center,
-                                          //             children: [
-                                          //               const Icon(Icons.calendar_today,
-                                          //                   color: Colors.white, size: 18),
-                                          //               const SizedBox(width: 6),
-                                          //               Flexible(
-                                          //                 child: Text(
-                                          //                   reebookingController.formattedTime(context),
-                                          //                   style: const TextStyle(
-                                          //                     fontSize: 15,
-                                          //                     fontWeight: FontWeight.bold,
-                                          //                     color: Colors.white,
-                                          //                   ),
-                                          //                   overflow: TextOverflow.ellipsis,
-                                          //                 ),
-                                          //               ),
-                                          //             ],
-                                          //           ),
-                                          //         ),
-                                          //       )),
-                                          //       const SizedBox(width: 15),
-                                          //
-                                          //       // ----- Time Picker -----
-                                          //       Obx(() => GestureDetector(
-                                          //         onTap: () => reebookingController.pickTime(context),
-                                          //         child: Container(
-                                          //           width: 150,
-                                          //           padding:
-                                          //           const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                                          //           decoration: BoxDecoration(
-                                          //             borderRadius: BorderRadius.circular(10),
-                                          //             color: Colors.black,
-                                          //           ),
-                                          //           child: Row(
-                                          //             mainAxisAlignment: MainAxisAlignment.center,
-                                          //             children: [
-                                          //               const Icon(Icons.access_time,
-                                          //                   color: Colors.white, size: 18),
-                                          //               const SizedBox(width: 6),
-                                          //               Flexible(
-                                          //                 child: Text(
-                                          //                   reebookingController.formattedTime(context),
-                                          //                   style:  AppTextStyles.regular(
-                                          //                     weight: FontWeight.bold,
-                                          //                   ),
-                                          //                   overflow: TextOverflow.ellipsis,
-                                          //                 ),
-                                          //               ),
-                                          //             ],
-                                          //           ),
-                                          //         ),
-                                          //       )),
-                                          //     ],
-                                          //   ),
-                                          // ),
-                  
-                                          // ---------- Date & Time ----------
-                                          Center(
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                // ----- Date Picker -----
-                                                Obx(() => GestureDetector(
-                                                  onTap: () => reebookingController.pickDate(context),
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 25),
+
+                                        // ---------- Date & Time ----------
+                                        // Center(
+                                        //   child: Row(
+                                        //     mainAxisAlignment: MainAxisAlignment.center,
+                                        //     children: [
+                                        //       // ----- Date Picker -----
+                                        //       Obx(() => GestureDetector(
+                                        //         onTap: () => reebookingController.pickDate(context),
+                                        //         child: Container(
+                                        //           width: 150,
+                                        //           padding:
+                                        //           const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                                        //           decoration: BoxDecoration(
+                                        //             borderRadius: BorderRadius.circular(10),
+                                        //             color: Colors.black,
+                                        //           ),
+                                        //           child: Row(
+                                        //             mainAxisAlignment: MainAxisAlignment.center,
+                                        //             children: [
+                                        //               const Icon(Icons.calendar_today,
+                                        //                   color: Colors.white, size: 18),
+                                        //               const SizedBox(width: 6),
+                                        //               Flexible(
+                                        //                 child: Text(
+                                        //                   reebookingController.formattedTime(context),
+                                        //                   style: const TextStyle(
+                                        //                     fontSize: 15,
+                                        //                     fontWeight: FontWeight.bold,
+                                        //                     color: Colors.white,
+                                        //                   ),
+                                        //                   overflow: TextOverflow.ellipsis,
+                                        //                 ),
+                                        //               ),
+                                        //             ],
+                                        //           ),
+                                        //         ),
+                                        //       )),
+                                        //       const SizedBox(width: 15),
+                                        //
+                                        //       // ----- Time Picker -----
+                                        //       Obx(() => GestureDetector(
+                                        //         onTap: () => reebookingController.pickTime(context),
+                                        //         child: Container(
+                                        //           width: 150,
+                                        //           padding:
+                                        //           const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                                        //           decoration: BoxDecoration(
+                                        //             borderRadius: BorderRadius.circular(10),
+                                        //             color: Colors.black,
+                                        //           ),
+                                        //           child: Row(
+                                        //             mainAxisAlignment: MainAxisAlignment.center,
+                                        //             children: [
+                                        //               const Icon(Icons.access_time,
+                                        //                   color: Colors.white, size: 18),
+                                        //               const SizedBox(width: 6),
+                                        //               Flexible(
+                                        //                 child: Text(
+                                        //                   reebookingController.formattedTime(context),
+                                        //                   style:  AppTextStyles.regular(
+                                        //                     weight: FontWeight.bold,
+                                        //                   ),
+                                        //                   overflow: TextOverflow.ellipsis,
+                                        //                 ),
+                                        //               ),
+                                        //             ],
+                                        //           ),
+                                        //         ),
+                                        //       )),
+                                        //     ],
+                                        //   ),
+                                        // ),
+
+                                        // ---------- Date & Time ----------
+                                        Center(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              // ----- Date Picker -----
+                                              Obx(
+                                                () => GestureDetector(
+                                                  onTap: () =>
+                                                      reebookingController
+                                                          .pickDate(context),
                                                   child: Container(
                                                     width: 150,
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 12,
+                                                        ),
                                                     decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
                                                       color: Colors.black,
                                                     ),
                                                     child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
                                                       children: [
-                                                        const Icon(Icons.calendar_today, color: Colors.white, size: 18),
-                                                        const SizedBox(width: 6),
+                                                        const Icon(
+                                                          Icons.calendar_today,
+                                                          color: Colors.white,
+                                                          size: 18,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 6,
+                                                        ),
                                                         Flexible(
                                                           child: Text(
-                                                            DateFormat('yyyy-MM-dd')
-                                                                .format(reebookingController.selectedDate.value),
-                                                            style: const TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
+                                                            DateFormat(
+                                                              'yyyy-MM-dd',
+                                                            ).format(
+                                                              reebookingController
+                                                                  .selectedDate
+                                                                  .value,
                                                             ),
-                                                            overflow: TextOverflow.ellipsis,
+                                                            style:
+                                                                const TextStyle(
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
-                                                )),
-                                                const SizedBox(width: 15),
-                  
-                                                // ----- Time Picker (24-hour format) -----
-                                                Obx(() => GestureDetector(
-                                                  onTap: () => reebookingController.pickTime(context),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 15),
+
+                                              // ----- Time Picker (24-hour format) -----
+                                              Obx(
+                                                () => GestureDetector(
+                                                  onTap: () =>
+                                                      reebookingController
+                                                          .pickTime(context),
                                                   child: Container(
                                                     width: 150,
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 12,
+                                                        ),
                                                     decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
                                                       color: Colors.black,
                                                     ),
                                                     child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
                                                       children: [
-                                                        const Icon(Icons.access_time, color: Colors.white, size: 18),
-                                                        const SizedBox(width: 6),
+                                                        const Icon(
+                                                          Icons.access_time,
+                                                          color: Colors.white,
+                                                          size: 18,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 6,
+                                                        ),
                                                         Flexible(
                                                           child: Text(
-                                                            reebookingController.formattedTime24(),  // FIXED: now 24-hour time
-                                                            style: AppTextStyles.regular(weight: FontWeight.bold),
-                                                            overflow: TextOverflow.ellipsis,
+                                                            reebookingController
+                                                                .formattedTime24(), // FIXED: now 24-hour time
+                                                            style:
+                                                                AppTextStyles.regular(
+                                                                  weight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
-                                                )),
-                                              ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 35),
+
+                                        // ========================================================== Book Ride Button
+                                        SizedBox(
+                                          height: 55,
+                                          width: 250,
+                                          child: MyElevatedButton(
+                                            text: '',
+                                            onPressed: () {
+                                              // Get.to(RideSearchScreen());
+
+                                              reebookingController
+                                                  .calculateHistoryBookingFareApi(
+                                                    trip,
+                                                  );
+                                              Get.dialog(
+                                                Dialog(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  insetPadding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 20,
+                                                      ),
+                                                  child: Container(
+                                                    height: 300,
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          20,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: CustomColor
+                                                          .Container_Colors,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20,
+                                                          ),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        /// TITLE
+                                                        Text(
+                                                          "Book Ride",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style:
+                                                              AppTextStyles.heading(),
+                                                        ),
+
+                                                        const SizedBox(
+                                                          height: 12,
+                                                        ),
+
+                                                        /// ICON
+                                                        Container(
+                                                          height: 70,
+                                                          width: 70,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                color: Colors
+                                                                    .yellow
+                                                                    .withOpacity(
+                                                                      0.08,
+                                                                    ),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                          child: const Icon(
+                                                            Icons
+                                                                .check_circle_rounded,
+                                                            color:
+                                                                Colors.yellow,
+                                                            size: 34,
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(
+                                                          height: 12,
+                                                        ),
+
+                                                        /// DESCRIPTION
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 10,
+                                                              ),
+                                                          child: Text(
+                                                            CustomText
+                                                                .Ride_book_ride_alert,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style:
+                                                                AppTextStyles.regular(),
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(
+                                                          height: 20,
+                                                        ),
+
+                                                        /// BUTTONS
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            /// YES BUTTON
+                                                            CustomTextButton(
+                                                              width: 70,
+                                                              height: 42,
+                                                              text: 'Yes',
+
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              rowMainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              columnCrossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+
+                                                              onPressed: () {
+                                                                reebookingController
+                                                                    .historyBookingApi(
+                                                                      trip,
+                                                                    );
+                                                                Get.find<
+                                                                      profileModelController
+                                                                    >()
+                                                                    .getuserProfile();
+
+                                                                if (reebookingController
+                                                                        .selectedTimeOption
+                                                                        .value ==
+                                                                    "ASAP") {
+                                                                  // 👉 ASAP → Search Screen
+                                                                  rideController
+                                                                          .isFromHistory =
+                                                                      true;
+                                                                  Get.offAllNamed(
+                                                                    routesName
+                                                                        .RideSearchScreen,
+                                                                  );
+                                                                } else {
+                                                                  // 👉 Scheduled → Dashboard
+                                                                  Get.offAllNamed(
+                                                                    routesName
+                                                                        .DeshBoard_Screen,
+                                                                  );
+                                                                }
+
+                                                                final profileController =
+                                                                    Get.isRegistered<
+                                                                      profileModelController
+                                                                    >()
+                                                                    ? Get.find<
+                                                                        profileModelController
+                                                                      >()
+                                                                    : Get.put(
+                                                                        profileModelController(),
+                                                                      );
+                                                                profileController
+                                                                    .getuserProfile();
+
+                                                                final homeC =
+                                                                    Get.isRegistered<
+                                                                      SwapController
+                                                                    >()
+                                                                    ? Get.find<
+                                                                        SwapController
+                                                                      >()
+                                                                    : Get.put(
+                                                                        SwapController(),
+                                                                      );
+                                                                // homeC.resetRouteState();homeC.resetRouteState();
+                                                                // homeC.dropOff.clear();
+                                                                // homeC.pickUp.clear();
+                                                                // homeC.viaController1.clear();
+                                                                // homeC.viaController2.clear();
+                                                                // homeC.activeField.value = "";
+                                                                homeC.update();
+                                                              },
+                                                              backgroundColor:
+                                                                  Colors.red,
+                                                              textColor:
+                                                                  CustomColor
+                                                                      .textColor,
+                                                              borderRadius: 10,
+                                                              elevation: 2,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+
+                                                            const SizedBox(
+                                                              width: 15,
+                                                            ),
+
+                                                            /// NO BUTTON
+                                                            CustomTextButton(
+                                                              width: 70,
+                                                              height: 42,
+                                                              text: ' No ',
+
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              rowMainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              columnCrossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+
+                                                              onPressed: () {
+                                                                Get.back();
+                                                              },
+
+                                                              backgroundColor:
+                                                                  CustomColor
+                                                                      .Button_background_Color,
+                                                              textColor:
+                                                                  CustomColor
+                                                                      .textColor,
+                                                              borderRadius: 10,
+                                                              elevation: 2,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            textWidget: FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text(
+                                                "Book Ride",
+                                                style: AppTextStyles.medium(
+                                                  size: 25,
+                                                  weight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: BottomButton(
+                                icon: Icons.schedule,
+                                button_name: "Schedule",
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Get.bottomSheet(
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      color: CustomColor.Container_Colors,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30),
+                                        topRight: Radius.circular(30),
+                                      ),
+                                    ),
+                                    width: double.infinity,
+                                    height:
+                                        MediaQuery.of(context).size.height *
+                                        0.5,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ),
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 8),
+                                          Center(
+                                            child: Container(
+                                              height: 5,
+                                              width: 40,
+                                              decoration: BoxDecoration(
+                                                color: CustomColor.Icon_Color,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
                                             ),
                                           ),
-                  
-                  
-                                          const SizedBox(height: 35),
-                  
-                                          // ========================================================== Book Ride Button
+                                          SizedBox(height: 10),
+
+                                          Row(
+                                            children: [
+                                              SizedBox(width: 20),
+
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.cancel_outlined,
+                                                  color: Colors.red,
+                                                ),
+                                                iconSize: 35,
+                                                onPressed: () => Get.back(),
+                                              ),
+
+                                              Expanded(
+                                                child: Center(
+                                                  child: Text(
+                                                    "ADD ORDER DETAILS",
+                                                    style:
+                                                        AppTextStyles.medium(),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              const SizedBox(width: 48),
+                                            ],
+                                          ),
+
                                           SizedBox(
-                                            height: 55,
-                                            width: 250  ,
-                                            child: MyElevatedButton(
-                                              text: '',
-                                              onPressed: () {
-                                               // Get.to(RideSearchScreen());
-                  
-                                                reebookingController.calculateHistoryBookingFareApi(trip);
-                                                Get.dialog(
-                                                  Dialog(
-                                                    backgroundColor: Colors.transparent,
-                                                    insetPadding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                    ),
-                                                    child: Container(
-                                                      height: 300,
-                                                      padding: const EdgeInsets.all(20),
-                                                      decoration: BoxDecoration(
-                                                        color: CustomColor
-                                                            .Container_Colors,
-                                                        borderRadius:
-                                                        BorderRadius.circular(20),
-                                                      ),
-                                                      child: Column(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          /// TITLE
-                                                          Text(
-                                                            "Book Ride",
-                                                            textAlign: TextAlign.center,
-                                                            style:
-                                                            AppTextStyles.heading(),
-                                                          ),
-                  
-                                                          const SizedBox(height: 12),
-                  
-                                                          /// ICON
-                                                          Container(
-                                                            height: 70,
-                                                            width: 70,
-                                                            decoration: BoxDecoration(
-                                                              color: Colors.yellow
-                                                                  .withOpacity(0.08),
-                                                              shape: BoxShape.circle,
-                                                            ),
-                                                            child: const Icon(
-                                                              Icons
-                                                                  .check_circle_rounded,
-                                                              color: Colors.yellow,
-                                                               size: 34,
-                                                            ),
-                                                          ),
-                  
-                                                          const SizedBox(height: 12),
-                  
-                                                          /// DESCRIPTION
-                                                          Padding(
-                                                            padding:
-                                                            const EdgeInsets.symmetric(
-                                                              horizontal: 10,
-                                                            ),
-                                                            child: Text(
-                                                              CustomText.Ride_book_ride_alert,
-                                                              textAlign:
-                                                              TextAlign.center,
-                                                              style:
-                                                              AppTextStyles.regular(),
-                                                            ),
-                                                          ),
-                  
-                                                          const SizedBox(height: 20),
-                  
-                                                          /// BUTTONS
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                            children: [
-                                                              /// YES BUTTON
-                                                              CustomTextButton(
-                                                                width: 70,
-                                                                height: 42,
-                                                                text: 'Yes',
-                  
-                                                                textAlign:
-                                                                TextAlign.center,
-                                                                rowMainAxisAlignment:
-                                                                MainAxisAlignment.center,
-                                                                columnCrossAxisAlignment:
-                                                                CrossAxisAlignment.center,
-                  
-                                                                onPressed: () {
-                                                                  reebookingController.historyBookingApi(trip);
-                                                                  Get.find<profileModelController>().getuserProfile();
-                  
-                  
-                  
-                  
-                                                                  if (reebookingController.selectedTimeOption.value == "ASAP") {
-                                                                    // 👉 ASAP → Search Screen
-                                                                    rideController.isFromHistory = true;
-                                                                    Get.offAllNamed(routesName.RideSearchScreen);
-                                                                  } else {
-                                                                    // 👉 Scheduled → Dashboard
-                                                                    Get.offAllNamed(routesName.DeshBoard_Screen);
-                                                                  }
-                  
-                                                                  final profileController = Get.isRegistered<profileModelController>()
-                                                                      ? Get.find<profileModelController>()
-                                                                      : Get.put(profileModelController());
-                                                                  profileController.getuserProfile();
-                  
-                                                                  final homeC = Get.isRegistered<SwapController>()
-                                                                      ? Get.find<SwapController>()
-                                                                      : Get.put(SwapController());
-                                                                  // homeC.resetRouteState();homeC.resetRouteState();
-                                                                  // homeC.dropOff.clear();
-                                                                  // homeC.pickUp.clear();
-                                                                  // homeC.viaController1.clear();
-                                                                  // homeC.viaController2.clear();
-                                                                  // homeC.activeField.value = "";
-                                                                  homeC.update();
-                                                                },
-                                                                backgroundColor:
-                                                                Colors.red,
-                                                                textColor: CustomColor
-                                                                    .textColor,
-                                                                borderRadius: 10,
-                                                                elevation: 2,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                FontWeight.bold,
-                                                              ),
-                  
-                                                              const SizedBox(width: 15),
-                  
-                                                              /// NO BUTTON
-                                                              CustomTextButton(
-                                                                width: 70,
-                                                                height: 42,
-                                                                text: ' No ',
-                  
-                                                                textAlign:
-                                                                TextAlign.center,
-                                                                rowMainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                                columnCrossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                  
-                                                                onPressed: () {
-                                                                  Get.back();
-                                                                },
-                  
-                                                                backgroundColor: CustomColor
-                                                                    .Button_background_Color,
-                                                                textColor: CustomColor
-                                                                    .textColor,
-                                                                borderRadius: 10,
-                                                                elevation: 2,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                FontWeight.bold,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
+                                            height:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.height *
+                                                0.03,
+                                          ),
+
+                                          const Text(
+                                            "Order Number",
+                                            style: TextStyle(
+                                              color: CustomColor.textColor,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          CustomTextField(
+                                            hintText: "Type your order number",
+                                            borderRadius: 15,
+                                            fillColor:
+                                                CustomColor.textfield_fill,
+                                          ),
+
+                                          SizedBox(
+                                            height:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.height *
+                                                0.015,
+                                          ),
+                                          Text(
+                                            "Name on order",
+                                            style: AppTextStyles.medium(),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          CustomTextField(
+                                            hintText: "Type name on order",
+                                            borderRadius: 15,
+                                            fillColor:
+                                                CustomColor.textfield_fill,
+                                          ),
+
+                                          SizedBox(
+                                            height:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.height *
+                                                0.025,
+                                          ),
+
+                                          Center(
+                                            child: SizedBox(
+                                              height: 55,
+                                              width: 250,
+                                              child: MyElevatedButton(
+                                                text: 'DONE',
+                                                textWidget: FittedBox(
+                                                  child: Text(
+                                                    "Done",
+                                                    style: AppTextStyles.medium(
+                                                      size: 25,
+                                                      weight: FontWeight.bold,
                                                     ),
                                                   ),
-                                                );
-                  
-                  
-                                              },
-                                              textWidget:
-                                              FittedBox(
-                                                  fit: BoxFit.scaleDown,
-                                                  child: Text("Book Ride",style: AppTextStyles.medium(size: 25,weight: FontWeight.bold),
-                                                  )
+                                                ),
+                                                onPressed: () {},
                                               ),
-                  
-                                              fontSize: 20,
                                             ),
-                                          )
+                                          ),
+                                          SizedBox(height: 100),
                                         ],
                                       ),
                                     ),
-                                  );
-                                },
-                                child: BottomButton(icon: Icons.schedule, button_name: "Schedule")
+                                  ),
+                                );
+
+                                // Get.bottomSheet(
+                                //   Container(
+                                //     decoration: const BoxDecoration(
+                                //       color: Colors.grey,
+                                //       borderRadius: BorderRadius.only(
+                                //         topLeft: Radius.circular(30),
+                                //         topRight: Radius.circular(30),
+                                //       ),
+                                //     ),
+                                //     height: 400,
+                                //     width: MediaQuery.of(context).size.width*1,
+                                //     child:Padding(
+                                //       padding: const EdgeInsets.all(10.0),
+                                //       child: Column(
+                                //         crossAxisAlignment: CrossAxisAlignment.start,
+                                //         children: [
+                                //           SizedBox(height: 10,),
+                                //           Row(
+                                //             children: [
+                                //               IconButton(
+                                //                 icon:  Icon(Icons.cancel_outlined, color:CustomColor.Icon_Color),
+                                //                 onPressed: () {
+                                //                   Get.back();
+                                //                 },
+                                //               ),
+                                //               SizedBox(width: 10,),
+                                //               Text(
+                                //                 "ADD ORDER DETAILS",
+                                //                 style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
+                                //               ),
+                                //               SizedBox(width: 20,),
+                                //               SizedBox(
+                                //                 height: 50,
+                                //                 width:   100,
+                                //                 child: MyElevatedButton(
+                                //                   text: 'DONE',
+                                //                   onPressed: () {  },
+                                //                   backgroundColor: Colors.black,
+                                //                   textColor: CustomColor.Icon_Color,
+                                //                   fontSize: 15,
+                                //                 ),
+                                //               ),
+                                //
+                                //
+                                //             ],
+                                //           ),
+                                //           SizedBox(height: 10,),
+                                //           Text(
+                                //             "Oder number",
+                                //             style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
+                                //           ),
+                                //           SizedBox(height: 3),
+                                //
+                                //           Padding(
+                                //             padding: const EdgeInsets.all(15.0),
+                                //             child: CustomTextField(
+                                //               // controller: ,
+                                //               hintText: "Type your order number",
+                                //               borderRadius: 15,
+                                //               fillColor: CustomColor.textfield_fill,
+                                //             ),
+                                //           ),
+                                //           SizedBox(height: 5,),
+                                //           Text(
+                                //             "Name on oder",
+                                //             style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
+                                //           ),
+                                //           SizedBox(height: 3),
+                                //
+                                //           Padding(
+                                //             padding: const EdgeInsets.all(15.0),
+                                //             child: CustomTextField(
+                                //               // controller: ,
+                                //               hintText: "Type name on Oder",
+                                //               borderRadius: 15,
+                                //               fillColor: CustomColor.textfield_fill,
+                                //             ),
+                                //           ),
+                                //
+                                //
+                                //
+                                //
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   )
+                                // );
+                              },
+                              child: BottomButton(
+                                icon: Icons.shopping_cart_outlined,
+                                button_name: "Shopping",
+                              ),
                             ),
                             InkWell(
-                                onTap:(){
-                  
-                                  Get.bottomSheet(
-                                    Container(
-                  
-                                      decoration: const BoxDecoration(
-                                        color: CustomColor.Container_Colors,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(30),
-                                          topRight: Radius.circular(30),
-                                        ),
-                                      ),
-                                      width: double.infinity,
-                                      height: MediaQuery.of(context).size.height * 0.5,
-                                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                                      child: SingleChildScrollView(
-                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(height: 8),
-                                            Center(
-                                              child: Container(
-                                                height: 5,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                  color: CustomColor.Icon_Color,
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 10),
-                  
-                  
-                                            Row(
-                                                children: [
-                  
-                                                  SizedBox(width: 20,),
-                  
-                                                  IconButton(
-                                                    icon: Icon(Icons.cancel_outlined, color: Colors.red),
-                                                    iconSize: 35,
-                                                    onPressed: () => Get.back(),
-                                                  ),
-                  
-                  
-                                                  Expanded(
-                                                    child: Center(
-                                                      child: Text(
-                                                        "ADD ORDER DETAILS",
-                                                        style:  AppTextStyles.medium(
-                  
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ),
-                  
-                  
-                                                  const SizedBox(width: 48),
-                                                ]
-                                            ),
-                  
-                                            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                  
-                  
-                                            const Text(
-                                              "Order Number",
-                                              style: TextStyle(
-                                                color: CustomColor.textColor,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 3),
-                                            CustomTextField(
-                                              hintText: "Type your order number",
-                                              borderRadius: 15,
-                                              fillColor: CustomColor.textfield_fill,
-                                            ),
-                  
-                                            SizedBox(height: MediaQuery.of(context).size.height * 0.015),
-                                             Text(
-                                              "Name on order",
-                                              style: AppTextStyles.medium(),
-                                            ),
-                                            const SizedBox(height: 3),
-                                            CustomTextField(
-                                              hintText: "Type name on order",
-                                              borderRadius: 15,
-                                              fillColor: CustomColor.textfield_fill,
-                                            ),
-                  
-                                            SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-                  
-                  
-                                            Center(
-                                              child: SizedBox(
-                                                height:55,
-                                                width:250,
-                                                child: MyElevatedButton(
-                                                  text: 'DONE',
-                                                  textWidget: FittedBox(
-                                                    child: Text("Done",style: AppTextStyles.medium(size:25,weight: FontWeight.bold),),
-                                                  ),
-                                                  onPressed: () {},
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 100,)
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                  
-                                  // Get.bottomSheet(
-                                  //   Container(
-                                  //     decoration: const BoxDecoration(
-                                  //       color: Colors.grey,
-                                  //       borderRadius: BorderRadius.only(
-                                  //         topLeft: Radius.circular(30),
-                                  //         topRight: Radius.circular(30),
-                                  //       ),
-                                  //     ),
-                                  //     height: 400,
-                                  //     width: MediaQuery.of(context).size.width*1,
-                                  //     child:Padding(
-                                  //       padding: const EdgeInsets.all(10.0),
-                                  //       child: Column(
-                                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                                  //         children: [
-                                  //           SizedBox(height: 10,),
-                                  //           Row(
-                                  //             children: [
-                                  //               IconButton(
-                                  //                 icon:  Icon(Icons.cancel_outlined, color:CustomColor.Icon_Color),
-                                  //                 onPressed: () {
-                                  //                   Get.back();
-                                  //                 },
-                                  //               ),
-                                  //               SizedBox(width: 10,),
-                                  //               Text(
-                                  //                 "ADD ORDER DETAILS",
-                                  //                 style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
-                                  //               ),
-                                  //               SizedBox(width: 20,),
-                                  //               SizedBox(
-                                  //                 height: 50,
-                                  //                 width:   100,
-                                  //                 child: MyElevatedButton(
-                                  //                   text: 'DONE',
-                                  //                   onPressed: () {  },
-                                  //                   backgroundColor: Colors.black,
-                                  //                   textColor: CustomColor.Icon_Color,
-                                  //                   fontSize: 15,
-                                  //                 ),
-                                  //               ),
-                                  //
-                                  //
-                                  //             ],
-                                  //           ),
-                                  //           SizedBox(height: 10,),
-                                  //           Text(
-                                  //             "Oder number",
-                                  //             style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
-                                  //           ),
-                                  //           SizedBox(height: 3),
-                                  //
-                                  //           Padding(
-                                  //             padding: const EdgeInsets.all(15.0),
-                                  //             child: CustomTextField(
-                                  //               // controller: ,
-                                  //               hintText: "Type your order number",
-                                  //               borderRadius: 15,
-                                  //               fillColor: CustomColor.textfield_fill,
-                                  //             ),
-                                  //           ),
-                                  //           SizedBox(height: 5,),
-                                  //           Text(
-                                  //             "Name on oder",
-                                  //             style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
-                                  //           ),
-                                  //           SizedBox(height: 3),
-                                  //
-                                  //           Padding(
-                                  //             padding: const EdgeInsets.all(15.0),
-                                  //             child: CustomTextField(
-                                  //               // controller: ,
-                                  //               hintText: "Type name on Oder",
-                                  //               borderRadius: 15,
-                                  //               fillColor: CustomColor.textfield_fill,
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //
-                                  //
-                                  //
-                                  //         ],
-                                  //       ),
-                                  //     ),
-                                  //   )
-                                  // );
-                  
-                                },
-                                child: BottomButton(icon: Icons.shopping_cart_outlined, button_name: "Shopping")),
-                            InkWell(
-                                onTap:(){Get.toNamed('/PromoScreen');},
-                                child: BottomButton(icon: Icons.local_offer_outlined, button_name: "Promo")),
+                              onTap: () {
+                                Get.toNamed('/PromoScreen');
+                              },
+                              child: BottomButton(
+                                icon: Icons.local_offer_outlined,
+                                button_name: "Promo",
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                  
+
                       // Container(
                       //   margin: EdgeInsets.only(top: 15),
                       //     // margin: EdgeInsets.symmetric(vertical: 8),
@@ -1026,26 +1328,19 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                   ),
                 ),
               ),
-
-
             ],
           ),
         ),
-
       ),
     );
   }
 }
 
-
-
-
-
 // =========================================================== tab bar  Button
 
 class BottomButton extends StatelessWidget {
   final IconData icon;
-  final String button_name ;
+  final String button_name;
   const BottomButton({required this.icon, required this.button_name});
 
   @override
@@ -1053,9 +1348,8 @@ class BottomButton extends StatelessWidget {
     return Column(
       children: [
         Icon(icon, color: CustomColor.Icon_Color, size: 22),
-         SizedBox(height: 3),
-        Text(button_name,
-            style:  AppTextStyles.small()),
+        SizedBox(height: 3),
+        Text(button_name, style: AppTextStyles.small()),
       ],
     );
   }

@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart' hide FormData, Response;
 
+import '../../View/Widgets/color.dart';
 import '../../View/profile/controller/profile_controller.dart';
 import '../../View/rides/model/ride_model/get_vehicle_model.dart';
+import '../../View/textstyle/apptextstyle.dart';
 import '../../View/yourtrip/booking_history_model/bookingHistorymodel.dart' hide VehicleType;
 import '../../api_servies/api_servies.dart';
 
@@ -93,8 +96,46 @@ class BookingController extends GetxController {
     update();
   }
 
+  Map<int, double> vehicleFareMap = {};
+  bool fareLoading = false;
 
+  Future<void> calculateFareAllVehiclesApi(Booking trip) async {
+    fareLoading = true;
+    update();
 
+    Map<String, dynamic> dataMap = {
+      "miles": trip.miles,
+      "pickup_date": DateFormat('yyyy-M-d').format(selectedDate.value),
+      "pickup_time": formattedTime24(),
+      "pickup": trip.pickup,
+      "dropoff": trip.dropoff,
+      "journey_type_id": trip.journeyTypeId ?? 1,
+      "pickup_latitude": trip.pickupLatitude,
+      "pickup_longitude": trip.pickupLongitude,
+    };
+
+    FormData formData = FormData.fromMap(dataMap);
+
+    Response? response = await ApiService.post(
+      formData,
+      "fares/calculate-fare-all-vehicles",
+      multiPart: true,
+      auth: true,
+      isProgressShow: true,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      vehicleFareMap.clear();
+
+      for (var item in response.data["data"]) {
+        vehicleFareMap[item["vehicle_type_id"]] =
+            (item["total_fare"] as num).toDouble();
+      }
+    }
+
+    fareLoading = false;
+    update();
+  }
 
 
 
@@ -123,24 +164,258 @@ Future<void> pickDate(BuildContext context) async {
 
 // ----------------- Pick Time -----------------
   Future<void> pickTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: selectedTime.value,
+    int hour = selectedTime.value.hour;
+    int minute = selectedTime.value.minute;
 
-      builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
-        );
-      },
+    const Color backgroundColor = Color(0xFF0F172A);
+    const Color cardColor = Color(0xFF1E293B);
+    const Color accentColor = Color(0xFFF59E0B);
 
+    Get.bottomSheet(
+      StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            height: 470,
+            padding: const EdgeInsets.symmetric(horizontal: 22),
+            decoration: const BoxDecoration(
+              // color: backgroundColor,
+              color:CustomColor.Container_Colors,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(35),
+              ),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+
+                /// Drag Handle
+                Container(
+                  width: 55,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+
+               // const SizedBox(height: 25),
+
+                // /// Time Icon
+                // Container(
+                //   height: 75,
+                //   width: 75,
+                //   decoration: BoxDecoration(
+                //     shape: BoxShape.circle,
+                //     color: accentColor.withOpacity(.15),
+                //     border: Border.all(
+                //       color: accentColor.withOpacity(.35),
+                //     ),
+                //   ),
+                //   child: const Icon(
+                //     Icons.access_time_filled_rounded,
+                //     color: accentColor,
+                //     size: 38,
+                //   ),
+                // ),
+
+                const SizedBox(height: 18),
+
+                const Text(
+                  "Schedule Pickup",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: .4,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                Text(
+                  "Choose your preferred pickup time",
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 15,
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                /// Picker Card
+                Container(
+                  height: 190,
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: Colors.white10,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(.35),
+                        blurRadius: 25,
+                        offset: const Offset(0, 15),
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CupertinoPicker(
+                          backgroundColor: Colors.transparent,
+                          itemExtent: 50,
+                          scrollController: FixedExtentScrollController(
+                            initialItem: hour,
+                          ),
+                          selectionOverlay: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: accentColor.withOpacity(.12),
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: accentColor.withOpacity(.45),
+                              ),
+                            ),
+                          ),
+                          onSelectedItemChanged: (value) {
+                            setState(() => hour = value);
+                          },
+                          children: List.generate(
+                            24,
+                                (index) => Center(
+                              child: Text(
+                                index.toString().padLeft(2, "0"),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const Text(
+                        ":",
+                        style: TextStyle(
+                          color: accentColor,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      Expanded(
+                        child: CupertinoPicker(
+                          backgroundColor: Colors.transparent,
+                          itemExtent: 50,
+                          scrollController: FixedExtentScrollController(
+                            initialItem: minute,
+                          ),
+                          selectionOverlay: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: accentColor.withOpacity(.12),
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: accentColor.withOpacity(.45),
+                              ),
+                            ),
+                          ),
+                          onSelectedItemChanged: (value) {
+                            setState(() => minute = value);
+                          },
+                          children: List.generate(
+                            60,
+                                (index) => Center(
+                              child: Text(
+                                index.toString().padLeft(2, "0"),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                //const Spacer(),
+                SizedBox(height: 25,),
+
+                SizedBox(
+                  width: 250,
+                  height: 58,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: CustomColor.Button_background_Color,
+                      foregroundColor: CustomColor.textColor,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    onPressed: () {
+                      selectedTime.value = TimeOfDay(
+                        hour: hour,
+                        minute: minute,
+                      );
+
+                      selectedTimeOption.value = "";
+
+                      Get.back();
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check_circle_rounded),
+                        SizedBox(width: 10),
+                        Text(
+                          "Confirm Pickup Time",
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 50),
+              ],
+            ),
+          );
+        },
+      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
     );
-
-    if (picked != null && picked != selectedTime.value) {
-      selectedTime.value = picked;
-      selectedTimeOption.value = '';
-    }
   }
+//   Future<void> pickTime(BuildContext context) async {
+//     final TimeOfDay? picked = await showTimePicker(
+//       context: context,
+//       initialTime: selectedTime.value,
+//
+//       builder: (BuildContext context, Widget? child) {
+//         return MediaQuery(
+//           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+//           child: child!,
+//         );
+//       },
+//
+//     );
+//
+//     if (picked != null && picked != selectedTime.value) {
+//       selectedTime.value = picked;
+//       selectedTimeOption.value = '';
+//     }
+//   }
 // ----------------- Add Minutes (15 / 30) -----------------
   void addMinutes(int minutesToAdd) {
     final now = DateTime.now(); // 👈 ALWAYS current time

@@ -90,7 +90,7 @@ class PaymentScreen extends StatelessWidget {
                    child: Text("Done",style: AppTextStyles.medium(size: 25,weight: FontWeight.bold),),
                  ),
                  onPressed: () {
-                   Get.toNamed("/SigIn_Screen");
+                  // Get.toNamed("/SigIn_Screen");
                  },
 
                  fontSize: 20,

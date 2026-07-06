@@ -158,55 +158,116 @@ class RideController extends GetxController {
     int hour = selectedTime.value.hour;
     int minute = selectedTime.value.minute;
 
+    const Color backgroundColor = Color(0xFF0F172A);
+    const Color cardColor = Color(0xFF1E293B);
+    const Color accentColor = Color(0xFFF59E0B);
+
     Get.bottomSheet(
       StatefulBuilder(
         builder: (context, setState) {
           return Container(
-            height: 350,
+            height: 470,
+            padding: const EdgeInsets.symmetric(horizontal: 22),
             decoration: const BoxDecoration(
-              color: CustomColor.Container_Colors,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
+              // color: backgroundColor,
+              color:CustomColor.Container_Colors,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(35),
               ),
             ),
             child: Column(
               children: [
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
                 /// Drag Handle
                 Container(
-                  width: 45,
+                  width: 55,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade600,
-                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
+
+                // const SizedBox(height: 25),
+
+                // /// Time Icon
+                // Container(
+                //   height: 75,
+                //   width: 75,
+                //   decoration: BoxDecoration(
+                //     shape: BoxShape.circle,
+                //     color: accentColor.withOpacity(.15),
+                //     border: Border.all(
+                //       color: accentColor.withOpacity(.35),
+                //     ),
+                //   ),
+                //   child: const Icon(
+                //     Icons.access_time_filled_rounded,
+                //     color: accentColor,
+                //     size: 38,
+                //   ),
+                // ),
 
                 const SizedBox(height: 18),
 
-                Text(
-                  "Select Pickup Time",
-                  style: AppTextStyles.medium(
-                    size: 24,
-                    weight: FontWeight.bold,
-                    color: CustomColor.Text_Color,
+                const Text(
+                  "Schedule Pickup",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: .4,
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 8),
 
-                Expanded(
+                Text(
+                  "Choose your preferred pickup time",
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 15,
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                /// Picker Card
+                Container(
+                  height: 190,
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: Colors.white10,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(.35),
+                        blurRadius: 25,
+                        offset: const Offset(0, 15),
+                      )
+                    ],
+                  ),
                   child: Row(
                     children: [
-                      /// Hour
                       Expanded(
                         child: CupertinoPicker(
                           backgroundColor: Colors.transparent,
-                          itemExtent: 45,
+                          itemExtent: 50,
                           scrollController: FixedExtentScrollController(
                             initialItem: hour,
+                          ),
+                          selectionOverlay: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: accentColor.withOpacity(.12),
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: accentColor.withOpacity(.45),
+                              ),
+                            ),
                           ),
                           onSelectedItemChanged: (value) {
                             setState(() => hour = value);
@@ -215,11 +276,11 @@ class RideController extends GetxController {
                             24,
                                 (index) => Center(
                               child: Text(
-                                index.toString().padLeft(2, '0'),
-                                style: AppTextStyles.medium(
-                                  size: 22,
-                                  weight: FontWeight.bold,
-                                  color: CustomColor.Text_Color,
+                                index.toString().padLeft(2, "0"),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
@@ -227,22 +288,31 @@ class RideController extends GetxController {
                         ),
                       ),
 
-                      Text(
+                      const Text(
                         ":",
-                        style: AppTextStyles.medium(
-                          size: 28,
-                          weight: FontWeight.bold,
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: accentColor,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      /// Minute
                       Expanded(
                         child: CupertinoPicker(
                           backgroundColor: Colors.transparent,
-                          itemExtent: 45,
+                          itemExtent: 50,
                           scrollController: FixedExtentScrollController(
                             initialItem: minute,
+                          ),
+                          selectionOverlay: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: accentColor.withOpacity(.12),
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: accentColor.withOpacity(.45),
+                              ),
+                            ),
                           ),
                           onSelectedItemChanged: (value) {
                             setState(() => minute = value);
@@ -251,11 +321,11 @@ class RideController extends GetxController {
                             60,
                                 (index) => Center(
                               child: Text(
-                                index.toString().padLeft(2, '0'),
-                                style: AppTextStyles.medium(
-                                  size: 22,
-                                  weight: FontWeight.bold,
-                                  color: CustomColor.Text_Color,
+                                index.toString().padLeft(2, "0"),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
@@ -266,48 +336,55 @@ class RideController extends GetxController {
                   ),
                 ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 15,
-                  ),
-                  child: SizedBox(
-                    width: 250,
-                    height: 52,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        CustomColor.Button_background_Color,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {
-                        selectedTime.value = TimeOfDay(
-                          hour: hour,
-                          minute: minute,
-                        );
+                //const Spacer(),
+                SizedBox(height: 25,),
 
-                        selectedTimeOption.value = "";
-
-                        Get.back();
-                      },
-                      child: Text(
-                        "Confirm Time",
-                        style: AppTextStyles.medium(
-                          size: 18,
-                          weight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                SizedBox(
+                  width: 250,
+                  height: 58,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: CustomColor.Button_background_Color,
+                      foregroundColor: CustomColor.textColor,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
                       ),
+                    ),
+                    onPressed: () {
+                      selectedTime.value = TimeOfDay(
+                        hour: hour,
+                        minute: minute,
+                      );
+
+                      selectedTimeOption.value = "";
+
+                      Get.back();
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check_circle_rounded),
+                        SizedBox(width: 10),
+                        Text(
+                          "Confirm Pickup Time",
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
+
+                const SizedBox(height: 50),
               ],
             ),
           );
         },
       ),
+      backgroundColor: Colors.transparent,
       isScrollControlled: true,
     );
   }

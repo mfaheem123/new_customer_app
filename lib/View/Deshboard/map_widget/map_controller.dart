@@ -32,7 +32,7 @@ class PickLocationController extends GetxController {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
 
-        if (permission == LocationPermission.denied) {
+        if (permission == LocationPermission  .denied) {
           print("Permission Denied");
           return;
         }

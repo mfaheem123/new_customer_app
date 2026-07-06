@@ -143,6 +143,8 @@ class _SigIn_ScreenState extends State<SigIn_Screen> {
 
                           hintText: CustomText.hint_password,
 
+                          maxlength: 15,
+
                           FontSize: 14,
 
                           prefixIcon: const Icon(Icons.lock),
