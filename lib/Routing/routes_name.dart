@@ -27,6 +27,7 @@ class routesName {
   static const String SignupOtpoPassword = '/SignupOtpoPassword';
   static const String ResetPasswordScreen = '/resetPasswordScreen';
   static const String ForgetPasswordOtp = '/ForgetPasswordOtp';
+  static const String BookingConfirmationScreen = '/BookingConfirmationScreen';
 
 
 

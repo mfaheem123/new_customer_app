@@ -300,68 +300,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                     );
                                   },
                                 ),
-                                // ListView.builder(
-                                //   controller: scrollController,
-                                //   itemCount: reebookingController.vehicleList.length,
-                                //   itemBuilder: (context, index) {
-                                //     var vehicle = reebookingController.vehicleList[index];
-                                //     return Obx(() {
-                                //       bool isSelected = reebookingController.selectedVehicleIndex.value == index;
-                                //       return GestureDetector(
-                                //         onTap: () {
-                                //           reebookingController.selectedVehicleIndex.value = index;
-                                //         },
-                                //         child: Container(
-                                //           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                //           padding: EdgeInsets.all(16),
-                                //           decoration: BoxDecoration(
-                                //             color: isSelected
-                                //                 ? CustomColor.Container_Colors.withOpacity(0.4)
-                                //                 : Colors.transparent,
-                                //             borderRadius: BorderRadius.circular(15),
-                                //             border: Border.all(
-                                //               color: isSelected
-                                //                   ? CustomColor.Button_background_Color
-                                //                   : Colors.grey.shade400,
-                                //               width: 2,
-                                //             ),
-                                //           ),
-                                //           child: Row(
-                                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //             children: [
-                                //               // Vehicle Info
-                                //               Column(
-                                //                 crossAxisAlignment: CrossAxisAlignment.start,
-                                //                 children: [
-                                //                   Text("${vehicle["name"]}", style: AppTextStyles.regular()),
-                                //                   SizedBox(height: 5),
-                                //                   Row(
-                                //                     children: [
-                                //                       Icon(Icons.person, color: CustomColor.Icon_Color, size: 18),
-                                //                       Text(" x${vehicle["people"]}", style: AppTextStyles.medium()),
-                                //                       Icon(Icons.work, color: CustomColor.Icon_Color, size: 18),
-                                //                       Text(" x${vehicle["cases"]}",
-                                //                           style: AppTextStyles.regular(color: CustomColor.Text_Color)),
-                                //                     ],
-                                //                   ),
-                                //                 ],
-                                //               ),
-                                //
-                                //               // Vehicle Icon & Price
-                                //               Row(
-                                //                 children: [
-                                //                   Icon(Icons.directions_car, color: CustomColor.Icon_Color, size: 32),
-                                //                   SizedBox(width: 10),
-                                //                   // Text("${vehicle["price"]}£", style: AppTextStyles.regular()),
-                                //                 ],
-                                //               ),
-                                //             ],
-                                //           ),
-                                //         ),
-                                //       );
-                                //     });
-                                //   },
-                                // ),
+
                               ),
                               SizedBox(height: 10),
                             ],
@@ -597,80 +536,8 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
 
                                         const SizedBox(height: 25),
 
-                                        // ---------- Date & Time ----------
-                                        // Center(
-                                        //   child: Row(
-                                        //     mainAxisAlignment: MainAxisAlignment.center,
-                                        //     children: [
-                                        //       // ----- Date Picker -----
-                                        //       Obx(() => GestureDetector(
-                                        //         onTap: () => reebookingController.pickDate(context),
-                                        //         child: Container(
-                                        //           width: 150,
-                                        //           padding:
-                                        //           const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                                        //           decoration: BoxDecoration(
-                                        //             borderRadius: BorderRadius.circular(10),
-                                        //             color: Colors.black,
-                                        //           ),
-                                        //           child: Row(
-                                        //             mainAxisAlignment: MainAxisAlignment.center,
-                                        //             children: [
-                                        //               const Icon(Icons.calendar_today,
-                                        //                   color: Colors.white, size: 18),
-                                        //               const SizedBox(width: 6),
-                                        //               Flexible(
-                                        //                 child: Text(
-                                        //                   reebookingController.formattedTime(context),
-                                        //                   style: const TextStyle(
-                                        //                     fontSize: 15,
-                                        //                     fontWeight: FontWeight.bold,
-                                        //                     color: Colors.white,
-                                        //                   ),
-                                        //                   overflow: TextOverflow.ellipsis,
-                                        //                 ),
-                                        //               ),
-                                        //             ],
-                                        //           ),
-                                        //         ),
-                                        //       )),
-                                        //       const SizedBox(width: 15),
-                                        //
-                                        //       // ----- Time Picker -----
-                                        //       Obx(() => GestureDetector(
-                                        //         onTap: () => reebookingController.pickTime(context),
-                                        //         child: Container(
-                                        //           width: 150,
-                                        //           padding:
-                                        //           const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                                        //           decoration: BoxDecoration(
-                                        //             borderRadius: BorderRadius.circular(10),
-                                        //             color: Colors.black,
-                                        //           ),
-                                        //           child: Row(
-                                        //             mainAxisAlignment: MainAxisAlignment.center,
-                                        //             children: [
-                                        //               const Icon(Icons.access_time,
-                                        //                   color: Colors.white, size: 18),
-                                        //               const SizedBox(width: 6),
-                                        //               Flexible(
-                                        //                 child: Text(
-                                        //                   reebookingController.formattedTime(context),
-                                        //                   style:  AppTextStyles.regular(
-                                        //                     weight: FontWeight.bold,
-                                        //                   ),
-                                        //                   overflow: TextOverflow.ellipsis,
-                                        //                 ),
-                                        //               ),
-                                        //             ],
-                                        //           ),
-                                        //         ),
-                                        //       )),
-                                        //     ],
-                                        //   ),
-                                        // ),
+                                        /// ---------- Date & Time ----------
 
-                                        // ---------- Date & Time ----------
                                         Center(
                                           child: Row(
                                             mainAxisAlignment:
@@ -807,9 +674,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                             onPressed: () {
                                               // Get.to(RideSearchScreen());
 
-                                              reebookingController
-                                                  .calculateHistoryBookingFareApi(
-                                                    trip,
+                                              reebookingController.calculateHistoryBookingFareApi(trip,
                                                   );
                                               Get.dialog(
                                                 Dialog(
@@ -943,42 +808,44 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                                   );
                                                                 } else {
                                                                   // 👉 Scheduled → Dashboard
-                                                                  Get.offAllNamed(
-                                                                    routesName
-                                                                        .DeshBoard_Screen,
-                                                                  );
+                                                                  reebookingController.getReBookingById();
+
+                                                                  // Get.offAllNamed(
+                                                                  //   routesName
+                                                                  //       .DeshBoard_Screen,
+                                                                  // );
                                                                 }
 
-                                                                final profileController =
-                                                                    Get.isRegistered<
-                                                                      profileModelController
-                                                                    >()
-                                                                    ? Get.find<
-                                                                        profileModelController
-                                                                      >()
-                                                                    : Get.put(
-                                                                        profileModelController(),
-                                                                      );
-                                                                profileController
-                                                                    .getuserProfile();
-
-                                                                final homeC =
-                                                                    Get.isRegistered<
-                                                                      SwapController
-                                                                    >()
-                                                                    ? Get.find<
-                                                                        SwapController
-                                                                      >()
-                                                                    : Get.put(
-                                                                        SwapController(),
-                                                                      );
+                                                                // final profileController =
+                                                                //     Get.isRegistered<
+                                                                //       profileModelController
+                                                                //     >()
+                                                                //     ? Get.find<
+                                                                //         profileModelController
+                                                                //       >()
+                                                                //     : Get.put(
+                                                                //         profileModelController(),
+                                                                //       );
+                                                                // profileController
+                                                                //     .getuserProfile();
+                                                                //
+                                                                // final homeC =
+                                                                //     Get.isRegistered<
+                                                                //       SwapController
+                                                                //     >()
+                                                                //     ? Get.find<
+                                                                //         SwapController
+                                                                //       >()
+                                                                //     : Get.put(
+                                                                //         SwapController(),
+                                                                //       );
                                                                 // homeC.resetRouteState();homeC.resetRouteState();
                                                                 // homeC.dropOff.clear();
                                                                 // homeC.pickUp.clear();
                                                                 // homeC.viaController1.clear();
                                                                 // homeC.viaController2.clear();
                                                                 // homeC.activeField.value = "";
-                                                                homeC.update();
+                                                                // homeC.update();
                                                               },
                                                               backgroundColor:
                                                                   Colors.red,
@@ -1204,93 +1071,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                   ),
                                 );
 
-                                // Get.bottomSheet(
-                                //   Container(
-                                //     decoration: const BoxDecoration(
-                                //       color: Colors.grey,
-                                //       borderRadius: BorderRadius.only(
-                                //         topLeft: Radius.circular(30),
-                                //         topRight: Radius.circular(30),
-                                //       ),
-                                //     ),
-                                //     height: 400,
-                                //     width: MediaQuery.of(context).size.width*1,
-                                //     child:Padding(
-                                //       padding: const EdgeInsets.all(10.0),
-                                //       child: Column(
-                                //         crossAxisAlignment: CrossAxisAlignment.start,
-                                //         children: [
-                                //           SizedBox(height: 10,),
-                                //           Row(
-                                //             children: [
-                                //               IconButton(
-                                //                 icon:  Icon(Icons.cancel_outlined, color:CustomColor.Icon_Color),
-                                //                 onPressed: () {
-                                //                   Get.back();
-                                //                 },
-                                //               ),
-                                //               SizedBox(width: 10,),
-                                //               Text(
-                                //                 "ADD ORDER DETAILS",
-                                //                 style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
-                                //               ),
-                                //               SizedBox(width: 20,),
-                                //               SizedBox(
-                                //                 height: 50,
-                                //                 width:   100,
-                                //                 child: MyElevatedButton(
-                                //                   text: 'DONE',
-                                //                   onPressed: () {  },
-                                //                   backgroundColor: Colors.black,
-                                //                   textColor: CustomColor.Icon_Color,
-                                //                   fontSize: 15,
-                                //                 ),
-                                //               ),
-                                //
-                                //
-                                //             ],
-                                //           ),
-                                //           SizedBox(height: 10,),
-                                //           Text(
-                                //             "Oder number",
-                                //             style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
-                                //           ),
-                                //           SizedBox(height: 3),
-                                //
-                                //           Padding(
-                                //             padding: const EdgeInsets.all(15.0),
-                                //             child: CustomTextField(
-                                //               // controller: ,
-                                //               hintText: "Type your order number",
-                                //               borderRadius: 15,
-                                //               fillColor: CustomColor.textfield_fill,
-                                //             ),
-                                //           ),
-                                //           SizedBox(height: 5,),
-                                //           Text(
-                                //             "Name on oder",
-                                //             style: TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
-                                //           ),
-                                //           SizedBox(height: 3),
-                                //
-                                //           Padding(
-                                //             padding: const EdgeInsets.all(15.0),
-                                //             child: CustomTextField(
-                                //               // controller: ,
-                                //               hintText: "Type name on Oder",
-                                //               borderRadius: 15,
-                                //               fillColor: CustomColor.textfield_fill,
-                                //             ),
-                                //           ),
-                                //
-                                //
-                                //
-                                //
-                                //         ],
-                                //       ),
-                                //     ),
-                                //   )
-                                // );
+
                               },
                               child: BottomButton(
                                 icon: Icons.shopping_cart_outlined,

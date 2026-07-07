@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart' hide FormData, Response;
 
+import '../../View/Reebook/reebooking_confirmation_screen.dart';
 import '../../View/Widgets/color.dart';
 import '../../View/profile/controller/profile_controller.dart';
 import '../../View/rides/model/ride_model/get_vehicle_model.dart';
@@ -672,7 +673,9 @@ Future<void> pickDate(BuildContext context) async {
       print("BOOKING ID ✅ => $bookingId");
 
       print("SUCCESS ✅ => ${response.data}");
-      Get.back();
+
+      getReBookingById();
+
       //Get.off(RideSearchScreen());
       //Get.toNamed("/RideSearchScreen ");
       BotToast.showText(text: "Booking Created");
@@ -707,5 +710,75 @@ Future<void> pickDate(BuildContext context) async {
 
 
   }
+  /// ----------------------------------------------   -----------------   confirmation Screen
 
+
+  Booking? reBookingData;
+  bool isReBookingLoading = false;
+
+  Future<void> getReBookingById() async {
+    try {
+      isReBookingLoading = true;
+      update();
+
+      print("Booking Id = $bookingId");
+
+      Response? response = await ApiService.get(
+        "bookings/getbyid/$bookingId",
+        auth: true,
+      );
+
+      print("Status Code = ${response?.statusCode}");
+      print("Response = ${response?.data}");
+
+      if (response != null && response.statusCode == 200) {
+
+        reBookingData = Booking.fromJson(response.data["booking"]);
+
+        print("Pickup = ${reBookingData?.pickup}");
+        print("Dropoff = ${reBookingData?.dropoff}");
+        print("Name = ${reBookingData?.name}");
+
+        update();
+
+        Get.offAll(() => ReeBookingConfirmationScreen());
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      isReBookingLoading = false;
+      update();
+    }
+  }
+  // Future<void> getReBookingById() async {
+  //   try {
+  //     isReBookingLoading = true;
+  //     update();
+  //
+  //     Response? response = await ApiService.get(
+  //       "bookings/getbyid/$bookingId",
+  //       auth: true,
+  //     );
+  //
+  //     if (response != null && response.statusCode == 200) {
+  //
+  //       print(response.data);
+  //
+  //
+  //       reBookingData = Booking.fromJson(response.data["booking"]);
+  //
+  //       debugPrint("              ==========  hello world   =============================================${reBookingData?.pickup}");
+  //       debugPrint(reBookingData?.dropoff);
+  //       debugPrint(response.data);
+  //       Get.offAll(()=> ReeBookingConfirmationScreen());
+  //
+  //     }
+  //
+  //   } catch (e) {
+  //     debugPrint(e.toString());
+  //   } finally {
+  //     isReBookingLoading = false;
+  //     update();
+  //   }
+  // }
 }

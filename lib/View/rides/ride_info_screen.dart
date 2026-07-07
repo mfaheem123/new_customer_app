@@ -10,6 +10,7 @@ import '../../Controller/Home/home-controller.dart';
 import '../Widgets/elevat_button.dart';
 import '../Widgets/text_button.dart';
 import '../profile/controller/profile_controller.dart';
+import 'booking_confirmation_screen.dart';
 import 'ridesearchscreen.dart';
 
 class RideInfoScreen extends StatefulWidget {
@@ -321,6 +322,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                   child: MyElevatedButton(
                     text: "", // ignored because we use textWidget
                     onPressed: () {
+                      // Get.to(BookingConfirmationScreen());
                       print(
                         "======================================================================${rideController.selectedVehicleId}",
                       );
@@ -646,6 +648,17 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                   child: MyElevatedButton(
                                     text: '',
                                     onPressed: () {
+
+                                      rideController.calculateFareApi();
+
+                                      // if (rideController.selectedTimeOption.value != "ASAP") {
+                                      //
+                                      //   Get.back(); // BottomSheet close
+                                      //
+                                      //   Get.to(() =>  BookingConfirmationScreen());
+                                      //
+                                      //   return;
+                                      // }
                                       Get.dialog(
                                         Dialog(
                                           backgroundColor: Colors.transparent,
@@ -756,34 +769,22 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                                 .RideSearchScreen,
                                                           );
                                                         } else {
-                                                          Get.offAllNamed(
-                                                            routesName
-                                                                .DeshBoard_Screen,
-                                                          );
+                                                          rideController.getBookingById();
+                                                          // Get.offAll(BookingConfirmationScreen());
+                                                          // Get.offAllNamed(
+                                                          //   routesName.DeshBoard_Screen,
+                                                          // );
                                                         }
                                                         final profileController =
-                                                            Get.isRegistered<
-                                                              profileModelController
-                                                            >()
-                                                            ? Get.find<
-                                                                profileModelController
-                                                              >()
-                                                            : Get.put(
-                                                                profileModelController(),
-                                                              );
-                                                        profileController
-                                                            .getuserProfile();
+                                                            Get.isRegistered<profileModelController>()
+                                                            ? Get.find<profileModelController>()
+                                                            : Get.put(profileModelController(),);
+                                                        profileController.getuserProfile();
 
                                                         final homeC =
-                                                            Get.isRegistered<
-                                                              SwapController
-                                                            >()
-                                                            ? Get.find<
-                                                                SwapController
-                                                              >()
-                                                            : Get.put(
-                                                                SwapController(),
-                                                              );
+                                                            Get.isRegistered<SwapController>()
+                                                                ? Get.find<SwapController>()
+                                                            : Get.put(SwapController(),);
                                                         // homeC.resetRouteState();homeC.resetRouteState();
                                                         // homeC.dropOff.clear();
                                                         // homeC.pickUp.clear();
@@ -842,7 +843,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                         ),
                                       );
 
-                                      rideController.calculateFareApi();
+                                     // rideController.calculateFareApi();
                                     },
                                     textWidget: FittedBox(
                                       fit: BoxFit.scaleDown,

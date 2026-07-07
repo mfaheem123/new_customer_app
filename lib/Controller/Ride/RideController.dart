@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:customer/Routing/routes_name.dart';
 import 'package:customer/View/rides/model/booking_get_by_id/booking_get_model.dart'
@@ -10,9 +11,14 @@ import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_pic
 import 'package:get/get.dart' hide FormData, Response;
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:share_plus/share_plus.dart';
 import '../../View/Widgets/color.dart';
 import '../../View/profile/controller/profile_controller.dart';
+import '../../View/rides/booking_confirmation_screen.dart';
 import '../../View/rides/model/get_driver_by_id/driver_detail_model.dart'
     hide VehicleType;
 import '../../View/rides/model/ride_model/get_vehicle_model.dart';
@@ -605,6 +611,8 @@ class RideController extends GetxController {
       print("BOOKING ID ✅ => $bookingId");
 
       print("SUCCESS ✅ => ${response.data}");
+      // 👇 Booking by ID API call
+      await getBookingById();
       //Get.off(RideSearchScreen());
       //Get.toNamed("/RideSearchScreen ");
       BotToast.showText(text: "Booking Created");
@@ -906,6 +914,230 @@ class RideController extends GetxController {
   //
   //   return null;
   // }
+
+
+
+
+///===========================================================  pdf booking working
+  bool isBookingLoading = false;
+  Future<void> getBookingById() async {
+    try {
+      isBookingLoading = true;
+      update();
+
+      debugPrint("Calling Booking API: $bookingId");
+
+      Response? response = await ApiService.get(
+        "bookings/getbyid/$bookingId",
+        auth: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        bookingData = BookingGetById.fromJson(response.data);
+        Get.offAll(BookingConfirmationScreen());
+        debugPrint("Booking Data => ${bookingData?.booking?.referenceNumber}");
+
+
+      } else {
+        debugPrint("Booking API Failed: ${response?.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Booking API Error: $e");
+    } finally {
+      isBookingLoading = false;
+      update();
+    }
+  }
+  // Future<void> getBookingById() async {
+  //   try {
+  //     debugPrint("Calling Booking API: $bookingId");
+  //
+  //     var response = await ApiService.get(
+  //       "bookings/getbyid/$bookingId", // correct endpoint
+  //       auth: true,
+  //     );
+  //
+  //     if ( response!.statusCode == 200) {
+  //       var data = response.data;
+  //
+  //       debugPrint("taj data araha hai Booking Data: $data");
+  //       //Agar model banana hai to yahan parse kar dein.
+  //       bookingData =  BookingGetById.fromJson(data);
+  //       update();
+  //
+  //
+  //
+  //     } else {
+  //       debugPrint("Booking API Failed: ${response.statusCode}");
+  //     }
+  //
+  //   } catch (e) {
+  //     debugPrint("Booking API error: $e");
+  //   }
+  // }
+  /// Booking Data
+  final Map<String, dynamic> booking = {
+    "name": "John Smith",
+    "referenceNumber": "NX-458963",
+    "pickupLocation": "Heathrow Airport Terminal 4",
+    "dropoffLocation": "Central London",
+    "mobileNumber": "+44 7123 456789",
+    "email": "johnsmith@gmail.com",
+    "date": "08 July 2026",
+    "time": "10:30 AM",
+    "vehicleType": "Executive Saloon",
+  };
+
+  /// PDF Fields List
+  late final List<Map<String, dynamic>> bookingList = [
+    {
+      "title": "Name",
+      "value": booking["name"],
+    },
+    {
+      "title": "Reference Number",
+      "value": booking["referenceNumber"],
+    },
+    {
+      "title": "Pickup Location",
+      "value": booking["pickupLocation"],
+    },
+    {
+      "title": "Dropoff Location",
+      "value": booking["dropoffLocation"],
+    },
+    {
+      "title": "Mobile Number",
+      "value": booking["mobileNumber"],
+    },
+    {
+      "title": "Email",
+      "value": booking["email"],
+    },
+    {
+      "title": "Date",
+      "value": booking["date"],
+    },
+    {
+      "title": "Time",
+      "value": booking["time"],
+    },
+    {
+      "title": "Vehicle Type",
+      "value": booking["vehicleType"],
+    },
+  ];
+/// Generate PDF & Share
+Future<void> generatePdf() async {
+  try {
+    if (booking.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Booking data not found.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (context) {
+          return pw.Padding(
+            padding: const pw.EdgeInsets.all(20),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.SizedBox(height: 20),
+
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      "Booking Confirmation",
+                      style: pw.TextStyle(
+                        fontSize: 24,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+
+                    pw.SizedBox(height: 20),
+
+                    ...bookingList.map(
+                          (item) => _pdfRow(
+                        item["title"],
+                        item["value"],
+                      ),
+                    ),
+
+                    pw.SizedBox(height: 30),
+
+                    pw.Divider(),
+
+                    pw.Text(
+                      "Thank you for booking with Nexus Tech Groups Ltd.",
+                      style: const pw.TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+
+
+              ],
+            ),
+          );
+        },
+      ),
+    );
+    final directory = await getTemporaryDirectory();
+
+    final file = File("${directory.path}/Booking_${booking['referenceNumber']}.pdf",);
+
+    await file.writeAsBytes(await pdf.save());
+
+    await Share.shareXFiles(
+      [
+        XFile(file.path),
+      ],
+      text: "Your booking confirmation",
+      subject: "Booking ${booking['referenceNumber']}",
+    );
+  } catch (e) {
+    Get.snackbar(
+      "PDF Error",
+      e.toString(),
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  }
+}
+
+/// PDF Row Widget
+pw.Widget _pdfRow(String title, dynamic value) {
+  return pw.Padding(
+    padding: const pw.EdgeInsets.symmetric(vertical: 5),
+    child: pw.Row(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.SizedBox(
+          width: 130,
+          child: pw.Text(
+            "$title :",
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+            ),
+          ),
+        ),
+        pw.Expanded(
+          child: pw.Text(
+            value?.toString() ?? "",
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }
 
 ///

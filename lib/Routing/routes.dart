@@ -21,6 +21,7 @@ import '../View/chatscreen.dart';
 import '../View/payments/paymentscreen.dart';
 import '../View/profile/profilescreen.dart';
 import '../View/rides/DriverDetailscreen.dart';
+import '../View/rides/booking_confirmation_screen.dart';
 import '../View/rides/feedback_screen.dart';
 import '../View/rides/ride_info_screen.dart';
 import '../View/rides/ridecomplete.dart';
@@ -163,6 +164,10 @@ class AppRoutes{
     GetPage(
       name: routesName.Driverdetailscreen ,
       page: () => Driverdetailscreen(),
+      //binding: PaymentReschedule(),
+    ), GetPage(
+      name: routesName.BookingConfirmationScreen ,
+      page: () => BookingConfirmationScreen(),
       //binding: PaymentReschedule(),
     ),
 
