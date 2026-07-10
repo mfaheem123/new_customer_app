@@ -81,6 +81,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     Obx(
                         ()=> CustomTextField(
 
+                          maxlength: 15,
                         suffixIcon: GestureDetector(
 
                             onTap: (){
@@ -117,6 +118,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     Obx(
                           ()=> CustomTextField(
 
+                            maxlength: 15,
                         suffixIcon: GestureDetector(
 
                             onTap: (){
@@ -165,6 +167,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     Obx(
                           ()=> CustomTextField(
 
+                            maxlength: 15,
                         suffixIcon: GestureDetector(
 
                             onTap: (){

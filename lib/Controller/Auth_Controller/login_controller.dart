@@ -321,7 +321,7 @@ class LoginController extends GetxController {
     }
 
     // ❌ Error Handling
-    String errorMessage = "Login Failed";
+    String errorMessage = "login failed";
 
     if (response.data is Map) {
       errorMessage = response.data['message']?.toString() ?? errorMessage;

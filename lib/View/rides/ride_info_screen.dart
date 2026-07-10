@@ -663,17 +663,17 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                         Dialog(
                                           backgroundColor: Colors.transparent,
                                           insetPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 20,
-                                              ),
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                          ),
                                           child: Container(
                                             height: 300,
                                             padding: const EdgeInsets.all(20),
                                             decoration: BoxDecoration(
                                               color:
-                                                  CustomColor.Container_Colors,
+                                              CustomColor.Container_Colors,
                                               borderRadius:
-                                                  BorderRadius.circular(20),
+                                              BorderRadius.circular(20),
                                             ),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
@@ -683,7 +683,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                   "Book Ride",
                                                   textAlign: TextAlign.center,
                                                   style:
-                                                      AppTextStyles.heading(),
+                                                  AppTextStyles.heading(),
                                                 ),
 
                                                 const SizedBox(height: 12),
@@ -723,15 +723,15 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                 /// DESCRIPTION
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                      ),
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                  ),
                                                   child: Text(
                                                     CustomText
                                                         .Ride_book_ride_alert,
                                                     textAlign: TextAlign.center,
                                                     style:
-                                                        AppTextStyles.regular(),
+                                                    AppTextStyles.regular(),
                                                   ),
                                                 ),
 
@@ -740,7 +740,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                 /// BUTTONS
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.center,
+                                                  MainAxisAlignment.center,
                                                   children: [
                                                     /// YES BUTTON
                                                     CustomTextButton(
@@ -748,60 +748,57 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                       height: 42,
                                                       text: 'Yes',
 
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      rowMainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      columnCrossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
+                                                      textAlign:TextAlign.center,
+                                                      rowMainAxisAlignment: MainAxisAlignment.center,
+                                                      columnCrossAxisAlignment: CrossAxisAlignment.center,
 
-                                                      onPressed: () {
-                                                        rideController
-                                                            .getBookingApi();
-                                                        if (rideController
-                                                                .selectedTimeOption
-                                                                .value ==
-                                                            "ASAP") {
-                                                          Get.offAllNamed(
-                                                            routesName
-                                                                .RideSearchScreen,
-                                                          );
+                                                      onPressed: () async{
+                                                        // rideController.getBookingApi();
+                                                        // if (rideController.selectedTimeOption.value == "ASAP") {
+                                                        //   Get.offAllNamed(routesName.RideSearchScreen,);
+                                                        // } else {
+                                                        //   //rideController.getBookingById();
+                                                        //   Get.offAll(BookingConfirmationScreen());
+                                                        //   // Get.offAllNamed(
+                                                        //   //   routesName.DeshBoard_Screen,
+                                                        //   // );
+                                                        // }
+                                                        Get.dialog(
+                                                          const Center(
+                                                            child: CircularProgressIndicator(),
+                                                          ),
+                                                          barrierDismissible: false,
+                                                        );
+
+                                                        await rideController.getBookingApi();
+
+                                                        //Get.back(); // Loader close
+
+                                                        if (rideController.selectedTimeOption.value == "ASAP") {
+                                                          Get.offAllNamed(routesName.RideSearchScreen);
                                                         } else {
-                                                          rideController.getBookingById();
-                                                          // Get.offAll(BookingConfirmationScreen());
-                                                          // Get.offAllNamed(
-                                                          //   routesName.DeshBoard_Screen,
-                                                          // );
+                                                          Get.offAll(BookingConfirmationScreen());
                                                         }
-                                                        final profileController =
-                                                            Get.isRegistered<profileModelController>()
-                                                            ? Get.find<profileModelController>()
-                                                            : Get.put(profileModelController(),);
-                                                        profileController.getuserProfile();
 
-                                                        final homeC =
-                                                            Get.isRegistered<SwapController>()
-                                                                ? Get.find<SwapController>()
-                                                            : Get.put(SwapController(),);
+
+
                                                         // homeC.resetRouteState();homeC.resetRouteState();
                                                         // homeC.dropOff.clear();
                                                         // homeC.pickUp.clear();
                                                         // homeC.viaController1.clear();
                                                         // homeC.viaController2.clear();
                                                         // homeC.activeField.value = "";
-                                                        homeC.update();
+
                                                       },
                                                       backgroundColor:
-                                                          Colors.red,
+                                                      Colors.red,
                                                       textColor:
-                                                          CustomColor.textColor,
+                                                      CustomColor.textColor,
                                                       borderRadius: 10,
                                                       elevation: 2,
                                                       fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                     ),
 
                                                     const SizedBox(width: 15),
@@ -813,13 +810,13 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                       text: ' No ',
 
                                                       textAlign:
-                                                          TextAlign.center,
+                                                      TextAlign.center,
                                                       rowMainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
+                                                      MainAxisAlignment
+                                                          .center,
                                                       columnCrossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
+                                                      CrossAxisAlignment
+                                                          .center,
 
                                                       onPressed: () {
                                                         Get.back();
@@ -828,12 +825,12 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                       backgroundColor: CustomColor
                                                           .Button_background_Color,
                                                       textColor:
-                                                          CustomColor.textColor,
+                                                      CustomColor.textColor,
                                                       borderRadius: 10,
                                                       elevation: 2,
                                                       fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                     ),
                                                   ],
                                                 ),

@@ -133,19 +133,19 @@ class RideCompleteScreen extends StatelessWidget {
                         const SizedBox(height: 15),
 
                         /// ================= FARE (API) =================
-                        Row(
-                          children: [
-                            const Icon(Icons.money,
-                                size: 25, color: Colors.white),
-                            const SizedBox(width: 15),
-                            Text(
-                              booking?.totalCharges?.toString() ?? "0.00",
-                              style: AppTextStyles.medium(),
-                            ),
-                            const Icon(Icons.currency_pound_sharp,
-                                size: 25, color: Colors.white),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     const Icon(Icons.money,
+                        //         size: 25, color: Colors.white),
+                        //     const SizedBox(width: 15),
+                        //     Text(
+                        //       booking?.totalCharges?.toString() ?? "0.00",
+                        //       style: AppTextStyles.medium(),
+                        //     ),
+                        //     const Icon(Icons.currency_pound_sharp,
+                        //         size: 25, color: Colors.white),
+                        //   ],
+                        // ),
 
                         const SizedBox(height: 15),
 

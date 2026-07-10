@@ -1,3 +1,4 @@
+import 'package:customer/View/Reebook/reebooking_confirmation_screen.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:customer/View/yourtrip/booking_history_model/bookingHistorymodel.dart';
 import 'package:customer/View/yourtrip/widget/card%20widget.dart';
@@ -784,68 +785,31 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                                   CrossAxisAlignment
                                                                       .center,
 
-                                                              onPressed: () {
-                                                                reebookingController
-                                                                    .historyBookingApi(
-                                                                      trip,
-                                                                    );
-                                                                Get.find<
-                                                                      profileModelController
-                                                                    >()
-                                                                    .getuserProfile();
+                                                              onPressed: () async {
+                                                                Get.dialog(
+                                                                  const Center(
+                                                                    child: CircularProgressIndicator(),
+                                                                  ),
+                                                                  barrierDismissible: false,
+                                                                );
 
-                                                                if (reebookingController
-                                                                        .selectedTimeOption
-                                                                        .value ==
-                                                                    "ASAP") {
-                                                                  // 👉 ASAP → Search Screen
-                                                                  rideController
-                                                                          .isFromHistory =
-                                                                      true;
-                                                                  Get.offAllNamed(
-                                                                    routesName
-                                                                        .RideSearchScreen,
-                                                                  );
+                                                                await reebookingController.historyBookingApi(trip);
+
+                                                                await Get.find<profileModelController>().getuserProfile();
+
+                                                                if (reebookingController.selectedTimeOption.value == "ASAP") {
+                                                                  rideController.isFromHistory = true;
+
+                                                                  Get.back(); // Loader close
+
+                                                                  Get.offAllNamed(routesName.RideSearchScreen);
                                                                 } else {
-                                                                  // 👉 Scheduled → Dashboard
-                                                                  reebookingController.getReBookingById();
+                                                                 // await reebookingController.getReBookingById();
 
-                                                                  // Get.offAllNamed(
-                                                                  //   routesName
-                                                                  //       .DeshBoard_Screen,
-                                                                  // );
+                                                                  //Get.back(); // Loader close
+                                                                  Get.offAll(()=> ReeBookingConfirmationScreen());
+                                                                  // Get.offAllNamed(routesName.DeshBoard_Screen);
                                                                 }
-
-                                                                // final profileController =
-                                                                //     Get.isRegistered<
-                                                                //       profileModelController
-                                                                //     >()
-                                                                //     ? Get.find<
-                                                                //         profileModelController
-                                                                //       >()
-                                                                //     : Get.put(
-                                                                //         profileModelController(),
-                                                                //       );
-                                                                // profileController
-                                                                //     .getuserProfile();
-                                                                //
-                                                                // final homeC =
-                                                                //     Get.isRegistered<
-                                                                //       SwapController
-                                                                //     >()
-                                                                //     ? Get.find<
-                                                                //         SwapController
-                                                                //       >()
-                                                                //     : Get.put(
-                                                                //         SwapController(),
-                                                                //       );
-                                                                // homeC.resetRouteState();homeC.resetRouteState();
-                                                                // homeC.dropOff.clear();
-                                                                // homeC.pickUp.clear();
-                                                                // homeC.viaController1.clear();
-                                                                // homeC.viaController2.clear();
-                                                                // homeC.activeField.value = "";
-                                                                // homeC.update();
                                                               },
                                                               backgroundColor:
                                                                   Colors.red,

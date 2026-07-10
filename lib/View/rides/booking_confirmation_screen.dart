@@ -19,17 +19,18 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       ? Get.find<RideController>()
       : Get.put(RideController());
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   rideController.getBookingById();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    rideController.getBookingById();
+  }
   @override
   Widget build(BuildContext context) {
     return GetBuilder<RideController>(
       builder: (controller) {
 
-        if (controller.isBookingLoading) {
+        if (controller.bookingData == null ||
+            controller.bookingData!.booking == null) {
           return  Scaffold(
             body: Container(
               width: double.infinity,
@@ -51,28 +52,31 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           );
         }
 
-        if (controller.bookingData == null ||
-            controller.bookingData!.booking == null) {
-          return Scaffold(
-            body: Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 30, 1, 44),
-                    Color.fromARGB(255, 227, 194, 242),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              child: const Center(
-                child: Text("No Booking Found"),
-              ),
-            ),
-          );
-        }
+        // if (controller.bookingData == null ||
+        //     controller.bookingData!.booking == null) {
+        //   return Scaffold(
+        //     body:
+        //     // controller.bookingData == null ||
+        //     //     controller.bookingData!.booking == null ? CircularProgressIndicator():
+        //     Container(
+        //       width: double.infinity,
+        //       height: double.infinity,
+        //       decoration: const BoxDecoration(
+        //         gradient: LinearGradient(
+        //           colors: [
+        //             Color.fromARGB(255, 30, 1, 44),
+        //             Color.fromARGB(255, 227, 194, 242),
+        //           ],
+        //           begin: Alignment.topCenter,
+        //           end: Alignment.bottomCenter,
+        //         ),
+        //       ),
+        //       child: const Center(
+        //         child: Text("No Booking Found"),
+        //       ),
+        //     ),
+        //   );
+        // }
 
         final booking = controller.bookingData!.booking!;
 
@@ -221,7 +225,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                                   ),
 
                                   Padding(
-                                    padding: EdgeInsets.only(left: 5),
+                                    padding: EdgeInsets.only(left: 0),
                                     child: Text(
                                         booking.referenceNumber ?? "",
                                         style:AppTextStyles.medium()
@@ -342,7 +346,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                         height: 55,
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            // rideController.generatePdf();
+                            rideController.generatePdf();
                           },
                           icon: const Icon(
                             Icons.picture_as_pdf,
@@ -379,297 +383,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       },
     );
   }
- // @override
- //  Widget build(BuildContext context) {
- //
- //    return SafeArea(
- //      child: Scaffold(
- //        body: Container(
- //          width: double.infinity,
- //          height: double.infinity,
- //          decoration: const BoxDecoration(
- //            gradient: LinearGradient(
- //              colors: [
- //                Color.fromARGB(255, 30, 1, 44),
- //                Color.fromARGB(255, 227, 194, 242),
- //              ],
- //              begin: Alignment.topCenter,
- //              end: Alignment.bottomCenter,
- //            ),
- //          ),
- //          child: SingleChildScrollView(
- //            padding: const EdgeInsets.all(18),
- //            child: Column(
- //              children: [
- //
- //                /// Success Icon
- //                Container(
- //                  height: 90,
- //                  width: 90,
- //                  decoration: BoxDecoration(
- //                    color: Colors.green,
- //                    borderRadius: BorderRadius.circular(45),
- //                  ),
- //                  child: const Icon(
- //                    Icons.check,
- //                    size: 50,
- //                    color: Colors.white,
- //                  ),
- //                ),
- //
- //                const SizedBox(height: 15),
- //
- //                Text(
- //                  "Booking Confirmed",
- //                  style:AppTextStyles.heading()
- //                ),
- //
- //                const SizedBox(height: 8),
- //
- //                Text(
- //                  "Thank you for choosing Nexus.",
- //                  style: AppTextStyles.regular()
- //
- //                ),
- //
- //                const SizedBox(height: 30),
- //
- //                /// Company + Ref Card
- //                Container(
- //                  padding: const EdgeInsets.all(18),
- //                  decoration: BoxDecoration(
- //                    color:  CustomColor.Container_Colors,
- //                    borderRadius: BorderRadius.circular(18),
- //                  ),
- //                  child: Row(
- //                    children: [
- //
- //                      Expanded(
- //                        child: Column(
- //                          crossAxisAlignment: CrossAxisAlignment.start,
- //                          children:  [
- //
- //                            Text(
- //                              "Nexus Tech\nGroups Ltd",
- //                              style: AppTextStyles.medium(
- //                                weight: FontWeight.bold,
- //                                color: Colors.amber
- //                              ),
- //                            ),
- //
- //                            SizedBox(height: 8),
- //
- //                            Row(
- //                              children: [
- //                                Icon(Icons.phone, color: Colors.amber,size: 22,),
- //                                SizedBox(width: 5,),
- //                                Text(
- //                                  "02036030511",
- //                                  style: AppTextStyles.regular(),
- //
- //                                ),
- //                              ],
- //                            ),
- //
- //                          ],
- //                        ),
- //                      ),
- //
- //                      Container(
- //                        width: 1,
- //                        height: 90,
- //                        color: Colors.white24,
- //                      ),
- //
- //                      const SizedBox(width: 15),
- //
- //                      Expanded(
- //                        child: Column(
- //                          crossAxisAlignment: CrossAxisAlignment.start,
- //                          children: [
- //
- //                            Row(
- //                              children: [
- //                                Icon(Icons.person, color: Colors.amber,
- //                                size: 22,),
- //                                SizedBox(width: 5,),
- //                                Text(
- //                                  rideController.booking["name"]!,
- //                                  overflow: TextOverflow.ellipsis,
- //                                  maxLines: 1,
- //                                  style: AppTextStyles.medium()
- //
- //                                ),
- //                              ],
- //                            ),
- //
- //                            const SizedBox(height: 15),
- //
- //                            Row(
- //                              children: [
- //                                Icon(Icons.numbers_outlined,color: Colors.amber,size: 15,),
- //                                SizedBox(width: 5,),
- //                                Text(
- //                                  "Reference",
- //                                  style: AppTextStyles.regular()
- //                                ),
- //                              ],
- //                            ),
- //
- //                            Text(
- //                              rideController.booking["referenceNumber"]!,
- //                              style:AppTextStyles.medium()
- //
- //                            )
- //
- //                          ],
- //                        ),
- //                      )
- //
- //                    ],
- //                  ),
- //                ),
- //
- //                const SizedBox(height: 25),
- //
- //                /// Booking Details Card
- //                Container(
- //                  decoration: BoxDecoration(
- //                    // color: const Color(0xff4A0A73),
- //                    color: CustomColor.Container_Colors   ,
- //                    borderRadius: BorderRadius.circular(18),
- //                  ),
- //                  padding: const EdgeInsets.all(18),
- //                  child: Column(
- //                    children: [
- //
- //                      detailTile(
- //                        Icons.location_on,
- //                        "Pickup",
- //                        rideController.booking["pickupLocation"]!,
- //                      ),
- //
- //                      divider(),
- //
- //                      detailTile(
- //                        Icons.flag,
- //                        "Dropoff",
- //                        rideController.booking["dropoffLocation"]!,
- //                      ),
- //
- //                      divider(),
- //
- //                      detailTile(
- //                        Icons.phone,
- //                        "Mobile",
- //                        rideController.booking["mobileNumber"]!,
- //                      ),
- //
- //                      divider(),
- //
- //                      detailTile(
- //                        Icons.email,
- //                        "Email",
- //                        rideController.booking["email"]!,
- //                      ),
- //
- //                      divider(),
- //
- //                      detailTile(
- //                        Icons.calendar_month,
- //                        "Date",
- //                        rideController.booking["date"]!,
- //                      ),
- //
- //                      divider(),
- //
- //                      detailTile(
- //                        Icons.access_time,
- //                        "Time",
- //                        rideController.booking["time"]!,
- //                      ),
- //
- //                      divider(),
- //
- //                      detailTile(
- //                        Icons.local_taxi,
- //                        "Vehicle",
- //                        rideController.booking["vehicleType"]!,
- //                      ),
- //
- //                    ],
- //                  ),
- //                ),
- //
- //                const SizedBox(height: 30),
- //
- //                /// Continue Button
- //                SizedBox(
- //                  width: double.infinity,
- //                  height: 55,
- //                  child: MyElevatedButton(
- //                    text: '',
- //                    onPressed: () async {
- //                      Get.offAllNamed(
- //                        routesName.DeshBoard_Screen,
- //                      );
- //                    },
- //
- //                    textWidget: FittedBox(
- //                      child: Text(
- //                        'Continue',
- //                        style: AppTextStyles.medium(
- //                            size: 25,
- //                            weight: FontWeight.bold),
- //                      ),
- //                    ),
- //                  ),
- //
- //                ),
- //
- //                const SizedBox(height: 15),
- //
- //                /// PDF Button
- //                SizedBox(
- //                  width: double.infinity,
- //                  height: 55,
- //                  child: OutlinedButton.icon(
- //                    onPressed: () {
- //                     // rideController.generatePdf();
- //                    },
- //                    icon: const Icon(
- //                      Icons.picture_as_pdf,
- //                      color: CustomColor.Button_background_Color,
- //                    ),
- //                    label: const Text(
- //                      "Download PDF",
- //                      style:
- //                      TextStyle(
- //                        color: CustomColor.Button_background_Color,
- //                        fontSize: 17,
- //                      ),
- //                    ),
- //                    style: OutlinedButton.styleFrom(
- //                      side: const BorderSide(
- //                        color: CustomColor.Button_background_Color,
- //                        width: 3
- //                      ),
- //                      shape: RoundedRectangleBorder(
- //                        borderRadius: BorderRadius.circular(15),
- //                      ),
- //                    ),
- //                  ),
- //                ),
- //
- //                const SizedBox(height: 30),
- //
- //              ],
- //            ),
- //          ),
- //        ),
- //      ),
- //    );
- //  }
+
 
   Widget divider() {
     return const Divider(
