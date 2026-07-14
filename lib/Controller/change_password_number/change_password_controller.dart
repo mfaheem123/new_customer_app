@@ -119,8 +119,9 @@ class changePasswordController extends GetxController {
 
     if (response!.statusCode == 200) {
       BotToast.showText(text: "Phone Number Updated Successfully");
-      Get.back(); // profile screen pe wapas
+      // Get.back(); // profile screen pe wapas
       profileController.getuserProfile();
+      
       return;
     }
   }

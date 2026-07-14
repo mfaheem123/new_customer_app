@@ -44,7 +44,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Obx(
                         ()=> CustomTextField(
-
+                        maxlength: 15,
                       suffixIcon: GestureDetector(
 
                           onTap: (){
@@ -86,6 +86,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: Obx(
                         ()=> CustomTextField(
 
+                          maxlength: 15,
                       suffixIcon: GestureDetector(
                           onTap: (){
                             controller.isConfirmPasswordVisible.value = !controller.isConfirmPasswordVisible.value;

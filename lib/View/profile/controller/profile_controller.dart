@@ -57,7 +57,7 @@ class profileModelController extends GetxController {
 
   Rx<File?> selectedImage = Rx<File?>(null);
   RxBool loader = false.obs;
-  void showImageSourceDialog(int userId) {
+  void showImageSourceDialog(int userId ,context) {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -120,7 +120,7 @@ class profileModelController extends GetxController {
               InkWell(
                 borderRadius: BorderRadius.circular(18),
                 onTap: () async {
-                  Get.back();
+                  Navigator.of(context).pop();
 
                   if (await requestCameraPermission()) {
                     changeProfilePicture(userId, ImageSource.camera);
@@ -171,7 +171,7 @@ class profileModelController extends GetxController {
               InkWell(
                 borderRadius: BorderRadius.circular(18),
                 onTap: () {
-                  Get.back();
+                  Navigator.of(context).pop();
                   changeProfilePicture(userId, ImageSource.gallery);
                 },
                 child: Container(
@@ -225,7 +225,7 @@ class profileModelController extends GetxController {
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  onPressed: () => Get.back(),
+                  onPressed: () =>  Navigator.of(context).pop(),
                   child: const Text(
                     "Cancel",
                     style: TextStyle(

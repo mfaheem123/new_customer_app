@@ -50,7 +50,7 @@ class ChangPhoneNumber extends StatelessWidget {
                         color: CustomColor.Icon_Color,
                       ),
                       onPressed: () {
-                        Get.back();
+                        Navigator.of(context).pop();
                       },
                     ),
                   ),
@@ -102,8 +102,9 @@ class ChangPhoneNumber extends StatelessWidget {
                   width: 250  ,
                   child: MyElevatedButton(
                     text: 'Next',
-                    onPressed: () {
-                      controller.changeNumberApi();
+                    onPressed: () async {
+                      await controller.changeNumberApi();
+                      Navigator.of(context).pop();
                     },
                     fontSize: 20,
                   ),

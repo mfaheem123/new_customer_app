@@ -60,7 +60,7 @@ class LocationPermissionController extends GetxController
 
         LocationPermissionDialog.show(
           onPressed: () async {
-            Get.back();
+            if (Get.context != null) Navigator.of(Get.context!).pop();
             _dialogShowing = false;
             await Geolocator.openLocationSettings();
           },
@@ -88,7 +88,7 @@ class LocationPermissionController extends GetxController
 
         LocationPermissionDialog.show(
           onPressed: () async {
-            Get.back();
+            if (Get.context != null) Navigator.of(Get.context!).pop();
             _dialogShowing = false;
             await Geolocator.openLocationSettings();
 
@@ -101,13 +101,11 @@ class LocationPermissionController extends GetxController
     }
 
     if(Get.isDialogOpen??false){
-
-      Get.back();
-
+      if (Get.context != null) Navigator.of(Get.context!).pop();
     }
 
     _dialogShowing=false;if (Get.isDialogOpen ?? false) {
-      Get.back();
+      if (Get.context != null) Navigator.of(Get.context!).pop();
     }
 
     _dialogShowing = false;

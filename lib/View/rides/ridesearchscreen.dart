@@ -280,7 +280,7 @@ class _RideSearchScreenState extends State<RideSearchScreen> {
                                           .center,
 
                                       onPressed: () {
-                                        Get.back();
+                                        Navigator.of(context).pop();
                                       },
 
                                       backgroundColor: CustomColor

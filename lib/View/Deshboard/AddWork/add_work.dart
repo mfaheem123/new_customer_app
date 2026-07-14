@@ -62,7 +62,7 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                           color: CustomColor.Icon_Color,
                         ),
                         onPressed: () {
-                          Get.back();
+                          Navigator.of(context).pop();
                         },
                       ),
                     ),
@@ -189,7 +189,7 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                                     barrierDismissible: false,
                                   );
                                   await Future.delayed(Duration(seconds: 1));
-                                  Get.back();
+                                  Navigator.of(context).pop();
                                   mydeshcontroller.editWorkAddress();
                                 },
                               ),
@@ -269,7 +269,7 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
 
                                                   onPressed: () async {
                                                     mydeshcontroller.deleteWorkapi();
-                                                    Get.back();
+                                                    Navigator.of(context).pop();
                                                   },
 
                                                   backgroundColor: Colors.red,
@@ -293,7 +293,7 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                                                   columnCrossAxisAlignment: CrossAxisAlignment.center,
 
                                                   onPressed: () {
-                                                    Get.back();
+                                                    Navigator.of(context).pop();
                                                   },
 
                                                   backgroundColor: CustomColor.Button_background_Color,

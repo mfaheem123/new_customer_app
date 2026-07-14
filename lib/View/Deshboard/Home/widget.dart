@@ -505,7 +505,7 @@ class _containerWidgetState extends State<containerWidget> {
 
                 onPressed: () async {
                   homeC.babyNoteController.clear();
-                  Get.back();
+                  Navigator.of(context).pop();
                 },
 
                 backgroundColor: Colors.red,
@@ -529,7 +529,7 @@ class _containerWidgetState extends State<containerWidget> {
                 columnCrossAxisAlignment: CrossAxisAlignment.center,
 
                 onPressed: () {
-                  homeC.babynoteText();
+                  homeC.babynoteText(context);
                 },
 
                 backgroundColor: CustomColor.Button_background_Color,

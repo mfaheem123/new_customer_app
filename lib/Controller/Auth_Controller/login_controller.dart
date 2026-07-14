@@ -141,7 +141,7 @@ class LoginController extends GetxController {
                       ),
                     ),
                     onPressed: () async {
-                      Get.back();
+                      if (Get.context != null) Navigator.of(Get.context!).pop();
                       await Geolocator.openLocationSettings();
                     },
                     child: const Text(
@@ -227,7 +227,7 @@ class LoginController extends GetxController {
                       ),
                     ),
                     onPressed: () async {
-                      Get.back();
+                      if (Get.context != null) Navigator.of(Get.context!).pop();
                       await Geolocator.openAppSettings();
                     },
                     child: const Text(
@@ -321,7 +321,7 @@ class LoginController extends GetxController {
     }
 
     // ❌ Error Handling
-    String errorMessage = "Login Failed";
+    String errorMessage = "login failed";
 
     if (response.data is Map) {
       errorMessage = response.data['message']?.toString() ?? errorMessage;

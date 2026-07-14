@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart' hide FormData, Response;
+import 'package:path_provider/path_provider.dart';
 
 import '../../View/Reebook/reebooking_confirmation_screen.dart';
 import '../../View/Widgets/color.dart';
@@ -83,7 +87,8 @@ class BookingController extends GetxController {
     var response = await ApiService.get(
         "vehicle-type/get",
         auth: true,
-        isProgressShow: false
+        isProgressShow: false,
+      // sendCompanyId: true
     );
 
     if (response != null && response.statusCode == 200) {
@@ -123,6 +128,7 @@ class BookingController extends GetxController {
       multiPart: true,
       auth: true,
       isProgressShow: true,
+      // sendCompanyId: true
     );
 
     if (response != null && response.statusCode == 200) {
@@ -505,6 +511,7 @@ Future<void> pickDate(BuildContext context) async {
       "fares/calculate-fare",
       multiPart: true,
       auth: true,
+      // sendCompanyId: true
     );
 
     if (response!.statusCode == 200) {
@@ -661,6 +668,7 @@ Future<void> pickDate(BuildContext context) async {
       "bookings/add",
       multiPart: true,
       auth: true,
+      // sendCompanyId: true
     ));
 
     if (response!.statusCode == 200) {
@@ -741,7 +749,7 @@ Future<void> pickDate(BuildContext context) async {
 
         update();
 
-        Get.offAll(() => ReeBookingConfirmationScreen());
+        // Get.offAll(() => ReeBookingConfirmationScreen());
       }
     } catch (e) {
       print(e);
@@ -750,35 +758,147 @@ Future<void> pickDate(BuildContext context) async {
       update();
     }
   }
-  // Future<void> getReBookingById() async {
-  //   try {
-  //     isReBookingLoading = true;
-  //     update();
-  //
-  //     Response? response = await ApiService.get(
-  //       "bookings/getbyid/$bookingId",
-  //       auth: true,
-  //     );
-  //
-  //     if (response != null && response.statusCode == 200) {
-  //
-  //       print(response.data);
-  //
-  //
-  //       reBookingData = Booking.fromJson(response.data["booking"]);
-  //
-  //       debugPrint("              ==========  hello world   =============================================${reBookingData?.pickup}");
-  //       debugPrint(reBookingData?.dropoff);
-  //       debugPrint(response.data);
-  //       Get.offAll(()=> ReeBookingConfirmationScreen());
-  //
-  //     }
-  //
-  //   } catch (e) {
-  //     debugPrint(e.toString());
-  //   } finally {
-  //     isReBookingLoading = false;
-  //     update();
-  //   }
-  // }
+
+  /// Generate PDF & Download (ReBooking)
+  Future<void> generatePdf() async {
+    try {
+      if (reBookingData == null) {
+        Get.snackbar(
+          "Error",
+          "ReBooking data not found.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      final Booking booking = reBookingData!;
+
+      final pdf = pw.Document();
+
+      pdf.addPage(
+        pw.Page(
+          margin: const pw.EdgeInsets.all(20),
+          build: (context) {
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+
+                pw.Text(
+                  "Booking Confirmation",
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+
+                pw.SizedBox(height: 20),
+
+                _pdfRow("Reference Number", booking.referenceNumber),
+                _pdfRow("Passenger Name", booking.name),
+                _pdfRow("Mobile Number", booking.mobile),
+
+                _pdfRow("Email", booking.email),
+
+
+
+                _pdfRow("Pickup", booking.pickup),
+                _pdfRow("Dropoff", booking.dropoff),
+                _pdfRow("Pickup Date", booking.pickupDate),
+                _pdfRow("Pickup Time", booking.pickupTime),
+                _pdfRow("Journey Type", booking.journeyType?.journeyType,),
+                _pdfRow("Vehicle Type", booking.vehicleType?.name,),
+                _pdfRow("Payment Method", booking.paymentType?.name,),
+                _pdfRow("Passengers", booking.passengers),
+                _pdfRow("Luggages", booking.luggages),
+                _pdfRow("Hand Luggages", booking.handLuggages),
+                _pdfRow("Fare", booking.totalCharges),
+
+                pw.SizedBox(height: 20),
+                pw.Divider(),
+
+
+                pw.Center(
+                  child: pw.Text(
+                    "Thank you for booking with Nexus Tech Groups Ltd.",
+                    style: const pw.TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+
+      final tempDir = await getTemporaryDirectory();
+
+      final file = File(
+        "${tempDir.path}/Booking_${booking.referenceNumber}.pdf",
+      );
+
+      await file.writeAsBytes(await pdf.save());
+
+      final savedPath = await FlutterFileDialog.saveFile(
+        params: SaveFileDialogParams(
+          sourceFilePath: file.path,
+          fileName: "Booking_${booking.referenceNumber}.pdf",
+        ),
+      );
+
+      if (savedPath != null) {
+        Get.snackbar(
+          "Success",
+          "PDF downloaded successfully.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          "Cancelled",
+          "Download cancelled.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print(e);
+
+      Get.snackbar(
+        "PDF Error",
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  pw.Widget _pdfRow(String title, dynamic value) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 5),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.SizedBox(
+            width: 140,
+            child: pw.Text(
+              "$title :",
+              style: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+          ),
+          pw.Expanded(
+            child: pw.Text(
+              value == null || value.toString().isEmpty
+                  ? "-"
+                  : value.toString(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

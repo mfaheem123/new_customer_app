@@ -108,7 +108,7 @@ class appDrawer extends StatelessWidget {
                         color: Colors.white,
                       ),
                       title: Text("Home", style: AppTextStyles.medium()),
-                      onTap: () => Get.back(),
+                      onTap: () => Navigator.of(context).pop(),
                     ),
                     ListTile(
                       leading: const Icon(

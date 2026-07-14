@@ -72,7 +72,7 @@ class _YourtripState extends State<Yourtrip> {
                           color: CustomColor.Icon_Color,
                         ),
                         onPressed: () {
-                          Get.back();
+                          Navigator.of(context).pop();
                         },
                       ),
                     ),

@@ -41,9 +41,9 @@ class SwapController extends GetxController {
 
   var babyNote = "";
 
-  void babynoteText() {
+  void babynoteText(context) {
     babyNote = babyNoteController.text;
-    Get.back();
+    Navigator.of(context).pop();
     babyNoteController.clear();
     print(babyNote);
   }
@@ -112,8 +112,9 @@ class SwapController extends GetxController {
     update();
 
     var response = await ApiService.get(
-      "airports/get?company_id=1", //  base url ApiService me hoga
+      "airports/get", //  base url ApiService me hoga
       auth: true,
+       sendCompanyId: true
     );
 
     if (response!.statusCode == 200) {

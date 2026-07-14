@@ -42,7 +42,7 @@ class forgotPassword extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.back();
+                        Navigator.of(context).pop();
                       },
                       child: const Icon(
                         Icons.arrow_back,

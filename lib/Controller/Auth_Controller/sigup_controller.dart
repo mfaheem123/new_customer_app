@@ -124,6 +124,7 @@ class SignUp_Controller extends GetxController {
         "customers/add",
         multiPart: true,
         auth: false,
+        // sendCompanyId: true
       );
 
       if (response == null) {

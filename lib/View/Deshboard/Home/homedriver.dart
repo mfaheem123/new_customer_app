@@ -56,7 +56,7 @@ class HomeDriver extends StatelessWidget {
                             child: IconButton(
                               icon: Icon(Icons.arrow_back, color: CustomColor.Icon_Color),
                               onPressed: () {
-                                Get.back();
+                                Navigator.of(context).pop();
                               },
                             ),
                           ),

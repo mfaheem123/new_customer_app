@@ -105,7 +105,7 @@ class ProfileScreen extends StatelessWidget {
                                 color: CustomColor.Icon_Color,
                               ),
                               onPressed: () {
-                                Get.back();
+                                Navigator.of(context).pop();
                               },
                             ),
                           ),
@@ -152,7 +152,7 @@ class ProfileScreen extends StatelessWidget {
                           right: 5,
                           child: GestureDetector(
                             onTap: () {
-                              controller.showImageSourceDialog(user.id!);
+                              controller.showImageSourceDialog(user.id!,context);
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -359,7 +359,7 @@ class ProfileScreen extends StatelessWidget {
                                           columnCrossAxisAlignment: CrossAxisAlignment.center,
 
                                           onPressed: () {
-                                            Get.back();
+                                            Navigator.of(context).pop();
                                           },
 
                                           backgroundColor: CustomColor.Button_background_Color,

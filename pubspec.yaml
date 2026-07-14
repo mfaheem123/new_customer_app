@@ -63,6 +63,8 @@ dependencies:
   path_provider: ^2.1.6
   share_plus: ^11.0.0
   cross_file: ^0.3.4+2
+  open_filex: ^4.7.0
+  flutter_file_dialog: ^3.0.2
 flutter_launcher_icons:
     android: true
     ios: true

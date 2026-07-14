@@ -138,30 +138,7 @@ class PushNotificationService {
       // ✅ TYPE HANDLE
       switch (type) {
 
-        // case "Available":
-        //   // Scaffold(
-        //   //   body:Container(
-        //   //       decoration: const BoxDecoration(
-        //   //         gradient: LinearGradient(
-        //   //           colors: [
-        //   //             Color.fromARGB(255, 30, 1, 44),
-        //   //             Color.fromARGB(255, 227, 194, 242),
-        //   //           ],
-        //   //           begin: Alignment.topCenter,
-        //   //           end: Alignment.bottomCenter,
-        //   //         ),
-        //   //       ),
-        //   //       child: Center(
-        //   //         child:SizedBox(
-        //   //           height: 50,
-        //   //           width: 250,
-        //   //           child: MyElevatedButton(text: "Go to Deshboard", onPressed: ()=>Get.offAllNamed(routesName.SigIn_Screen)
-        //   //           ),
-        //   //         ),
-        //   //       ),
-        //   //   ) ,
-        //   // );
-        //   break;
+
 
 
 

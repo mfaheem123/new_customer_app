@@ -287,7 +287,7 @@ class ScheduleBookingCard extends StatelessWidget {
 
                                             onPressed: () async {
                                               tripController.rideCancelApi();
-                                              Get.back();
+                                            Navigator.of(context).pop();
                                             },
 
                                             backgroundColor: Colors.red,
@@ -311,7 +311,7 @@ class ScheduleBookingCard extends StatelessWidget {
                                             columnCrossAxisAlignment: CrossAxisAlignment.center,
 
                                             onPressed: () {
-                                              Get.back();
+                                       Navigator.of(context).pop();
                                             },
 
                                             backgroundColor: CustomColor.Button_background_Color,

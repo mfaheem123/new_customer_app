@@ -61,7 +61,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                         color: CustomColor.Icon_Color,
                       ),
                       onPressed: () {
-                        Get.back();
+                        Navigator.of(context).pop();
                       },
                     ),
                   ),
@@ -187,7 +187,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                                   barrierDismissible: false,
                                 );
                                 await Future.delayed(Duration(seconds: 1));
-                                Get.back();
+                                Navigator.of(context).pop();
                                 mydeshcontroller.editItem();
                               },
                             ),
@@ -267,7 +267,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
 
                                                 onPressed: () async {
                                                   mydeshcontroller.deleteHomeApi();
-                                                  Get.back();
+                                                  Navigator.of(context).pop();
                                                 },
 
                                                 backgroundColor: Colors.red,
@@ -291,7 +291,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                                                 columnCrossAxisAlignment: CrossAxisAlignment.center,
 
                                                 onPressed: () {
-                                                  Get.back();
+                                                  Navigator.of(context).pop();
                                                 },
 
                                                 backgroundColor: CustomColor.Button_background_Color,

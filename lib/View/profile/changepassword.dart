@@ -54,7 +54,7 @@ class _ChangepasswordState extends State<Changepassword> {
                         color: CustomColor.Icon_Color,
                       ),
                       onPressed: () {
-                        Get.back();
+                        Navigator.of(context).pop();
                       },
                     ),
                   ),
@@ -81,6 +81,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     Obx(
                         ()=> CustomTextField(
 
+                          maxlength: 15,
                         suffixIcon: GestureDetector(
 
                             onTap: (){
@@ -117,6 +118,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     Obx(
                           ()=> CustomTextField(
 
+                            maxlength: 15,
                         suffixIcon: GestureDetector(
 
                             onTap: (){
@@ -165,6 +167,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     Obx(
                           ()=> CustomTextField(
 
+                            maxlength: 15,
                         suffixIcon: GestureDetector(
 
                             onTap: (){
@@ -194,8 +197,9 @@ class _ChangepasswordState extends State<Changepassword> {
                         width: 250,
                         child: MyElevatedButton(
                           text: "",
-                          onPressed: () {
-                            chnagePassController.changePasswordApi();
+                          onPressed: () async{
+                            await chnagePassController.changePasswordApi();
+                              Navigator.of(context).pop();
                             //Get.toNamed('/RideInfoScreen');
                           },
                           textWidget: FittedBox(

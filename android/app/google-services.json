@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "81697669010",
-    "project_id": "texidispetchsystem",
-    "storage_bucket": "texidispetchsystem.firebasestorage.app"
+    "project_number": "532500206034",
+    "project_id": "nexus-texh-group-ltd",
+    "storage_bucket": "nexus-texh-group-ltd.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:81697669010:android:773475cb984d838bf60b4b",
+        "mobilesdk_app_id": "1:532500206034:android:80dd3ca2c27a371a97f80b",
         "android_client_info": {
-          "package_name": "com.example.customer"
+          "package_name": "com.nexustechgroupltd.customerapp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAjNWQHukk0O6vQMNOfyHiKVPK0iYXAajU"
+          "current_key": "AIzaSyAzvp_IeHtCbWpIyRxOusMFktg3NK6AwA8"
         }
       ],
       "services": {
@@ -26,15 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:81697669010:android:5ec02d7c37b5f5d9f60b4b",
+        "mobilesdk_app_id": "1:532500206034:android:0a0db606acd1fe0e97f80b",
         "android_client_info": {
-          "package_name": "com.example.driver_app_alpha"
+          "package_name": "com.nexustechgroupltd.driverapp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAjNWQHukk0O6vQMNOfyHiKVPK0iYXAajU"
+          "current_key": "AIzaSyAzvp_IeHtCbWpIyRxOusMFktg3NK6AwA8"
         }
       ],
       "services": {

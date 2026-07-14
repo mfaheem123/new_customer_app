@@ -48,7 +48,7 @@ class PromoScreen extends StatelessWidget {
                       color: CustomColor.Icon_Color,
                     ),
                     onPressed: () {
-                      Get.back();
+                      Navigator.of(context).pop();
                     },
                   ),
                 ),
