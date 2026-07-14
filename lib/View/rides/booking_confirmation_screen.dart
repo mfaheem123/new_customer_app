@@ -31,6 +31,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
 
         if (controller.bookingData == null ||
             controller.bookingData!.booking == null) {
+<<<<<<< HEAD
           return PopScope(
             canPop: false,
             onPopInvokedWithResult: (didPop, result) {
@@ -54,6 +55,20 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
                 child: Center(
                   child: CircularProgressIndicator(),
+=======
+          return  Scaffold(
+            body: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 30, 1, 44),
+                    Color.fromARGB(255, 227, 194, 242),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+>>>>>>> f9f9ef09b1d2daf07167d0b91c9335136da8755d
                 ),
               ),
             ),

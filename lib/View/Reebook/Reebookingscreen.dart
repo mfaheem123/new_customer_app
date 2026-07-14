@@ -800,7 +800,11 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                                 if (reebookingController.selectedTimeOption.value == "ASAP") {
                                                                   rideController.isFromHistory = true;
 
+<<<<<<< HEAD
                                                                   Navigator.of(context).pop(); // Loader close
+=======
+                                                                  Get.back(); // Loader close
+>>>>>>> f9f9ef09b1d2daf07167d0b91c9335136da8755d
 
                                                                   Get.offAllNamed(routesName.RideSearchScreen);
                                                                 } else {
