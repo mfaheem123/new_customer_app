@@ -155,14 +155,14 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                       itemCount: controller.vehicles.length,
                                       itemBuilder: (context, index) {
                                         var vehicle =
-                                            controller.vehicles[index];
+                                        controller.vehicles[index];
 
                                         return Obx(() {
                                           bool isSelected =
                                               controller
                                                   .selectedVehicleIndex
                                                   .value ==
-                                              index;
+                                                  index;
 
                                           return GestureDetector(
                                             onTap: () {
@@ -178,35 +178,35 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                               decoration: BoxDecoration(
                                                 color: isSelected
                                                     ? CustomColor
-                                                          .Container_Colors.withOpacity(
-                                                        0.4,
-                                                      )
+                                                    .Container_Colors.withOpacity(
+                                                  0.4,
+                                                )
                                                     : Colors.transparent,
                                                 borderRadius:
-                                                    BorderRadius.circular(15),
+                                                BorderRadius.circular(15),
                                                 border: Border.all(
                                                   color: isSelected
                                                       ? CustomColor
-                                                            .Button_background_Color
+                                                      .Button_background_Color
                                                       : Colors.grey.shade400,
                                                   width: 2,
                                                 ),
                                               ),
                                               child: Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                MainAxisAlignment
+                                                    .spaceBetween,
                                                 children: [
                                                   /// 🔹 Vehicle Info
                                                   Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                    CrossAxisAlignment
+                                                        .start,
                                                     children: [
                                                       Text(
                                                         ("${vehicle.name ?? ""}").toUpperCase(),
                                                         style:
-                                                            AppTextStyles.regular(weight: FontWeight.bold),
+                                                        AppTextStyles.regular(weight: FontWeight.bold),
                                                       ),
 
                                                       SizedBox(height: 5),
@@ -222,7 +222,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                           Text(
                                                             " x${vehicle.passengers ?? 0}",
                                                             style:
-                                                                AppTextStyles.medium(),
+                                                            AppTextStyles.medium(),
                                                           ),
 
                                                           SizedBox(width: 10),
@@ -259,31 +259,31 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
 
                                                       controller.fareLoading
                                                           ? const SizedBox(
-                                                              height: 20,
-                                                              width: 20,
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                                    strokeWidth:
-                                                                        2,
-                                                                  ),
-                                                            )
+                                                        height: 20,
+                                                        width: 20,
+                                                        child:
+                                                        CircularProgressIndicator(
+                                                          strokeWidth:
+                                                          2,
+                                                        ),
+                                                      )
                                                           : Column(
-                                                            children: [
-                                                              Text(
-                                                                  "£${(controller.vehicleFareMap[vehicle.id] ?? 0).toStringAsFixed(2)}",
-                                                                  style: AppTextStyles.regular(
-                                                                    size: 18,
-                                                                    weight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              Text(
-                                                               "Estimated",
-                                                                style: AppTextStyles.small(),
-                                                              ),
-                                                            ],
+                                                        children: [
+                                                          Text(
+                                                            "£${(controller.vehicleFareMap[vehicle.id] ?? 0).toStringAsFixed(2)}",
+                                                            style: AppTextStyles.regular(
+                                                              size: 18,
+                                                              weight:
+                                                              FontWeight
+                                                                  .bold,
+                                                            ),
                                                           ),
+                                                          Text(
+                                                            "Estimated",
+                                                            style: AppTextStyles.small(),
+                                                          ),
+                                                        ],
+                                                      ),
 
                                                       //
                                                       // Text(
@@ -376,7 +376,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                     width: double.infinity,
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      CrossAxisAlignment.center,
                                       children: [
                                         SizedBox(height: 8),
                                         Container(
@@ -405,9 +405,9 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
 
                                         // ---------- Time Buttons ----------
                                         Obx(
-                                          () => Row(
+                                              () => Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                             children: [
                                               // ----- ASAP -----
                                               SizedBox(
@@ -419,29 +419,29 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                           .setASAP(),
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                        reebookingController
-                                                                .selectedTimeOption
-                                                                .value ==
-                                                            "ASAP"
+                                                    reebookingController
+                                                        .selectedTimeOption
+                                                        .value ==
+                                                        "ASAP"
                                                         ? CustomColor
-                                                              .Button_background_Color
+                                                        .Button_background_Color
                                                         : Colors.black54,
                                                     elevation: 2,
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
+                                                      BorderRadius.circular(
+                                                        8,
+                                                      ),
                                                     ),
                                                   ),
                                                   child: Text(
                                                     "ASAP",
                                                     style: AppTextStyles.small(
                                                       weight:
-                                                          reebookingController
-                                                                  .selectedTimeOption
-                                                                  .value ==
-                                                              "ASAP"
+                                                      reebookingController
+                                                          .selectedTimeOption
+                                                          .value ==
+                                                          "ASAP"
                                                           ? FontWeight.bold
                                                           : FontWeight.normal,
                                                     ),
@@ -460,29 +460,29 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                           .addMinutes(15),
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                        reebookingController
-                                                                .selectedTimeOption
-                                                                .value ==
-                                                            "15 min"
+                                                    reebookingController
+                                                        .selectedTimeOption
+                                                        .value ==
+                                                        "15 min"
                                                         ? CustomColor
-                                                              .Button_background_Color
+                                                        .Button_background_Color
                                                         : Colors.black54,
                                                     elevation: 2,
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
+                                                      BorderRadius.circular(
+                                                        8,
+                                                      ),
                                                     ),
                                                   ),
                                                   child: Text(
                                                     "15 min",
                                                     style: AppTextStyles.small(
                                                       weight:
-                                                          reebookingController
-                                                                  .selectedTimeOption
-                                                                  .value ==
-                                                              "15 min"
+                                                      reebookingController
+                                                          .selectedTimeOption
+                                                          .value ==
+                                                          "15 min"
                                                           ? FontWeight.bold
                                                           : FontWeight.normal,
                                                     ),
@@ -501,29 +501,29 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                           .addMinutes(30),
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                        reebookingController
-                                                                .selectedTimeOption
-                                                                .value ==
-                                                            "30 min"
+                                                    reebookingController
+                                                        .selectedTimeOption
+                                                        .value ==
+                                                        "30 min"
                                                         ? CustomColor
-                                                              .Button_background_Color
+                                                        .Button_background_Color
                                                         : Colors.black54,
                                                     elevation: 2,
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
+                                                      BorderRadius.circular(
+                                                        8,
+                                                      ),
                                                     ),
                                                   ),
                                                   child: Text(
                                                     "30 min",
                                                     style: AppTextStyles.small(
                                                       weight:
-                                                          reebookingController
-                                                                  .selectedTimeOption
-                                                                  .value ==
-                                                              "30 min"
+                                                      reebookingController
+                                                          .selectedTimeOption
+                                                          .value ==
+                                                          "30 min"
                                                           ? FontWeight.bold
                                                           : FontWeight.normal,
                                                       color: Colors.white,
@@ -542,32 +542,32 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                         Center(
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                             children: [
                                               // ----- Date Picker -----
                                               Obx(
-                                                () => GestureDetector(
+                                                    () => GestureDetector(
                                                   onTap: () =>
                                                       reebookingController
                                                           .pickDate(context),
                                                   child: Container(
                                                     width: 150,
                                                     padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 12,
-                                                        ),
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 12,
+                                                    ),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
+                                                      BorderRadius.circular(
+                                                        10,
+                                                      ),
                                                       color: Colors.black,
                                                     ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
+                                                      MainAxisAlignment
+                                                          .center,
                                                       children: [
                                                         const Icon(
                                                           Icons.calendar_today,
@@ -587,17 +587,17 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                                   .value,
                                                             ),
                                                             style:
-                                                                const TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
+                                                            const TextStyle(
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              color: Colors
+                                                                  .white,
+                                                            ),
                                                             overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                            TextOverflow
+                                                                .ellipsis,
                                                           ),
                                                         ),
                                                       ],
@@ -609,28 +609,28 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
 
                                               // ----- Time Picker (24-hour format) -----
                                               Obx(
-                                                () => GestureDetector(
+                                                    () => GestureDetector(
                                                   onTap: () =>
                                                       reebookingController
                                                           .pickTime(context),
                                                   child: Container(
                                                     width: 150,
                                                     padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 12,
-                                                        ),
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 12,
+                                                    ),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
+                                                      BorderRadius.circular(
+                                                        10,
+                                                      ),
                                                       color: Colors.black,
                                                     ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
+                                                      MainAxisAlignment
+                                                          .center,
                                                       children: [
                                                         const Icon(
                                                           Icons.access_time,
@@ -645,14 +645,14 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                             reebookingController
                                                                 .formattedTime24(), // FIXED: now 24-hour time
                                                             style:
-                                                                AppTextStyles.regular(
-                                                                  weight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
+                                                            AppTextStyles.regular(
+                                                              weight:
+                                                              FontWeight
+                                                                  .bold,
+                                                            ),
                                                             overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                            TextOverflow
+                                                                .ellipsis,
                                                           ),
                                                         ),
                                                       ],
@@ -676,40 +676,40 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                               // Get.to(RideSearchScreen());
 
                                               reebookingController.calculateHistoryBookingFareApi(trip,
-                                                  );
+                                              );
                                               Get.dialog(
                                                 Dialog(
                                                   backgroundColor:
-                                                      Colors.transparent,
+                                                  Colors.transparent,
                                                   insetPadding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 20,
-                                                      ),
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 20,
+                                                  ),
                                                   child: Container(
                                                     height: 300,
                                                     padding:
-                                                        const EdgeInsets.all(
-                                                          20,
-                                                        ),
+                                                    const EdgeInsets.all(
+                                                      20,
+                                                    ),
                                                     decoration: BoxDecoration(
                                                       color: CustomColor
                                                           .Container_Colors,
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                            20,
-                                                          ),
+                                                      BorderRadius.circular(
+                                                        20,
+                                                      ),
                                                     ),
                                                     child: Column(
                                                       mainAxisSize:
-                                                          MainAxisSize.min,
+                                                      MainAxisSize.min,
                                                       children: [
                                                         /// TITLE
                                                         Text(
                                                           "Book Ride",
                                                           textAlign:
-                                                              TextAlign.center,
+                                                          TextAlign.center,
                                                           style:
-                                                              AppTextStyles.heading(),
+                                                          AppTextStyles.heading(),
                                                         ),
 
                                                         const SizedBox(
@@ -721,20 +721,20 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                           height: 70,
                                                           width: 70,
                                                           decoration:
-                                                              BoxDecoration(
-                                                                color: Colors
-                                                                    .yellow
-                                                                    .withOpacity(
-                                                                      0.08,
-                                                                    ),
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                              ),
+                                                          BoxDecoration(
+                                                            color: Colors
+                                                                .yellow
+                                                                .withOpacity(
+                                                              0.08,
+                                                            ),
+                                                            shape: BoxShape
+                                                                .circle,
+                                                          ),
                                                           child: const Icon(
                                                             Icons
                                                                 .check_circle_rounded,
                                                             color:
-                                                                Colors.yellow,
+                                                            Colors.yellow,
                                                             size: 34,
                                                           ),
                                                         ),
@@ -746,16 +746,16 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                         /// DESCRIPTION
                                                         Padding(
                                                           padding:
-                                                              const EdgeInsets.symmetric(
-                                                                horizontal: 10,
-                                                              ),
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                          ),
                                                           child: Text(
                                                             CustomText
                                                                 .Ride_book_ride_alert,
                                                             textAlign: TextAlign
                                                                 .center,
                                                             style:
-                                                                AppTextStyles.regular(),
+                                                            AppTextStyles.regular(),
                                                           ),
                                                         ),
 
@@ -766,8 +766,8 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                         /// BUTTONS
                                                         Row(
                                                           mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                          MainAxisAlignment
+                                                              .center,
                                                           children: [
                                                             /// YES BUTTON
                                                             CustomTextButton(
@@ -776,14 +776,14 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                               text: 'Yes',
 
                                                               textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                              TextAlign
+                                                                  .center,
                                                               rowMainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                              MainAxisAlignment
+                                                                  .center,
                                                               columnCrossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                              CrossAxisAlignment
+                                                                  .center,
 
                                                               onPressed: () async {
                                                                 Get.dialog(
@@ -800,15 +800,11 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                                 if (reebookingController.selectedTimeOption.value == "ASAP") {
                                                                   rideController.isFromHistory = true;
 
-<<<<<<< HEAD
                                                                   Navigator.of(context).pop(); // Loader close
-=======
-                                                                  Get.back(); // Loader close
->>>>>>> f9f9ef09b1d2daf07167d0b91c9335136da8755d
 
                                                                   Get.offAllNamed(routesName.RideSearchScreen);
                                                                 } else {
-                                                                 // await reebookingController.getReBookingById();
+                                                                  // await reebookingController.getReBookingById();
 
                                                                   //Get.back(); // Loader close
                                                                   Get.offAll(()=> ReeBookingConfirmationScreen());
@@ -816,16 +812,16 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                                 }
                                                               },
                                                               backgroundColor:
-                                                                  Colors.red,
+                                                              Colors.red,
                                                               textColor:
-                                                                  CustomColor
-                                                                      .textColor,
+                                                              CustomColor
+                                                                  .textColor,
                                                               borderRadius: 10,
                                                               elevation: 2,
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                              FontWeight
+                                                                  .bold,
                                                             ),
 
                                                             const SizedBox(
@@ -839,31 +835,31 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                               text: ' No ',
 
                                                               textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                              TextAlign
+                                                                  .center,
                                                               rowMainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                              MainAxisAlignment
+                                                                  .center,
                                                               columnCrossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                              CrossAxisAlignment
+                                                                  .center,
 
                                                               onPressed: () {
                                                                 Navigator.of(context).pop();
                                                               },
 
                                                               backgroundColor:
-                                                                  CustomColor
-                                                                      .Button_background_Color,
+                                                              CustomColor
+                                                                  .Button_background_Color,
                                                               textColor:
-                                                                  CustomColor
-                                                                      .textColor,
+                                                              CustomColor
+                                                                  .textColor,
                                                               borderRadius: 10,
                                                               elevation: 2,
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                              FontWeight
+                                                                  .bold,
                                                             ),
                                                           ],
                                                         ),
@@ -910,7 +906,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                     ),
                                     width: double.infinity,
                                     height:
-                                        MediaQuery.of(context).size.height *
+                                    MediaQuery.of(context).size.height *
                                         0.5,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 20,
@@ -918,7 +914,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                     child: SingleChildScrollView(
                                       child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(height: 8),
                                           Center(
@@ -928,7 +924,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                               decoration: BoxDecoration(
                                                 color: CustomColor.Icon_Color,
                                                 borderRadius:
-                                                    BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                               ),
                                             ),
                                           ),
@@ -952,7 +948,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                                   child: Text(
                                                     "ADD ORDER DETAILS",
                                                     style:
-                                                        AppTextStyles.medium(),
+                                                    AppTextStyles.medium(),
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
@@ -964,9 +960,9 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
 
                                           SizedBox(
                                             height:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.height *
+                                            MediaQuery.of(
+                                              context,
+                                            ).size.height *
                                                 0.03,
                                           ),
 
@@ -983,14 +979,14 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                             hintText: "Type your order number",
                                             borderRadius: 15,
                                             fillColor:
-                                                CustomColor.textfield_fill,
+                                            CustomColor.textfield_fill,
                                           ),
 
                                           SizedBox(
                                             height:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.height *
+                                            MediaQuery.of(
+                                              context,
+                                            ).size.height *
                                                 0.015,
                                           ),
                                           Text(
@@ -1002,14 +998,14 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                             hintText: "Type name on order",
                                             borderRadius: 15,
                                             fillColor:
-                                                CustomColor.textfield_fill,
+                                            CustomColor.textfield_fill,
                                           ),
 
                                           SizedBox(
                                             height:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.height *
+                                            MediaQuery.of(
+                                              context,
+                                            ).size.height *
                                                 0.025,
                                           ),
 

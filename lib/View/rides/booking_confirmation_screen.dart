@@ -7,7 +7,7 @@ import '../Widgets/elevat_button.dart';
 import '../textstyle/apptextstyle.dart';
 
 class BookingConfirmationScreen extends StatefulWidget {
-   BookingConfirmationScreen({super.key});
+  BookingConfirmationScreen({super.key});
 
 
   @override
@@ -31,7 +31,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
 
         if (controller.bookingData == null ||
             controller.bookingData!.booking == null) {
-<<<<<<< HEAD
           return PopScope(
             canPop: false,
             onPopInvokedWithResult: (didPop, result) {
@@ -55,20 +54,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
                 child: Center(
                   child: CircularProgressIndicator(),
-=======
-          return  Scaffold(
-            body: Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 30, 1, 44),
-                    Color.fromARGB(255, 227, 194, 242),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
->>>>>>> f9f9ef09b1d2daf07167d0b91c9335136da8755d
                 ),
               ),
             ),
@@ -231,7 +216,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
 
                                       Expanded(
                                         child: Text(
-                                         ( booking.name ?? "").toUpperCase(),
+                                          ( booking.name ?? "").toUpperCase(),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           softWrap: false,
@@ -335,7 +320,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                             detailTile(
                               Icons.local_taxi,
                               "Vehicle",
-                             ( booking.vehicleType?.name ?? "").toUpperCase(),
+                              ( booking.vehicleType?.name ?? "").toUpperCase(),
                             ),
 
                           ],
@@ -392,8 +377,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                           ),
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
-                                color: CustomColor.Button_background_Color,
-                                width: 2,
+                              color: CustomColor.Button_background_Color,
+                              width: 2,
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
@@ -446,20 +431,20 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
             children: [
 
               Text(
-                title,
-                style: AppTextStyles.small(
-                  color: Colors.grey
-                )
+                  title,
+                  style: AppTextStyles.small(
+                      color: Colors.grey
+                  )
 
               ),
 
               const SizedBox(height: 4),
               Text(
-                value,
-                style: AppTextStyles.medium(
-                  size: 16
-                 // weight: FontWeight.w600,
-                )
+                  value,
+                  style: AppTextStyles.medium(
+                      size: 16
+                    // weight: FontWeight.w600,
+                  )
               )
             ],
           ),

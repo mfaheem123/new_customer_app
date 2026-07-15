@@ -6,10 +6,10 @@ import 'package:bot_toast/bot_toast.dart';
 class ApiService {
   //static String apiUrl = "http://192.168.18.16:5000/api/";  //Faheem
   // static String apiUrl = "http://192.168.110.5:5000/api/";  // taj
-  //  static String apiUrl = "http://158.220.92.206:5000/api/";  // taj live url
-   static String apiUrl = "https://www.nexustechnologys.com/api/";  // taj live url
+   static String apiUrl = "http://158.220.92.206:5000/api/";  // taj live url
+   // static String apiUrl = "https://www.nexustechnologys.com/api/";  // taj live url
 
-   static String companyId = "1";
+   static String companyId = "3";
 
   /// --------------- - POST ----------------
    static Future<Response?> post(

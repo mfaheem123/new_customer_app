@@ -79,7 +79,7 @@ class RideController extends GetxController {
       "vehicle-type/get",
       auth: true,
       isProgressShow: false,
-      // sendCompanyId: true
+      sendCompanyId: true
     );
 
     if (response != null && response.statusCode == 200) {
@@ -122,7 +122,7 @@ class RideController extends GetxController {
       multiPart: true,
       auth: true,
       isProgressShow: true,
-        // sendCompanyId: true
+        sendCompanyId: true
     );
 
     if (response != null && response.statusCode == 200) {
@@ -605,7 +605,7 @@ class RideController extends GetxController {
       "bookings/add",
        multiPart: true,
        auth: true,
-        // sendCompanyId: true
+        sendCompanyId: true
     );
 
     if (response!.statusCode == 200) {
@@ -659,7 +659,7 @@ class RideController extends GetxController {
       "fares/calculate-fare",
       multiPart: true,
       auth: true,
-      // sendCompanyId: true
+      sendCompanyId: true
     );
 
     if (response!.statusCode == 200) {
