@@ -9,7 +9,7 @@ class ApiService {
    static String apiUrl = "http://158.220.92.206:5000/api/";  // taj live url
    // static String apiUrl = "https://www.nexustechnologys.com/api/";  // taj live url
 
-   static String companyId = "3";
+   static String companyId = "1";
 
   /// --------------- - POST ----------------
    static Future<Response?> post(

@@ -18,10 +18,7 @@ class ForgetPasswordOtp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        //backgroundColor: AppColors.primary,
 
-      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

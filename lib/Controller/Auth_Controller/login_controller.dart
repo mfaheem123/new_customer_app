@@ -293,6 +293,7 @@ class LoginController extends GetxController {
       "customers/login",
       multiPart: false,
       auth: false,
+        sendCompanyId: true
     );
     if (response!.statusCode == 200) {
       final data = response.data;
