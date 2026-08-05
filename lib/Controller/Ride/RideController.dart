@@ -792,6 +792,10 @@ class RideController extends GetxController {
 
         swapController.driverLat.value = lat;
         swapController.driverLng.value = lng;
+///        =====================================================  driver to pickup
+        if (!swapController.hasFetchedDriverRoute) {
+          swapController.fetchDriverRoute();
+        }
 
         isLoading.value = false;
 

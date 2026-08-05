@@ -294,7 +294,7 @@ class profileModelController extends GetxController {
       formData,
       '',
       fullUrl: "https://www.nexustechnologys.com/api/customers/profile-image/${TokenManager.userId}",
-      //fullUrl: "http://158.220.92.206:5000/api/customers/profile-image/${TokenManager.userId}",
+      // fullUrl: "http://158.220.92.206:5000/api/customers/profile-image/${TokenManager.userId}",
       multiPart: true,
       auth: true,
     );

@@ -1,8 +1,8 @@
-
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'dart:math' as math;
 import 'package:latlong2/latlong.dart';
 import '../../../Controller/Home/home-controller.dart';
 
@@ -203,32 +203,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
 
-                ///                                                       DISTANCE LABEL ON POLYLINE
-                if (c.routeCenterPoint != null)
-                  Marker(
-                    point: c.routeCenterPoint!,
-                    width: 100,
-                    height: 50,
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black26, blurRadius: 4),
-                        ],
-                      ),
-                      child: Text(
-                        "${c.totalRouteDistanceMiles.toStringAsFixed(2)} miles "
-                        "\n ${c.estimatedTimeText}",
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.small(size: 10),
-                      ),
-                    ),
-                  ),
-
-                ///                                                           VIA 2
+                ///                                                                   VIA 2
                 if (c.showVia2.value && c.via2Lat != 0.0 && c.via2Lon != 0.0)
                   Marker(
                     point: LatLng(c.via2Lat, c.via2Lon),
@@ -273,25 +248,55 @@ class _MapScreenState extends State<MapScreen> {
               ],
             ),
 
-            ///
             Obx(() {
               if (c.driverLat.value == 0.0) return const SizedBox();
-              return MarkerLayer(
-                markers: [
-                  Marker(
-                    point: LatLng(c.driverLat.value, c.driverLng.value),
-                    width: 40,
-                    height: 40,
-                    child: Image.asset(
-                      'assets/images/car_map.png',
-                      // width: 30,
-                      // height: 30,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ],
+              
+              LatLng targetLatLng = LatLng(c.driverLat.value, c.driverLng.value);
+              
+              List<LatLng> activeRoute = [];
+              if (c.driverRoutePoints.isNotEmpty) {
+                activeRoute.addAll(c.driverRoutePoints);
+              }
+              if (c.routePoints.isNotEmpty) {
+                activeRoute.addAll(c.routePoints);
+              }
+
+              if (activeRoute.isNotEmpty) {
+                 targetLatLng = _snapToPolyline(targetLatLng, activeRoute);
+              }
+              
+              return AnimatedCarMarker(
+                driverLocation: targetLatLng,
+                routePoints: activeRoute,
+                mapController: mapController,
               );
             }),
+
+            ///                                                       DISTANCE LABEL ON TOP RIGHT
+            if (c.routeCenterPoint != null)
+              Positioned(
+                top: 15,
+                right: 15,
+                child: Container(
+                  width: 100,
+                  height: 50,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black26, blurRadius: 4),
+                    ],
+                  ),
+                  child: Text(
+                    "${c.totalRouteDistanceMiles.toStringAsFixed(2)} miles "
+                    "\n ${c.estimatedTimeText}",
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.small(size: 10),
+                  ),
+                ),
+              ),
 
             Positioned(
               bottom: 20,
@@ -300,14 +305,12 @@ class _MapScreenState extends State<MapScreen> {
                 mini: true,
                 backgroundColor: Colors.blueGrey,
                 onPressed: () {
-                  if (c.driverLat.value != null &&
-                      c.driverLng.value != null &&
-                      c.driverLat.value != 0.0 &&
+                  if (c.driverLat.value != 0.0 &&
                       c.driverLng.value != 0.0) {
 
                     mapController.move(
                       LatLng(c.driverLat.value, c.driverLng.value),
-                      13,
+                      16,
                     );
                   } else {
                     mapController.fitCamera(
@@ -347,3 +350,302 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 }
+
+class AnimatedCarMarker extends StatefulWidget {
+  final LatLng driverLocation;
+  final List<LatLng> routePoints;
+  final MapController mapController;
+  const AnimatedCarMarker({Key? key, required this.driverLocation, required this.routePoints, required this.mapController}) : super(key: key);
+
+  @override
+  State<AnimatedCarMarker> createState() => _AnimatedCarMarkerState();
+}
+
+class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<LatLng> _positionAnimation;
+
+  LatLng? _previousAnimatedPosition;
+  double _smoothedBearing = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    _positionAnimation = PolylineTween([widget.driverLocation]).animate(_controller);
+  }
+
+  @override
+  void didUpdateWidget(AnimatedCarMarker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.driverLocation != widget.driverLocation) {
+      if (oldWidget.driverLocation.latitude == widget.driverLocation.latitude && 
+          oldWidget.driverLocation.longitude == widget.driverLocation.longitude) {
+        return;
+      }
+      
+      List<LatLng> path = _getPolylinePath(_positionAnimation.value, widget.driverLocation, widget.routePoints);
+      
+      PolylineTween tween = PolylineTween(path);
+      
+      // Calculate dynamic duration based on distance
+      // A factor of 2000000 roughly equals 2 seconds for a 100-meter movement
+      int durationMs = (tween.totalDistance * 2000000).toInt();
+      durationMs = durationMs.clamp(300, 4000); // Clamp between 300ms and 4s
+      
+      _controller.duration = Duration(milliseconds: durationMs);
+      
+      _positionAnimation = tween.animate(CurvedAnimation(
+        parent: _controller,
+        curve: Curves.linear,
+      ));
+
+      _controller.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  double _calculateBearing(LatLng start, LatLng end) {
+    final double startLat = start.latitude * math.pi / 180.0;
+    final double startLng = start.longitude * math.pi / 180.0;
+    final double endLat = end.latitude * math.pi / 180.0;
+    final double endLng = end.longitude * math.pi / 180.0;
+
+    final double dLng = endLng - startLng;
+
+    final double y = math.sin(dLng) * math.cos(endLat);
+    final double x = math.cos(startLat) * math.sin(endLat) -
+        math.sin(startLat) * math.cos(endLat) * math.cos(dLng);
+
+    final double bearing = math.atan2(y, x) * 180.0 / math.pi;
+    return (bearing + 360.0) % 360.0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        LatLng currentPos = _positionAnimation.value;
+        
+        if (_previousAnimatedPosition != null) {
+          final latDiff = currentPos.latitude - _previousAnimatedPosition!.latitude;
+          final lngDiff = currentPos.longitude - _previousAnimatedPosition!.longitude;
+          final dist = latDiff * latDiff + lngDiff * lngDiff;
+          
+          if (dist > 0.0) {
+            double targetBearing = _calculateBearing(_previousAnimatedPosition!, currentPos);
+
+            const double imageRotationOffset = 0.0;
+            targetBearing = (targetBearing + imageRotationOffset) % 360.0;
+
+            double delta = (targetBearing - _smoothedBearing) % 360.0;
+            if (delta > 180.0) delta -= 360.0;
+            else if (delta < -180.0) delta += 360.0;
+
+            // Turn speed factor (0.15 gives a quick but smooth steer)
+            _smoothedBearing = (_smoothedBearing + delta * 0.15) % 360.0;
+          }
+        } else {
+          _smoothedBearing = 0.0;
+        }
+        
+        _previousAnimatedPosition = currentPos;
+
+        // 🔥 Map camera follows the driver
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          try {
+            widget.mapController.move(currentPos, widget.mapController.camera.zoom);
+          } catch (_) {}
+        });
+
+        return MarkerLayer(
+          markers: [
+            Marker(
+              point: currentPos,
+              width: 40,
+              height: 40,
+              child: Transform.rotate(
+                angle: _smoothedBearing * math.pi / 180.0,
+                child: Image.asset(
+                  'assets/images/car_map.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+
+class PolylineTween extends Tween<LatLng> {
+  final List<LatLng> path;
+  final List<double> distances;
+  final double totalDistance;
+
+  PolylineTween(this.path)
+      : distances = [],
+        totalDistance = _calculatePathDistances(path),
+        super(
+          begin: path.isNotEmpty ? path.first : const LatLng(0, 0),
+          end: path.isNotEmpty ? path.last : const LatLng(0, 0)
+        ) {
+    if (path.isNotEmpty) {
+      double currentDist = 0.0;
+      distances.add(0.0);
+      for (int i = 0; i < path.length - 1; i++) {
+        currentDist += _calculateDistance(path[i], path[i + 1]);
+        distances.add(currentDist);
+      }
+    }
+  }
+
+  static double _calculatePathDistances(List<LatLng> p) {
+    if (p.isEmpty) return 0.0;
+    double total = 0.0;
+    for (int i = 0; i < p.length - 1; i++) {
+      total += _calculateDistance(p[i], p[i + 1]);
+    }
+    return total;
+  }
+
+  static double _calculateDistance(LatLng p1, LatLng p2) {
+    final dLat = p1.latitude - p2.latitude;
+    final dLng = p1.longitude - p2.longitude;
+    return math.sqrt(dLat * dLat + dLng * dLng);
+  }
+
+  @override
+  LatLng lerp(double t) {
+    if (path.isEmpty) return end!;
+    if (totalDistance == 0.0) return end!;
+    if (t <= 0.0) return path.first;
+    if (t >= 1.0) return path.last;
+
+    double targetDistance = totalDistance * t;
+
+    for (int i = 0; i < path.length - 1; i++) {
+      if (targetDistance <= distances[i + 1]) {
+        double segmentDistance = distances[i + 1] - distances[i];
+        double segmentT = (segmentDistance == 0)
+            ? 0.0
+            : (targetDistance - distances[i]) / segmentDistance;
+
+        return LatLng(
+          path[i].latitude + (path[i + 1].latitude - path[i].latitude) * segmentT,
+          path[i].longitude + (path[i + 1].longitude - path[i].longitude) * segmentT,
+        );
+      }
+    }
+    return path.last;
+  }
+}
+
+List<LatLng> _getPolylinePath(LatLng start, LatLng end, List<LatLng> polyline) {
+  if (polyline.isEmpty) return [start, end];
+
+  int startIndex = _getSegmentIndex(start, polyline);
+  int endIndex = _getSegmentIndex(end, polyline);
+
+  if (startIndex == -1 || endIndex == -1) {
+    return [start, end];
+  }
+
+  List<LatLng> path = [start];
+
+  if (startIndex < endIndex) {
+    for (int i = startIndex + 1; i <= endIndex; i++) {
+      path.add(polyline[i]);
+    }
+  } else if (startIndex > endIndex) {
+    for (int i = startIndex; i > endIndex; i--) {
+      path.add(polyline[i]);
+    }
+  }
+
+  path.add(end);
+  return path;
+}
+
+int _getSegmentIndex(LatLng point, List<LatLng> polyline) {
+  double minDistance = double.infinity;
+  int closestSegment = -1;
+
+  for (int i = 0; i < polyline.length - 1; i++) {
+    final projected = _projectPointOnSegment(point, polyline[i], polyline[i + 1]);
+    final dist = _calculateDistanceSquared(point, projected);
+    if (dist < minDistance) {
+      minDistance = dist;
+      closestSegment = i;
+    }
+  }
+  
+  // If driver is more than ~100m (0.000001 deg^2) away, don't route along polyline
+  if (minDistance > 0.000001) {
+    return -1;
+  }
+  
+  return closestSegment;
+}
+
+LatLng _snapToPolyline(LatLng point, List<LatLng> polyline) {
+  if (polyline.isEmpty) return point;
+  if (polyline.length == 1) return polyline.first;
+
+  double minDistance = double.infinity;
+  LatLng closestPoint = point;
+
+  for (int i = 0; i < polyline.length - 1; i++) {
+    final start = polyline[i];
+    final end = polyline[i + 1];
+
+    final projected = _projectPointOnSegment(point, start, end);
+    final distance = _calculateDistanceSquared(point, projected);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestPoint = projected;
+    }
+  }
+
+  // If driver is more than ~100m (0.000001 deg^2) away, don't snap
+  if (minDistance > 0.000001) {
+    return point;
+  }
+
+  return closestPoint;
+}
+
+LatLng _projectPointOnSegment(LatLng p, LatLng v, LatLng w) {
+  final l2 = _calculateDistanceSquared(v, w);
+  if (l2 == 0.0) return v;
+
+  final t = ((p.latitude - v.latitude) * (w.latitude - v.latitude) +
+             (p.longitude - v.longitude) * (w.longitude - v.longitude)) / l2;
+  
+  final tClamped = math.max(0.0, math.min(1.0, t));
+  
+  return LatLng(
+    v.latitude + tClamped * (w.latitude - v.latitude),
+    v.longitude + tClamped * (w.longitude - v.longitude),
+  );
+}
+
+double _calculateDistanceSquared(LatLng p1, LatLng p2) {
+  final dLat = p1.latitude - p2.latitude;
+  final dLng = p1.longitude - p2.longitude;
+  return dLat * dLat + dLng * dLng;
+}
+

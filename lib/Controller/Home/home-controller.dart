@@ -796,6 +796,36 @@ class SwapController extends GetxController {
 
   RxDouble driverLat = 0.0.obs;
   RxDouble driverLng = 0.0.obs;
+  
+  List<LatLng> driverRoutePoints = [];
+  bool hasFetchedDriverRoute = false;
+
+  Future<void> fetchDriverRoute() async {
+    if (driverLat.value == 0.0 || driverLng.value == 0.0 || selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) return;
+    
+    String url = 'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=f57e40a3-f4c9-41da-8f4d-25d26e0b2e56'
+        '&point=${driverLat.value},${driverLng.value}'
+        '&point=$selectedPickUPLat,$selectedPickUPLon';
+        
+    try {
+      final response = await Dio().get(url);
+      if (response.statusCode == 200) {
+        final route = response.data['paths'][0];
+        final coords = route['points']['coordinates'];
+        driverRoutePoints = coords.map<LatLng>((p) {
+          return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
+        }).toList();
+        
+        hasFetchedDriverRoute = true;
+        update(["map"]);
+      }
+    } catch (e) {
+      print("Driver Route error: $e");
+    }
+  }
+
+
+
   /// ================= ROUTE TRACKING =================
 
 
