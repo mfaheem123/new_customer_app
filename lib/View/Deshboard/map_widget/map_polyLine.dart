@@ -250,9 +250,9 @@ class _MapScreenState extends State<MapScreen> {
 
             Obx(() {
               if (c.driverLat.value == 0.0) return const SizedBox();
-              
+
               LatLng targetLatLng = LatLng(c.driverLat.value, c.driverLng.value);
-              
+
               List<LatLng> activeRoute = [];
               if (c.driverRoutePoints.isNotEmpty) {
                 activeRoute.addAll(c.driverRoutePoints);
@@ -264,7 +264,7 @@ class _MapScreenState extends State<MapScreen> {
               if (activeRoute.isNotEmpty) {
                  targetLatLng = _snapToPolyline(targetLatLng, activeRoute);
               }
-              
+
               return AnimatedCarMarker(
                 driverLocation: targetLatLng,
                 routePoints: activeRoute,
@@ -310,7 +310,7 @@ class _MapScreenState extends State<MapScreen> {
 
                     mapController.move(
                       LatLng(c.driverLat.value, c.driverLng.value),
-                      16,
+                      18,
                     );
                   } else {
                     mapController.fitCamera(
@@ -383,22 +383,22 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
   void didUpdateWidget(AnimatedCarMarker oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.driverLocation != widget.driverLocation) {
-      if (oldWidget.driverLocation.latitude == widget.driverLocation.latitude && 
+      if (oldWidget.driverLocation.latitude == widget.driverLocation.latitude &&
           oldWidget.driverLocation.longitude == widget.driverLocation.longitude) {
         return;
       }
-      
+
       List<LatLng> path = _getPolylinePath(_positionAnimation.value, widget.driverLocation, widget.routePoints);
-      
+
       PolylineTween tween = PolylineTween(path);
-      
+
       // Calculate dynamic duration based on distance
       // A factor of 2000000 roughly equals 2 seconds for a 100-meter movement
       int durationMs = (tween.totalDistance * 2000000).toInt();
       durationMs = durationMs.clamp(300, 4000); // Clamp between 300ms and 4s
-      
+
       _controller.duration = Duration(milliseconds: durationMs);
-      
+
       _positionAnimation = tween.animate(CurvedAnimation(
         parent: _controller,
         curve: Curves.linear,
@@ -430,41 +430,60 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
     return (bearing + 360.0) % 360.0;
   }
 
+  /// 🔥 Google Maps style — get bearing from the actual road segment car is on
+  double _getSegmentBearing(LatLng pos, List<LatLng> polyline) {
+    if (polyline.length < 2) return _smoothedBearing;
+
+    double minDist = double.infinity;
+    int bestSegment = 0;
+
+    // Find closest SEGMENT using projection (not just closest point)
+    for (int i = 0; i < polyline.length - 1; i++) {
+      final projected = _projectPointOnSegment(pos, polyline[i], polyline[i + 1]);
+      final dist = _calculateDistanceSquared(pos, projected);
+      if (dist < minDist) {
+        minDist = dist;
+        bestSegment = i;
+      }
+    }
+
+    return _calculateBearing(polyline[bestSegment], polyline[bestSegment + 1]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
         LatLng currentPos = _positionAnimation.value;
-        
+
         if (_previousAnimatedPosition != null) {
           final latDiff = currentPos.latitude - _previousAnimatedPosition!.latitude;
           final lngDiff = currentPos.longitude - _previousAnimatedPosition!.longitude;
           final dist = latDiff * latDiff + lngDiff * lngDiff;
-          
+
           if (dist > 0.0) {
-            double targetBearing = _calculateBearing(_previousAnimatedPosition!, currentPos);
-
-            const double imageRotationOffset = 0.0;
-            targetBearing = (targetBearing + imageRotationOffset) % 360.0;
-
-            double delta = (targetBearing - _smoothedBearing) % 360.0;
-            if (delta > 180.0) delta -= 360.0;
-            else if (delta < -180.0) delta += 360.0;
-
-            // Turn speed factor (0.15 gives a quick but smooth steer)
-            _smoothedBearing = (_smoothedBearing + delta * 0.15) % 360.0;
+            // 🔥 Car face = road segment direction (instant, no lag)
+            if (widget.routePoints.length >= 2) {
+              _smoothedBearing = _getSegmentBearing(currentPos, widget.routePoints);
+            } else {
+              _smoothedBearing = _calculateBearing(_previousAnimatedPosition!, currentPos);
+            }
           }
         } else {
           _smoothedBearing = 0.0;
         }
-        
+
         _previousAnimatedPosition = currentPos;
 
-        // 🔥 Map camera follows the driver
+        // 🔥 Navigation mode — map rotates so road always goes UP
         WidgetsBinding.instance.addPostFrameCallback((_) {
           try {
-            widget.mapController.move(currentPos, widget.mapController.camera.zoom);
+            widget.mapController.moveAndRotate(
+              currentPos,
+              widget.mapController.camera.zoom,
+              -_smoothedBearing,
+            );
           } catch (_) {}
         });
 
@@ -591,12 +610,12 @@ int _getSegmentIndex(LatLng point, List<LatLng> polyline) {
       closestSegment = i;
     }
   }
-  
+
   // If driver is more than ~100m (0.000001 deg^2) away, don't route along polyline
   if (minDistance > 0.000001) {
     return -1;
   }
-  
+
   return closestSegment;
 }
 
@@ -634,9 +653,9 @@ LatLng _projectPointOnSegment(LatLng p, LatLng v, LatLng w) {
 
   final t = ((p.latitude - v.latitude) * (w.latitude - v.latitude) +
              (p.longitude - v.longitude) * (w.longitude - v.longitude)) / l2;
-  
+
   final tClamped = math.max(0.0, math.min(1.0, t));
-  
+
   return LatLng(
     v.latitude + tClamped * (w.latitude - v.latitude),
     v.longitude + tClamped * (w.longitude - v.longitude),

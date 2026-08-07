@@ -276,14 +276,14 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                         ),
                                                   )
                                                 : Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.start,
                                                     children: [
                                                       Text(
                                                         "£${fare.toStringAsFixed(2)}",
                                                         style:
                                                             AppTextStyles.regular(
                                                               weight: FontWeight.bold,
-                                                              size: 18,
+                                                              size: 16,
                                                             ),
                                                       ),
                                                       Text(

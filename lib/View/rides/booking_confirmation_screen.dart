@@ -22,8 +22,17 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
   @override
   void initState() {
     super.initState();
-    rideController.getBookingById();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      rideController.getBookingById();
+    });
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   rideController.getBookingById();
+  // }
   @override
   Widget build(BuildContext context) {
     return GetBuilder<RideController>(

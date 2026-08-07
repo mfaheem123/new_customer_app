@@ -886,9 +886,9 @@ class V5Registration {
 class VehicleType {
   int id;
   String name;
-  int driverWaitingCharges;
-  int accountWaitingCharges;
-  int waitingTime;
+  double driverWaitingCharges;
+  double accountWaitingCharges;
+  double waitingTime;
 
   VehicleType({
     required this.id,
@@ -901,9 +901,13 @@ class VehicleType {
   factory VehicleType.fromJson(Map<String, dynamic> json) => VehicleType(
     id: json["id"]?? "",
     name: json["name"]?? "",
-    driverWaitingCharges: json["driver_waiting_charges"]?? "",
-    accountWaitingCharges: json["account_waiting_charges"]?? "",
-    waitingTime: json["waiting_time"]?? "",
+    //driverWaitingCharges: json["driver_waiting_charges"]?? "",
+    driverWaitingCharges: (json["driver_waiting_charges"] as num?)?.toDouble() ?? 0.0,
+    // accountWaitingCharges: json["account_waiting_charges"]?? null,
+
+    accountWaitingCharges: (json["account_waiting_charges"] as num?)?.toDouble() ?? 0.0,
+    waitingTime: (json["waiting_time"] as num?)?.toDouble() ?? 0.0,
+    // waitingTime: json["waiting_time"]?? "",
   );
 
   Map<String, dynamic> toJson() => {
