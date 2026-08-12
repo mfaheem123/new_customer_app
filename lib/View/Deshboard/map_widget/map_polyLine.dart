@@ -367,6 +367,7 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
 
   LatLng? _previousAnimatedPosition;
   double _smoothedBearing = 0.0;
+  int _animFrameCount = 0;
 
   @override
   void initState() {
@@ -393,15 +394,15 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
       PolylineTween tween = PolylineTween(path);
 
       // Calculate dynamic duration based on distance
-      // A factor of 2000000 roughly equals 2 seconds for a 100-meter movement
-      int durationMs = (tween.totalDistance * 2000000).toInt();
-      durationMs = durationMs.clamp(300, 4000); // Clamp between 300ms and 4s
+      // Longer duration = smoother movement between API updates
+      int durationMs = (tween.totalDistance * 3000000).toInt();
+      durationMs = durationMs.clamp(500, 5000); // Clamp between 500ms and 5s
 
       _controller.duration = Duration(milliseconds: durationMs);
 
       _positionAnimation = tween.animate(CurvedAnimation(
         parent: _controller,
-        curve: Curves.linear,
+        curve: Curves.easeInOut,
       ));
 
       _controller.forward(from: 0.0);
@@ -476,16 +477,18 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
 
         _previousAnimatedPosition = currentPos;
 
-        // 🔥 Navigation mode — map rotates so road always goes UP
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          try {
-            widget.mapController.moveAndRotate(
-              currentPos,
-              widget.mapController.camera.zoom,
-              -_smoothedBearing,
-            );
-          } catch (_) {}
-        });
+        // 🔥 Navigation mode — map follows smoothly (only every 10th frame to avoid jitter)
+        if (_controller.isAnimating && (_animFrameCount++ % 10 == 0)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            try {
+              widget.mapController.moveAndRotate(
+                currentPos,
+                widget.mapController.camera.zoom,
+                -_smoothedBearing,
+              );
+            } catch (_) {}
+          });
+        }
 
         return MarkerLayer(
           markers: [
@@ -611,8 +614,8 @@ int _getSegmentIndex(LatLng point, List<LatLng> polyline) {
     }
   }
 
-  // If driver is more than ~100m (0.000001 deg^2) away, don't route along polyline
-  if (minDistance > 0.000001) {
+  // If driver is more than ~500m away, don't route along polyline
+  if (minDistance > 0.00005) {
     return -1;
   }
 
@@ -639,8 +642,8 @@ LatLng _snapToPolyline(LatLng point, List<LatLng> polyline) {
     }
   }
 
-  // If driver is more than ~100m (0.000001 deg^2) away, don't snap
-  if (minDistance > 0.000001) {
+  // If driver is more than ~500m away, don't snap
+  if (minDistance > 0.00005) {
     return point;
   }
 

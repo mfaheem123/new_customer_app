@@ -750,7 +750,7 @@ class RideController extends GetxController {
 
     stopPolling();
 
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       _hitDriverApi(driverId);
     });
   }
@@ -790,8 +790,7 @@ class RideController extends GetxController {
         double lat = double.tryParse(driver.latitude.toString()) ?? 0.0;
         double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
 
-        swapController.driverLat.value = lat;
-        swapController.driverLng.value = lng;
+        swapController.animateDriverTo(lat, lng);
 ///        =====================================================  driver to pickup
         if (!swapController.hasFetchedDriverRoute) {
           swapController.fetchDriverRoute();

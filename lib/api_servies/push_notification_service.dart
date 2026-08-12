@@ -30,6 +30,8 @@ class PushNotificationService {
       debugPrint("Token refreshed: $newToken");
     });
 
+
+
     //  FOREGROUND
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint("Foreground notification");
@@ -281,7 +283,6 @@ class PushNotificationService {
 
 
 }
-
 
 
 // import 'package:firebase_messaging/firebase_messaging.dart';
