@@ -971,10 +971,43 @@ class SwapController extends GetxController {
     pickUp.text = booking.pickup ?? "";
     dropOff.text = booking.dropoff ?? "";
 
+    /// RESET VIA
     via1Lat = 0;
     via1Lon = 0;
     via2Lat = 0;
     via2Lon = 0;
+    showVia1.value = false;
+    showVia2.value = false;
+
+    /// 🟡 VIA POINTS
+    debugPrint("🟡 VIA POINTS RAW: ${booking.viapoints}");
+    if (booking.viapoints != null && booking.viapoints.isNotEmpty) {
+      /// VIA 1
+      if (booking.viapoints.length >= 1) {
+        var v1 = booking.viapoints[0];
+        debugPrint("🟡 VIA 1 DATA: $v1");
+        via1Lat = double.tryParse((v1['latitude'] ?? v1['lat'])?.toString() ?? "0") ?? 0.0;
+        via1Lon = double.tryParse((v1['longitude'] ?? v1['lng'])?.toString() ?? "0") ?? 0.0;
+        viaController1.text = v1['viapoint'] ?? "";
+        debugPrint("🟡 VIA 1 SET: lat=$via1Lat, lon=$via1Lon");
+        if (via1Lat != 0.0 && via1Lon != 0.0) {
+          showVia1.value = true;
+        }
+      }
+
+      /// VIA 2
+      if (booking.viapoints.length >= 2) {
+        var v2 = booking.viapoints[1];
+        debugPrint("🟡 VIA 2 DATA: $v2");
+        via2Lat = double.tryParse((v2['latitude'] ?? v2['lat'])?.toString() ?? "0") ?? 0.0;
+        via2Lon = double.tryParse((v2['longitude'] ?? v2['lng'])?.toString() ?? "0") ?? 0.0;
+        viaController2.text = v2['viapoint'] ?? "";
+        debugPrint("🟡 VIA 2 SET: lat=$via2Lat, lon=$via2Lon");
+        if (via2Lat != 0.0 && via2Lon != 0.0) {
+          showVia2.value = true;
+        }
+      }
+    }
 
     //routePointsTraking.clear();
     hasFittedMap = false;
@@ -982,7 +1015,7 @@ class SwapController extends GetxController {
     fetchRoute();
 
     // UI UPDATE
-     update(["map", "distance"]);
+    update(["map", "distance"]);
     //fetchRouteTracking();
 
   }
