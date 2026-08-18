@@ -794,107 +794,107 @@ class SwapController extends GetxController {
   ///============================================================  map funtion driver detail screen
 
 
-
-  RxDouble driverLat = 0.0.obs;
-  RxDouble driverLng = 0.0.obs;
-
-  /// 🔥 Ultra-smooth driver animation system
-  /// Single continuous timer — NEVER cancels/restarts
-  /// Fixed step size = CONSTANT speed from start to end
-  double _targetDriverLat = 0.0;
-  double _targetDriverLng = 0.0;
-  Timer? _driverAnimTimer;
-
-  // Fixed step deltas — same amount moves each frame
-  double _stepLat = 0.0;
-  double _stepLng = 0.0;
-  int _stepsRemaining = 0;
-
-  /// Call this instead of directly setting driverLat/driverLng
-  void animateDriverTo(double newLat, double newLng) {
-    // First time — just set directly, no animation
-    if (driverLat.value == 0.0 && driverLng.value == 0.0) {
-      driverLat.value = newLat;
-      driverLng.value = newLng;
-      _targetDriverLat = newLat;
-      _targetDriverLng = newLng;
-      _startContinuousAnimation();
-      return;
-    }
-
-    // Same position — skip
-    if (newLat == _targetDriverLat && newLng == _targetDriverLng) return;
-
-    // Skip extremely tiny movements (GPS jitter) — less than ~1 meter
-    double latDiff = (newLat - driverLat.value).abs();
-    double lngDiff = (newLng - driverLng.value).abs();
-    if (latDiff < 0.000009 && lngDiff < 0.000009) return;
-
-    // Calculate fixed step size from CURRENT position to new target
-    // 50 steps × 100ms = 5000ms = exactly 5 seconds
-    // Each step moves the SAME amount = constant speed
-    int totalSteps = 50;
-    _stepLat = (newLat - driverLat.value) / totalSteps;
-    _stepLng = (newLng - driverLng.value) / totalSteps;
-    _stepsRemaining = totalSteps;
-
-    _targetDriverLat = newLat;
-    _targetDriverLng = newLng;
-
-    // Start timer if not already running
-    _startContinuousAnimation();
-  }
-
-  /// Starts the continuous animation timer (runs forever, never restarts)
-  void _startContinuousAnimation() {
-    if (_driverAnimTimer != null) return; // already running
-
-    _driverAnimTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      // No steps remaining — car is at target, wait for next update
-      if (_stepsRemaining <= 0) return;
-
-      _stepsRemaining--;
-
-      if (_stepsRemaining <= 0) {
-        // Last step — snap to exact target
-        driverLat.value = _targetDriverLat;
-        driverLng.value = _targetDriverLng;
-        return;
-      }
-
-      // Move by FIXED amount each frame — same speed start to end
-      driverLat.value = driverLat.value + _stepLat;
-      driverLng.value = driverLng.value + _stepLng;
-    });
-  }
-
-  List<LatLng> driverRoutePoints = [];
-  bool hasFetchedDriverRoute = false;
-
-  Future<void> fetchDriverRoute() async {
-    if (driverLat.value == 0.0 || driverLng.value == 0.0 || selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) return;
-    
-    String url = 'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=f57e40a3-f4c9-41da-8f4d-25d26e0b2e56'
-        '&point=${driverLat.value},${driverLng.value}'
-        '&point=$selectedPickUPLat,$selectedPickUPLon';
-        
-    try {
-      final response = await Dio().get(url);
-      if (response.statusCode == 200) {
-        final route = response.data['paths'][0];
-        final coords = route['points']['coordinates'];
-        driverRoutePoints = coords.map<LatLng>((p) {
-          return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
-        }).toList();
-        
-        hasFetchedDriverRoute = true;
-        update(["map"]);
-      }
-    } catch (e) {
-      print("Driver Route error: $e");
-    }
-  }
-
+  //
+  // RxDouble driverLat = 0.0.obs;
+  // RxDouble driverLng = 0.0.obs;
+  //
+  // /// 🔥 Ultra-smooth driver animation system
+  // /// Single continuous timer — NEVER cancels/restarts
+  // /// Fixed step size = CONSTANT speed from start to end
+  // double _targetDriverLat = 0.0;
+  // double _targetDriverLng = 0.0;
+  // Timer? _driverAnimTimer;
+  //
+  // // Fixed step deltas — same amount moves each frame
+  // double _stepLat = 0.0;
+  // double _stepLng = 0.0;
+  // int _stepsRemaining = 0;
+  //
+  // /// Call this instead of directly setting driverLat/driverLng
+  // void animateDriverTo(double newLat, double newLng) {
+  //   // First time — just set directly, no animation
+  //   if (driverLat.value == 0.0 && driverLng.value == 0.0) {
+  //     driverLat.value = newLat;
+  //     driverLng.value = newLng;
+  //     _targetDriverLat = newLat;
+  //     _targetDriverLng = newLng;
+  //     _startContinuousAnimation();
+  //     return;
+  //   }
+  //
+  //   // Same position — skip
+  //   if (newLat == _targetDriverLat && newLng == _targetDriverLng) return;
+  //
+  //   // Skip extremely tiny movements (GPS jitter) — less than ~1 meter
+  //   double latDiff = (newLat - driverLat.value).abs();
+  //   double lngDiff = (newLng - driverLng.value).abs();
+  //   if (latDiff < 0.000009 && lngDiff < 0.000009) return;
+  //
+  //   // Calculate fixed step size from CURRENT position to new target
+  //   // 50 steps × 100ms = 5000ms = exactly 5 seconds
+  //   // Each step moves the SAME amount = constant speed
+  //   int totalSteps = 50;
+  //   _stepLat = (newLat - driverLat.value) / totalSteps;
+  //   _stepLng = (newLng - driverLng.value) / totalSteps;
+  //   _stepsRemaining = totalSteps;
+  //
+  //   _targetDriverLat = newLat;
+  //   _targetDriverLng = newLng;
+  //
+  //   // Start timer if not already running
+  //   _startContinuousAnimation();
+  // }
+  //
+  // /// Starts the continuous animation timer (runs forever, never restarts)
+  // void _startContinuousAnimation() {
+  //   if (_driverAnimTimer != null) return; // already running
+  //
+  //   _driverAnimTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+  //     // No steps remaining — car is at target, wait for next update
+  //     if (_stepsRemaining <= 0) return;
+  //
+  //     _stepsRemaining--;
+  //
+  //     if (_stepsRemaining <= 0) {
+  //       // Last step — snap to exact target
+  //       driverLat.value = _targetDriverLat;
+  //       driverLng.value = _targetDriverLng;
+  //       return;
+  //     }
+  //
+  //     // Move by FIXED amount each frame — same speed start to end
+  //     driverLat.value = driverLat.value + _stepLat;
+  //     driverLng.value = driverLng.value + _stepLng;
+  //   });
+  // }
+  //
+  // List<LatLng> driverRoutePoints = [];
+  // bool hasFetchedDriverRoute = false;
+  //
+  // Future<void> fetchDriverRoute() async {
+  //   if (driverLat.value == 0.0 || driverLng.value == 0.0 || selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) return;
+  //
+  //   String url = 'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=f57e40a3-f4c9-41da-8f4d-25d26e0b2e56'
+  //       '&point=${driverLat.value},${driverLng.value}'
+  //       '&point=$selectedPickUPLat,$selectedPickUPLon';
+  //
+  //   try {
+  //     final response = await Dio().get(url);
+  //     if (response.statusCode == 200) {
+  //       final route = response.data['paths'][0];
+  //       final coords = route['points']['coordinates'];
+  //       driverRoutePoints = coords.map<LatLng>((p) {
+  //         return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
+  //       }).toList();
+  //
+  //       hasFetchedDriverRoute = true;
+  //       update(["map"]);
+  //     }
+  //   } catch (e) {
+  //     print("Driver Route error: $e");
+  //   }
+  // }
+  //
 
 
   /// ================= ROUTE TRACKING =================
