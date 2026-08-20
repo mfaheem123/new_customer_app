@@ -750,6 +750,9 @@ class RideController extends GetxController {
 
     stopPolling();
 
+    // 🚀 Pehli bar foran hit karo taake driver location aur route bina delay ke load ho
+    _hitDriverApi(driverId);
+
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       _hitDriverApi(driverId);
     });
@@ -792,7 +795,7 @@ class RideController extends GetxController {
 
         swapController.animateDriverTo(lat, lng);
 ///        =====================================================  driver to pickup
-        if (!swapController.hasFetchedDriverRoute) {
+        if (!swapController.hasFetchedDriverRoute && !swapController.hasReachedPickup.value) {
           swapController.fetchDriverRoute();
         }
 

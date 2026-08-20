@@ -248,19 +248,40 @@ class _MapScreenState extends State<MapScreen> {
               ],
             ),
 
+            /// 🔥 DRIVER → PICKUP POLYLINE (Orange, progressive removal)
             Obx(() {
-              if (c.driverLat.value == 0.0) return const SizedBox();
+              if (c.hasReachedPickup.value || c.driverToPickupPolyline.isEmpty) return const SizedBox();
 
-              LatLng targetLatLng = LatLng(c.driverLat.value, c.driverLng.value);
+              return PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: List<LatLng>.from(c.driverToPickupPolyline),
+                    strokeWidth: 5,
+                    color: Colors.orange,
+                  ),
+                ],
+              );
+            }),
 
+            Obx(() {
+              if (c.driverLat.value == 0.0 || c.driverLng.value == 0.0) return const SizedBox();
+
+              LatLng rawTarget = LatLng(c.driverLat.value, c.driverLng.value);
+
+              // 🔥 Phase 1 (Going to Pickup): use Orange route ONLY
+              // 🔥 Phase 2 (Trip to Drop-off): use Purple route ONLY
               List<LatLng> activeRoute = [];
-              if (c.driverRoutePoints.isNotEmpty) {
-                activeRoute.addAll(c.driverRoutePoints);
-              }
-              if (c.routePoints.isNotEmpty) {
-                activeRoute.addAll(c.routePoints);
+              if (!c.hasReachedPickup.value) {
+                if (c.driverRoutePoints.isNotEmpty) {
+                  activeRoute = c.driverRoutePoints;
+                } else if (c.driverToPickupPolyline.isNotEmpty) {
+                  activeRoute = c.driverToPickupPolyline.toList();
+                }
+              } else if (c.routePoints.isNotEmpty) {
+                activeRoute = c.routePoints;
               }
 
+              LatLng targetLatLng = rawTarget;
               if (activeRoute.isNotEmpty) {
                 targetLatLng = _snapToPolyline(targetLatLng, activeRoute);
               }
@@ -382,18 +403,31 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
   @override
   void didUpdateWidget(AnimatedCarMarker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.driverLocation != widget.driverLocation) {
+    if (oldWidget.driverLocation != widget.driverLocation || oldWidget.routePoints != widget.routePoints) {
+      // If driver coordinates didn't change (only route arrived), just set position directly
       if (oldWidget.driverLocation.latitude == widget.driverLocation.latitude &&
           oldWidget.driverLocation.longitude == widget.driverLocation.longitude) {
+        _positionAnimation = PolylineTween([widget.driverLocation]).animate(_controller);
         return;
       }
 
-      List<LatLng> path = _getPolylinePath(_positionAnimation.value, widget.driverLocation, widget.routePoints);
+      LatLng startPos = _positionAnimation.value;
+
+      // If initial position setup or jump, directly place at driver location
+      double distSq = _calculateDistanceSquared(startPos, widget.driverLocation);
+      if (distSq > 0.0005) {
+        startPos = widget.driverLocation;
+        _positionAnimation = PolylineTween([widget.driverLocation]).animate(_controller);
+        return;
+      } else if (widget.routePoints.isNotEmpty) {
+        startPos = _snapToPolyline(startPos, widget.routePoints);
+      }
+
+      List<LatLng> path = _getPolylinePath(startPos, widget.driverLocation, widget.routePoints);
 
       PolylineTween tween = PolylineTween(path);
 
       // Calculate dynamic duration based on distance
-      // A factor of 2000000 roughly equals 2 seconds for a 100-meter movement
       int durationMs = (tween.totalDistance * 2000000).toInt();
       durationMs = durationMs.clamp(300, 4000); // Clamp between 300ms and 4s
 
@@ -436,6 +470,11 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
       animation: _controller,
       builder: (context, child) {
         LatLng currentPos = _positionAnimation.value;
+
+        // 🔥 Real-time polyline trimming at exact car location on the road
+        if (Get.isRegistered<SwapController>()) {
+          Get.find<SwapController>().trimDriverPolyline(currentPos);
+        }
 
         if (_previousAnimatedPosition != null) {
           final latDiff = currentPos.latitude - _previousAnimatedPosition!.latitude;
@@ -555,15 +594,15 @@ class PolylineTween extends Tween<LatLng> {
 
 List<LatLng> _getPolylinePath(LatLng start, LatLng end, List<LatLng> polyline) {
   if (polyline.isEmpty) return [start, end];
+  if (polyline.length == 1) return [start, polyline.first, end];
 
   int startIndex = _getSegmentIndex(start, polyline);
   int endIndex = _getSegmentIndex(end, polyline);
 
-  if (startIndex == -1 || endIndex == -1) {
-    return [start, end];
-  }
+  LatLng snappedStart = _snapToPolyline(start, polyline);
+  LatLng snappedEnd = _snapToPolyline(end, polyline);
 
-  List<LatLng> path = [start];
+  List<LatLng> path = [snappedStart];
 
   if (startIndex < endIndex) {
     for (int i = startIndex + 1; i <= endIndex; i++) {
@@ -575,13 +614,14 @@ List<LatLng> _getPolylinePath(LatLng start, LatLng end, List<LatLng> polyline) {
     }
   }
 
-  path.add(end);
+  path.add(snappedEnd);
   return path;
 }
 
 int _getSegmentIndex(LatLng point, List<LatLng> polyline) {
+  if (polyline.length < 2) return 0;
   double minDistance = double.infinity;
-  int closestSegment = -1;
+  int closestSegment = 0;
 
   for (int i = 0; i < polyline.length - 1; i++) {
     final projected = _projectPointOnSegment(point, polyline[i], polyline[i + 1]);
@@ -592,11 +632,6 @@ int _getSegmentIndex(LatLng point, List<LatLng> polyline) {
     }
   }
 
-  // If driver is more than ~100m (0.000001 deg^2) away, don't route along polyline
-  if (minDistance > 0.000001) {
-    return -1;
-  }
-
   return closestSegment;
 }
 
@@ -605,7 +640,7 @@ LatLng _snapToPolyline(LatLng point, List<LatLng> polyline) {
   if (polyline.length == 1) return polyline.first;
 
   double minDistance = double.infinity;
-  LatLng closestPoint = point;
+  LatLng closestPoint = polyline.first;
 
   for (int i = 0; i < polyline.length - 1; i++) {
     final start = polyline[i];
@@ -618,11 +653,6 @@ LatLng _snapToPolyline(LatLng point, List<LatLng> polyline) {
       minDistance = distance;
       closestPoint = projected;
     }
-  }
-
-  // If driver is more than ~100m (0.000001 deg^2) away, don't snap
-  if (minDistance > 0.000001) {
-    return point;
   }
 
   return closestPoint;

@@ -36,6 +36,7 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
     // 🔥 driverId arguments se lo
     final driverId = Get.arguments['id'];
 
+    swapController.resetDriverTracking();
     controller.startPolling(driverId.toString());
   }
 

@@ -788,6 +788,7 @@ class SwapController extends GetxController {
     }
 
     fetchRoute(); // 🔥 API call
+    resetDriverTracking();
     update(["map"]);
   }
 
@@ -798,82 +799,226 @@ class SwapController extends GetxController {
   RxDouble driverLat = 0.0.obs;
   RxDouble driverLng = 0.0.obs;
 
-  /// 🔥 Ultra-smooth driver animation system
-  /// Single continuous timer — NEVER cancels/restarts
-  /// Fixed step size = CONSTANT speed from start to end
-  double _targetDriverLat = 0.0;
-  double _targetDriverLng = 0.0;
-  Timer? _driverAnimTimer;
+  /// 🔥 Driver → Pickup remaining polyline (driver ke aage se pickup tak)
+  RxList<LatLng> driverToPickupPolyline = <LatLng>[].obs;
 
-  // Fixed step deltas — same amount moves each frame
-  double _stepLat = 0.0;
-  double _stepLng = 0.0;
-  int _stepsRemaining = 0;
+  /// Route deviation threshold — ~70-80 meters (0.0000005 in squared degrees)
+  static const double _routeDeviationThreshold = 0.0000005;
 
-  /// Call this instead of directly setting driverLat/driverLng
-  void animateDriverTo(double newLat, double newLng) {
-    // First time — just set directly, no animation
-    if (driverLat.value == 0.0 && driverLng.value == 0.0) {
-      driverLat.value = newLat;
-      driverLng.value = newLng;
-      _targetDriverLat = newLat;
-      _targetDriverLng = newLng;
-      _startContinuousAnimation();
-      return;
-    }
+  /// Flag to prevent multiple simultaneous route fetches
+  bool _isFetchingDriverRoute = false;
+  bool _isFetchingDropoffRoute = false;
 
-    // Same position — skip
-    if (newLat == _targetDriverLat && newLng == _targetDriverLng) return;
-
-    // Skip extremely tiny movements (GPS jitter) — less than ~1 meter
-    double latDiff = (newLat - driverLat.value).abs();
-    double lngDiff = (newLng - driverLng.value).abs();
-    if (latDiff < 0.000009 && lngDiff < 0.000009) return;
-
-    // Calculate fixed step size from CURRENT position to new target
-    // 50 steps × 100ms = 5000ms = exactly 5 seconds
-    // Each step moves the SAME amount = constant speed
-    int totalSteps = 50;
-    _stepLat = (newLat - driverLat.value) / totalSteps;
-    _stepLng = (newLng - driverLng.value) / totalSteps;
-    _stepsRemaining = totalSteps;
-
-    _targetDriverLat = newLat;
-    _targetDriverLng = newLng;
-
-    // Start timer if not already running
-    _startContinuousAnimation();
-  }
-
-  /// Starts the continuous animation timer (runs forever, never restarts)
-  void _startContinuousAnimation() {
-    if (_driverAnimTimer != null) return; // already running
-
-    _driverAnimTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      // No steps remaining — car is at target, wait for next update
-      if (_stepsRemaining <= 0) return;
-
-      _stepsRemaining--;
-
-      if (_stepsRemaining <= 0) {
-        // Last step — snap to exact target
-        driverLat.value = _targetDriverLat;
-        driverLng.value = _targetDriverLng;
-        return;
-      }
-
-      // Move by FIXED amount each frame — same speed start to end
-      driverLat.value = driverLat.value + _stepLat;
-      driverLng.value = driverLng.value + _stepLng;
-    });
-  }
+  /// Cooldown — minimum 3 seconds between re-fetches
+  DateTime? _lastDriverRouteFetchTime;
+  DateTime? _lastDropoffRouteFetchTime;
 
   List<LatLng> driverRoutePoints = [];
   bool hasFetchedDriverRoute = false;
 
+  /// 🔥 Driver pickup tak pohanch chuka hai ya nahi
+  RxBool hasReachedPickup = false.obs;
+
+  /// Reset driver tracking for fresh session
+  void resetDriverTracking() {
+    driverLat.value = 0.0;
+    driverLng.value = 0.0;
+    driverToPickupPolyline.clear();
+    driverRoutePoints.clear();
+    hasFetchedDriverRoute = false;
+    hasReachedPickup.value = false;
+    _isFetchingDriverRoute = false;
+    _isFetchingDropoffRoute = false;
+    _lastDriverRouteFetchTime = null;
+    _lastDropoffRouteFetchTime = null;
+  }
+
+  /// Call this when new driver GPS arrives from API (handles validation & jitter)
+  void animateDriverTo(double newLat, double newLng) {
+    // 🛡️ TC-23 & TC-11: Validate GPS coordinate range and ignore invalid data
+    if (newLat < -90.0 || newLat > 90.0 || newLng < -180.0 || newLng > 180.0 || newLat == 0.0 || newLng == 0.0) {
+      return;
+    }
+
+    // 🛡️ TC-01: First time — set directly and fetch initial route if not at pickup
+    if (driverLat.value == 0.0 && driverLng.value == 0.0) {
+      driverLat.value = newLat;
+      driverLng.value = newLng;
+      if (!hasReachedPickup.value) {
+        fetchDriverRoute();
+      }
+      return;
+    }
+
+    // 🛡️ TC-09: Ignore micro GPS fluctuations / jitter (< ~1 meter)
+    double latDiff = (newLat - driverLat.value).abs();
+    double lngDiff = (newLng - driverLng.value).abs();
+    if (latDiff < 0.000009 && lngDiff < 0.000009) {
+      return;
+    }
+
+    final newPoint = LatLng(newLat, newLng);
+
+    // 🛡️ Check if driver reached pickup point (~60m radius)
+    if (!hasReachedPickup.value && selectedPickUPLat != 0.0 && selectedPickUPLon != 0.0) {
+      final pickupPoint = LatLng(selectedPickUPLat, selectedPickUPLon);
+      if (_distSquared(newPoint, pickupPoint) < 0.00005) {
+        hasReachedPickup.value = true;
+        driverToPickupPolyline.clear();
+        driverRoutePoints.clear();
+        hasFetchedDriverRoute = true;
+      }
+    }
+
+    // Phase 1 (Going to Pickup): Check deviation if route exists
+    if (!hasReachedPickup.value) {
+      if (driverRoutePoints.isNotEmpty) {
+        double minDist = double.infinity;
+        for (int i = 0; i < driverRoutePoints.length - 1; i++) {
+          final projected = _projectOnSegment(
+            newPoint, driverRoutePoints[i], driverRoutePoints[i + 1],
+          );
+          final dist = _distSquared(newPoint, projected);
+          if (dist < minDist) minDist = dist;
+        }
+
+        // 🔴 If driver deviated from route (> ~75m), re-fetch new route immediately from driver to pickup
+        if (minDist > _routeDeviationThreshold) {
+          if (_lastDriverRouteFetchTime == null ||
+              DateTime.now().difference(_lastDriverRouteFetchTime!).inSeconds >= 3) {
+            debugPrint("🔴 Driver route changed/deviated! Re-fetching route from driver to pickup...");
+            driverLat.value = newLat;
+            driverLng.value = newLng;
+            fetchDriverRoute();
+            return;
+          }
+        }
+      } else {
+        if (!hasFetchedDriverRoute) {
+          fetchDriverRoute();
+        }
+      }
+    }
+    // 🟣 Phase 2 (Pickup to Drop-off): Check deviation against purple route
+    else if (hasReachedPickup.value && routePoints.isNotEmpty) {
+      double minDist = double.infinity;
+      for (int i = 0; i < routePoints.length - 1; i++) {
+        final projected = _projectOnSegment(
+          newPoint, routePoints[i], routePoints[i + 1],
+        );
+        final dist = _distSquared(newPoint, projected);
+        if (dist < minDist) minDist = dist;
+      }
+
+      // 🔴 If driver deviated from drop-off route (> ~75m), re-fetch new purple route to drop-off
+      if (minDist > _routeDeviationThreshold) {
+        if (_lastDropoffRouteFetchTime == null ||
+            DateTime.now().difference(_lastDropoffRouteFetchTime!).inSeconds >= 3) {
+          debugPrint("🔴 Driver route changed after pickup! Re-fetching purple route to drop-off...");
+          driverLat.value = newLat;
+          driverLng.value = newLng;
+          fetchDropoffRouteFromDriver();
+          return;
+        }
+      }
+    }
+
+    // 🛡️ TC-02, TC-08: Update target coordinates so AnimatedCarMarker drives smoothly along polyline
+    driverLat.value = newLat;
+    driverLng.value = newLng;
+  }
+
+  /// 🔥 Real-time polyline trimmer:
+  /// - Phase 1 (Driver -> Pickup): Trims orange line behind driver (ONLY ends when pickup is reached)
+  /// - Phase 2 (Pickup -> Dropoff): Trims purple line behind vehicle once pickup has been reached
+  void trimDriverPolyline(LatLng carCurrentPos) {
+    final pickupPoint = LatLng(selectedPickUPLat, selectedPickUPLon);
+
+    // 🎯 1. Strict Pickup Arrival Check: Only when driver is physically within ~35m of pickup
+    if (!hasReachedPickup.value && selectedPickUPLat != 0.0 && selectedPickUPLon != 0.0) {
+      if (_distSquared(carCurrentPos, pickupPoint) < 0.00003) {
+        hasReachedPickup.value = true;
+        driverToPickupPolyline.clear();
+        driverRoutePoints.clear();
+        hasFetchedDriverRoute = true;
+        return;
+      }
+    }
+
+    // 🔥 Phase 1: Trim Driver -> Pickup (Orange Line) - Stays active until driver reaches pickup!
+    if (!hasReachedPickup.value) {
+      if (driverRoutePoints.isNotEmpty) {
+        int closestSegmentIndex = 0;
+        double minDist = double.infinity;
+        LatLng closestProjection = carCurrentPos;
+
+        for (int i = 0; i < driverRoutePoints.length - 1; i++) {
+          final projected = _projectOnSegment(
+            carCurrentPos, driverRoutePoints[i], driverRoutePoints[i + 1],
+          );
+          final dist = _distSquared(carCurrentPos, projected);
+          if (dist < minDist) {
+            minDist = dist;
+            closestSegmentIndex = i;
+            closestProjection = projected;
+          }
+        }
+
+        // Reached end of driver-to-pickup route and within 40m of pickup
+        if (closestSegmentIndex >= driverRoutePoints.length - 2 && _distSquared(carCurrentPos, pickupPoint) < 0.00004) {
+          hasReachedPickup.value = true;
+          driverToPickupPolyline.clear();
+          driverRoutePoints.clear();
+          hasFetchedDriverRoute = true;
+          return;
+        }
+
+        List<LatLng> remaining = [closestProjection];
+        for (int i = closestSegmentIndex + 1; i < driverRoutePoints.length; i++) {
+          remaining.add(driverRoutePoints[i]);
+        }
+
+        driverToPickupPolyline.value = remaining;
+      }
+    }
+    // 🟣 Phase 2: Trim Pickup -> Drop-off (Purple Line) - ONLY when driver has reached pickup!
+    else if (hasReachedPickup.value && routePoints.isNotEmpty) {
+      int closestSegmentIndex = 0;
+      double minDist = double.infinity;
+      LatLng closestProjection = carCurrentPos;
+
+      for (int i = 0; i < routePoints.length - 1; i++) {
+        final projected = _projectOnSegment(
+          carCurrentPos, routePoints[i], routePoints[i + 1],
+        );
+        final dist = _distSquared(carCurrentPos, projected);
+        if (dist < minDist) {
+          minDist = dist;
+          closestSegmentIndex = i;
+          closestProjection = projected;
+        }
+      }
+
+      // If car is tracking along the purple route (< ~100m)
+      if (minDist < 0.0001) {
+        List<LatLng> remaining = [closestProjection];
+        for (int i = closestSegmentIndex + 1; i < routePoints.length; i++) {
+          remaining.add(routePoints[i]);
+        }
+        routePoints = remaining;
+        update(["map"]);
+      }
+    }
+  }
+
   Future<void> fetchDriverRoute() async {
+    if (hasReachedPickup.value) return;
     if (driverLat.value == 0.0 || driverLng.value == 0.0 || selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) return;
-    
+    if (_isFetchingDriverRoute) return;
+
+    _isFetchingDriverRoute = true;
+    _lastDriverRouteFetchTime = DateTime.now();
+
     String url = 'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=f57e40a3-f4c9-41da-8f4d-25d26e0b2e56'
         '&point=${driverLat.value},${driverLng.value}'
         '&point=$selectedPickUPLat,$selectedPickUPLon';
@@ -881,18 +1026,102 @@ class SwapController extends GetxController {
     try {
       final response = await Dio().get(url);
       if (response.statusCode == 200) {
+        if (hasReachedPickup.value) return;
+
         final route = response.data['paths'][0];
         final coords = route['points']['coordinates'];
-        driverRoutePoints = coords.map<LatLng>((p) {
+        final newPoints = coords.map<LatLng>((p) {
           return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
         }).toList();
-        
+
+        driverRoutePoints = newPoints;
+        driverToPickupPolyline.value = List<LatLng>.from(newPoints);
         hasFetchedDriverRoute = true;
-        update(["map"]);
       }
     } catch (e) {
       print("Driver Route error: $e");
+    } finally {
+      _isFetchingDriverRoute = false;
     }
+  }
+
+  /// 🟣 Re-fetch route from Driver's current position to Drop-off (when driver changes route after pickup)
+  Future<void> fetchDropoffRouteFromDriver() async {
+    if (driverLat.value == 0.0 || driverLng.value == 0.0 || selectedDropLat == 0.0 || selectedDropLon == 0.0) return;
+    if (_isFetchingDropoffRoute) return;
+
+    _isFetchingDropoffRoute = true;
+    _lastDropoffRouteFetchTime = DateTime.now();
+
+    String url = 'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=f57e40a3-f4c9-41da-8f4d-25d26e0b2e56'
+        '&point=${driverLat.value},${driverLng.value}';
+
+    // Include via points if not passed yet
+    if (showVia1.value && via1Lat != 0.0 && via1Lon != 0.0) {
+      final via1Point = LatLng(via1Lat, via1Lon);
+      if (_distSquared(LatLng(driverLat.value, driverLng.value), via1Point) > 0.0001) {
+        url += '&point=$via1Lat,$via1Lon';
+      }
+    }
+
+    if (showVia2.value && via2Lat != 0.0 && via2Lon != 0.0) {
+      final via2Point = LatLng(via2Lat, via2Lon);
+      if (_distSquared(LatLng(driverLat.value, driverLng.value), via2Point) > 0.0001) {
+        url += '&point=$via2Lat,$via2Lon';
+      }
+    }
+
+    url += '&point=$selectedDropLat,$selectedDropLon';
+
+    try {
+      final response = await Dio().get(url);
+      if (response.statusCode == 200) {
+        final route = response.data['paths'][0];
+        final coords = route['points']['coordinates'];
+        final newPoints = coords.map<LatLng>((p) {
+          return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
+        }).toList();
+
+        routePoints = newPoints;
+
+        // Update distance & estimated time
+        double distanceMeters = (route['distance'] as num).toDouble();
+        totalRouteDistanceMiles = distanceMeters * 0.000621371;
+        double durationMs = (route['time'] as num).toDouble();
+        estimatedTimeMinutes = durationMs / 1000 / 60;
+        estimatedTimeText = formatDuration(estimatedTimeMinutes);
+
+        if (routePoints.isNotEmpty) {
+          routeCenterPoint = routePoints[routePoints.length ~/ 2.5];
+        }
+
+        update(["map", "distance"]);
+      }
+    } catch (e) {
+      debugPrint("Dropoff Route re-fetch error: $e");
+    } finally {
+      _isFetchingDropoffRoute = false;
+    }
+  }
+
+  /// Helper: Project point on segment
+  LatLng _projectOnSegment(LatLng p, LatLng v, LatLng w) {
+    final l2 = _distSquared(v, w);
+    if (l2 == 0.0) return v;
+    final t = ((p.latitude - v.latitude) * (w.latitude - v.latitude) +
+        (p.longitude - v.longitude) * (w.longitude - v.longitude)) / l2;
+    final tClamped = t.clamp(0.0, 1.0);
+    return LatLng(
+      v.latitude + tClamped * (w.latitude - v.latitude),
+      v.longitude + tClamped * (w.longitude - v.longitude),
+    );
+  }
+
+  /// Helper: Distance squared between two points
+  double _distSquared(LatLng a, LatLng b) {
+    final dLat = a.latitude - b.latitude;
+    final dLng = a.longitude - b.longitude;
+    return dLat * dLat + dLng * dLng;
   }
 
 

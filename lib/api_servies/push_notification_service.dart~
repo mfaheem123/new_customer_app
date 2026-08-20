@@ -18,7 +18,7 @@ class PushNotificationService {
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
-  Future<void> init   () async {
+  Future<void> init () async {
     await requestPermission();
     await _initLocal();
 
