@@ -160,16 +160,17 @@ class PushNotificationService {
 
 
             if (statusId == 15) {
-
               await _getBookingById(bookingId!);
 
               if (driverId != null) {
-                Get.offAllNamed(
-                  routesName.Driverdetailscreen,
-                  arguments: {
-                    "id": driverId,
-                  },
-                );
+                if (Get.currentRoute != routesName.Driverdetailscreen) {
+                  Get.offAllNamed(
+                    routesName.Driverdetailscreen,
+                    arguments: {
+                      "id": driverId,
+                    },
+                  );
+                }
               }
             }
           }
