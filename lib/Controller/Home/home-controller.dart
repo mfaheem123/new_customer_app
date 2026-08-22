@@ -703,9 +703,13 @@ class SwapController extends GetxController {
 
         /// 🟣 POLYLINE POINTS
         final coords = route['points']['coordinates'];
-        routePoints = coords.map<LatLng>((p) {
+        final newRoute = coords.map<LatLng>((p) {
           return LatLng((p[1] as num).toDouble(), (p[0] as num).toDouble());
         }).toList();
+
+        routePoints = newRoute;
+        fullTripRoutePoints = List<LatLng>.from(newRoute);
+        driverToDropoffPolyline.value = List<LatLng>.from(newRoute);
 
         /// DISTANCE (meters → miles)
         double distanceMeters = (route['distance'] as num).toDouble();
@@ -802,6 +806,10 @@ class SwapController extends GetxController {
   /// 🔥 Driver → Pickup remaining polyline (driver ke aage se pickup tak)
   RxList<LatLng> driverToPickupPolyline = <LatLng>[].obs;
 
+  /// 🟣 Driver → Dropoff remaining polyline (driver ke aage se drop-off tak)
+  RxList<LatLng> driverToDropoffPolyline = <LatLng>[].obs;
+  List<LatLng> fullTripRoutePoints = [];
+
   /// Route deviation threshold — ~70-80 meters (0.0000005 in squared degrees)
   static const double _routeDeviationThreshold = 0.0000005;
 
@@ -825,6 +833,8 @@ class SwapController extends GetxController {
     driverLng.value = 0.0;
     driverToPickupPolyline.clear();
     driverRoutePoints.clear();
+    driverToDropoffPolyline.clear();
+    fullTripRoutePoints.clear();
     hasFetchedDriverRoute = false;
     hasReachedPickup.value = false;
     _isFetchingDriverRoute = false;
@@ -999,8 +1009,8 @@ class SwapController extends GetxController {
         }
       }
 
-      // If car is tracking along the purple route (< ~100m)
-      if (minDist < 0.0001) {
+      // If car is tracking along the purple route
+      if (minDist < 0.0002) {
         List<LatLng> remaining = [closestProjection];
         for (int i = closestSegmentIndex + 1; i < routePoints.length; i++) {
           remaining.add(routePoints[i]);
@@ -1083,6 +1093,8 @@ class SwapController extends GetxController {
         }).toList();
 
         routePoints = newPoints;
+        fullTripRoutePoints = List<LatLng>.from(newPoints);
+        driverToDropoffPolyline.value = List<LatLng>.from(newPoints);
 
         // Update distance & estimated time
         double distanceMeters = (route['distance'] as num).toDouble();
