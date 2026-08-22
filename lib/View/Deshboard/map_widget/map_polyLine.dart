@@ -39,33 +39,17 @@ class _MapScreenState extends State<MapScreen> {
           );
         }
 
-        if (c.isMapReady && c.routePoints.isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            final bounds = LatLngBounds.fromPoints(c.routePoints);
-
-            mapController.fitCamera(
-              CameraFit.bounds(
-                bounds: bounds,
-                padding: const EdgeInsets.all(60),
-              ),
-            );
-          });
-        }
-
         final pickupLatLng = LatLng(c.selectedPickUPLat, c.selectedPickUPLon);
         final dropLatLng = LatLng(c.selectedDropLat, c.selectedDropLon);
 
-        /// 🔥 AUTO FIT PICKUP + DROP + ROUTE
-        if (c.isMapReady) {
+        /// 🔥 AUTO FIT PICKUP + DROP + ROUTE ONCE ON INIT
+        if (c.isMapReady && !c.hasFittedMap && c.routePoints.isNotEmpty) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            final List<LatLng> points = [];
-
-            points.add(pickupLatLng);
-            points.add(dropLatLng);
-
-            if (c.routePoints.isNotEmpty) {
-              points.addAll(c.routePoints);
-            }
+            final List<LatLng> points = [
+              pickupLatLng,
+              dropLatLng,
+              ...c.routePoints,
+            ];
 
             final bounds = LatLngBounds.fromPoints(points);
 
@@ -188,7 +172,7 @@ class _MapScreenState extends State<MapScreen> {
 
             /// 🔥 DRIVER → PICKUP POLYLINE (Orange, progressive removal)
             Obx(() {
-              if (c.hasReachedPickup.value || c.driverToPickupPolyline.isEmpty) return const SizedBox();
+              if (c.hasReachedPickup.value || c.driverToPickupPolyline.length < 2) return const SizedBox();
 
               return PolylineLayer(
                 polylines: [
@@ -259,31 +243,58 @@ class _MapScreenState extends State<MapScreen> {
             Positioned(
               bottom: 20,
               right: 15,
-              child: FloatingActionButton(
-                mini: true,
-                backgroundColor: Colors.blueGrey,
-                onPressed: () {
-                  if (c.driverLat.value != 0.0 && c.driverLng.value != 0.0) {
-                    mapController.move(
-                      LatLng(c.driverLat.value, c.driverLng.value),
-                      16,
-                    );
-                  } else {
-                    mapController.fitCamera(
-                      CameraFit.bounds(
-                        bounds: LatLngBounds.fromPoints([
-                          pickupLatLng,
-                          dropLatLng,
-                        ]),
-                        padding: const EdgeInsets.all(70),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 🚗 Center on Driver Button
+                  if (c.driverLat.value != 0.0 && c.driverLng.value != 0.0)
+                    FloatingActionButton(
+                      heroTag: "btn_driver_center",
+                      mini: true,
+                      backgroundColor: Colors.white,
+                      elevation: 3,
+                      onPressed: () {
+                        mapController.move(
+                          LatLng(c.driverLat.value, c.driverLng.value),
+                          16,
+                        );
+                      },
+                      child: const Icon(
+                        Icons.navigation_rounded,
+                        color: Colors.orange,
+                        size: 20,
                       ),
-                    );
-                  }
-                },
-                child: const Icon(
-                  Icons.center_focus_strong_rounded,
-                  color: Colors.black,
-                ),
+                    ),
+                  if (c.driverLat.value != 0.0 && c.driverLng.value != 0.0)
+                    const SizedBox(height: 8),
+                  // 🗺️ Fit Route Bounds Button
+                  FloatingActionButton(
+                    heroTag: "btn_fit_route",
+                    mini: true,
+                    backgroundColor: Colors.white,
+                    elevation: 3,
+                    onPressed: () {
+                      final List<LatLng> points = [pickupLatLng, dropLatLng];
+                      if (c.routePoints.isNotEmpty) {
+                        points.addAll(c.routePoints);
+                      }
+                      if (c.driverLat.value != 0.0 && c.driverLng.value != 0.0) {
+                        points.add(LatLng(c.driverLat.value, c.driverLng.value));
+                      }
+                      mapController.fitCamera(
+                        CameraFit.bounds(
+                          bounds: LatLngBounds.fromPoints(points),
+                          padding: const EdgeInsets.all(60),
+                        ),
+                      );
+                    },
+                    child: const Icon(
+                      Icons.center_focus_strong_rounded,
+                      color: Colors.black87,
+                      size: 20,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -411,12 +422,6 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
         }
 
         _previousAnimatedPosition = currentPos;
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          try {
-            widget.mapController.move(currentPos, widget.mapController.camera.zoom);
-          } catch (_) {}
-        });
 
         return MarkerLayer(
           markers: [

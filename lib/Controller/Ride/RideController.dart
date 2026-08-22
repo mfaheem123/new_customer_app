@@ -799,6 +799,24 @@ class RideController extends GetxController {
           swapController.fetchDriverRoute();
         }
 
+        String statusStr = bookingStatus.value.trim().toLowerCase();
+        if (statusStr == "arrived" ||
+            statusStr == "on route"
+            // ||
+            // statusStr == "picked up" ||
+            // statusStr == "started" ||
+            // statusStr == "ongoing" ||
+            // statusStr == "ontrip" ||
+            // statusStr == "on trip"
+        ) {
+          if (!swapController.hasReachedPickup.value) {
+            swapController.hasReachedPickup.value = true;
+            swapController.driverToPickupPolyline.clear();
+            swapController.driverRoutePoints.clear();
+            swapController.update(["map"]);
+          }
+        }
+
         isLoading.value = false;
 
         debugPrint("Driver Lat: $lat");

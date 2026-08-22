@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -869,14 +870,17 @@ class SwapController extends GetxController {
 
     final newPoint = LatLng(newLat, newLng);
 
-    // 🛡️ Check if driver reached pickup point (~60m radius)
+    // 🛡️ Check if driver reached pickup point or is near/heading towards dropoff (< 40 meters)
     if (!hasReachedPickup.value && selectedPickUPLat != 0.0 && selectedPickUPLon != 0.0) {
       final pickupPoint = LatLng(selectedPickUPLat, selectedPickUPLon);
-      if (_distSquared(newPoint, pickupPoint) < 0.00005) {
+      double distToPickup = _distanceInMeters(newPoint, pickupPoint);
+
+      if (distToPickup <= 40.0 || (routePoints.isNotEmpty && _distanceInMeters(newPoint, routePoints.first) <= 40.0)) {
         hasReachedPickup.value = true;
         driverToPickupPolyline.clear();
         driverRoutePoints.clear();
         hasFetchedDriverRoute = true;
+        update(["map"]);
       }
     }
 
@@ -939,23 +943,26 @@ class SwapController extends GetxController {
   }
 
   /// 🔥 Real-time polyline trimmer:
-  /// - Phase 1 (Driver -> Pickup): Trims orange line behind driver (ONLY ends when pickup is reached)
+  /// - Phase 1 (Driver -> Pickup): Trims orange line behind driver (ends cleanly when pickup is reached)
   /// - Phase 2 (Pickup -> Dropoff): Trims purple line behind vehicle once pickup has been reached
   void trimDriverPolyline(LatLng carCurrentPos) {
+    if (selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) return;
     final pickupPoint = LatLng(selectedPickUPLat, selectedPickUPLon);
 
-    // 🎯 1. Strict Pickup Arrival Check: Only when driver is physically within ~35m of pickup
-    if (!hasReachedPickup.value && selectedPickUPLat != 0.0 && selectedPickUPLon != 0.0) {
-      if (_distSquared(carCurrentPos, pickupPoint) < 0.00003) {
+    // 🎯 1. Pickup Arrival Check:
+    if (!hasReachedPickup.value) {
+      double distToPickup = _distanceInMeters(carCurrentPos, pickupPoint);
+      if (distToPickup <= 40.0 || (routePoints.isNotEmpty && _distanceInMeters(carCurrentPos, routePoints.first) <= 40.0)) {
         hasReachedPickup.value = true;
         driverToPickupPolyline.clear();
         driverRoutePoints.clear();
         hasFetchedDriverRoute = true;
+        update(["map"]);
         return;
       }
     }
 
-    // 🔥 Phase 1: Trim Driver -> Pickup (Orange Line) - Stays active until driver reaches pickup!
+    // 🔥 Phase 1: Trim Driver -> Pickup (Orange Line) - Stays active until driver reaches exact pickup!
     if (!hasReachedPickup.value) {
       if (driverRoutePoints.isNotEmpty) {
         int closestSegmentIndex = 0;
@@ -974,13 +981,18 @@ class SwapController extends GetxController {
           }
         }
 
-        // Reached end of driver-to-pickup route and within 40m of pickup
-        if (closestSegmentIndex >= driverRoutePoints.length - 2 && _distSquared(carCurrentPos, pickupPoint) < 0.00004) {
-          hasReachedPickup.value = true;
-          driverToPickupPolyline.clear();
-          driverRoutePoints.clear();
-          hasFetchedDriverRoute = true;
-          return;
+        // Check if car reached the last segments of the orange route
+        if (closestSegmentIndex >= driverRoutePoints.length - 2) {
+          double distToEnd = _distanceInMeters(carCurrentPos, driverRoutePoints.last);
+          double distToPickup = _distanceInMeters(carCurrentPos, pickupPoint);
+          if (distToEnd <= 35.0 || distToPickup <= 50.0) {
+            hasReachedPickup.value = true;
+            driverToPickupPolyline.clear();
+            driverRoutePoints.clear();
+            hasFetchedDriverRoute = true;
+            update(["map"]);
+            return;
+          }
         }
 
         List<LatLng> remaining = [closestProjection];
@@ -988,7 +1000,22 @@ class SwapController extends GetxController {
           remaining.add(driverRoutePoints[i]);
         }
 
-        driverToPickupPolyline.value = remaining;
+        // Ensure the pickup point is always the destination endpoint of the orange line
+        if (remaining.isNotEmpty &&
+            (remaining.last.latitude != pickupPoint.latitude ||
+             remaining.last.longitude != pickupPoint.longitude)) {
+          remaining.add(pickupPoint);
+        }
+
+        if (remaining.length >= 2) {
+          driverToPickupPolyline.value = remaining;
+        } else {
+          hasReachedPickup.value = true;
+          driverToPickupPolyline.clear();
+          driverRoutePoints.clear();
+          hasFetchedDriverRoute = true;
+          update(["map"]);
+        }
       }
     }
     // 🟣 Phase 2: Trim Pickup -> Drop-off (Purple Line) - ONLY when driver has reached pickup!
@@ -1134,6 +1161,23 @@ class SwapController extends GetxController {
     final dLat = a.latitude - b.latitude;
     final dLng = a.longitude - b.longitude;
     return dLat * dLat + dLng * dLng;
+  }
+
+  /// Helper: Distance in meters between two points (Haversine formula)
+  double _distanceInMeters(LatLng a, LatLng b) {
+    const double earthRadius = 6371000; // in meters
+    final double dLat = (b.latitude - a.latitude) * math.pi / 180.0;
+    final double dLng = (b.longitude - a.longitude) * math.pi / 180.0;
+    final double lat1 = a.latitude * math.pi / 180.0;
+    final double lat2 = b.latitude * math.pi / 180.0;
+
+    final double sinDLat = math.sin(dLat / 2);
+    final double sinDLng = math.sin(dLng / 2);
+
+    final double h = sinDLat * sinDLat +
+        math.cos(lat1) * math.cos(lat2) * sinDLng * sinDLng;
+    final double c = 2 * math.asin(math.sqrt(math.max(0.0, math.min(1.0, h))));
+    return earthRadius * c;
   }
 
 
