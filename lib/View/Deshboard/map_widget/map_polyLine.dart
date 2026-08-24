@@ -105,16 +105,49 @@ class _MapScreenState extends State<MapScreen> {
             ),
 
             // Polyline
-            if (c.routePoints.isNotEmpty)
-              PolylineLayer(
+            // Obx(() {
+            //   List<LatLng> pointsToShow;
+            //   if (c.driverToDropoffPolyline.isNotEmpty) {
+            //     pointsToShow = c.driverToDropoffPolyline.toList();
+            //   } else {
+            //     pointsToShow = c.routePoints;
+            //   }
+            //
+            //   if (pointsToShow.isEmpty) return const SizedBox();
+            //
+            //   return PolylineLayer(
+            //     polylines: [
+            //       Polyline(
+            //         points: pointsToShow,
+            //         strokeWidth: 4,
+            //         color: Colors.deepPurpleAccent,
+            //       ),
+            //     ],
+            //   );
+            // }),
+
+            Obx(() {
+              List<LatLng> pointsToShow;
+              if (c.driverToDropoffPolyline.isNotEmpty) {
+                pointsToShow = c.driverToDropoffPolyline.toList();
+              } else {
+                pointsToShow = c.routePoints;
+              }
+
+              if (pointsToShow.length < 2) {
+                return const SizedBox();
+              }
+
+              return PolylineLayer(
                 polylines: [
                   Polyline(
-                    points: c.routePoints,
+                    points: pointsToShow,
                     strokeWidth: 4,
                     color: Colors.deepPurpleAccent,
                   ),
                 ],
-              ),
+              );
+            }),
 
             MarkerLayer(
               markers: [
@@ -199,6 +232,8 @@ class _MapScreenState extends State<MapScreen> {
                 } else if (c.driverToPickupPolyline.isNotEmpty) {
                   activeRoute = c.driverToPickupPolyline.toList();
                 }
+              } else if (c.fullTripRoutePoints.isNotEmpty) {
+                activeRoute = c.fullTripRoutePoints;
               } else if (c.routePoints.isNotEmpty) {
                 activeRoute = c.routePoints;
               }
@@ -256,7 +291,7 @@ class _MapScreenState extends State<MapScreen> {
                       onPressed: () {
                         mapController.move(
                           LatLng(c.driverLat.value, c.driverLng.value),
-                          16,
+                          17,
                         );
                       },
                       child: const Icon(
@@ -329,16 +364,22 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
       duration: const Duration(seconds: 2),
     );
 
+    _controller.addListener(() {
+      final currentPos = _positionAnimation.value;
+      if (Get.isRegistered<SwapController>()) {
+        Get.find<SwapController>().trimDriverPolyline(currentPos);
+      }
+    });
+
     _positionAnimation = PolylineTween([widget.driverLocation]).animate(_controller);
   }
 
   @override
   void didUpdateWidget(AnimatedCarMarker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.driverLocation != widget.driverLocation || oldWidget.routePoints != widget.routePoints) {
+    if (oldWidget.driverLocation != widget.driverLocation) {
       if (oldWidget.driverLocation.latitude == widget.driverLocation.latitude &&
           oldWidget.driverLocation.longitude == widget.driverLocation.longitude) {
-        _positionAnimation = PolylineTween([widget.driverLocation]).animate(_controller);
         return;
       }
 
@@ -399,10 +440,6 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
       animation: _controller,
       builder: (context, child) {
         LatLng currentPos = _positionAnimation.value;
-
-        if (Get.isRegistered<SwapController>()) {
-          Get.find<SwapController>().trimDriverPolyline(currentPos);
-        }
 
         if (_previousAnimatedPosition != null) {
           final latDiff = currentPos.latitude - _previousAnimatedPosition!.latitude;
@@ -593,3 +630,5 @@ double _calculateDistanceSquared(LatLng p1, LatLng p2) {
   final dLng = p1.longitude - p2.longitude;
   return dLat * dLat + dLng * dLng;
 }
+
+

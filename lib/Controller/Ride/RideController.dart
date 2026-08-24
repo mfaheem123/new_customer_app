@@ -753,7 +753,7 @@ class RideController extends GetxController {
     // 🚀 Pehli bar foran hit karo taake driver location aur route bina delay ke load ho
     _hitDriverApi(driverId);
 
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       _hitDriverApi(driverId);
     });
   }
@@ -801,13 +801,14 @@ class RideController extends GetxController {
 
         String statusStr = bookingStatus.value.trim().toLowerCase();
         if (statusStr == "arrived" ||
-            statusStr == "on route"
-            // ||
-            // statusStr == "picked up" ||
-            // statusStr == "started" ||
-            // statusStr == "ongoing" ||
-            // statusStr == "ontrip" ||
-            // statusStr == "on trip"
+            statusStr == "on route" ||
+            statusStr == "onroute" ||
+            statusStr == "picked up" ||
+            statusStr == "pickedup" ||
+            statusStr == "started" ||
+            statusStr == "ongoing" ||
+            statusStr == "ontrip" ||
+            statusStr == "on trip"
         ) {
           if (!swapController.hasReachedPickup.value) {
             swapController.hasReachedPickup.value = true;
