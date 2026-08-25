@@ -367,7 +367,11 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
     _controller.addListener(() {
       final currentPos = _positionAnimation.value;
       if (Get.isRegistered<SwapController>()) {
-        Get.find<SwapController>().trimDriverPolyline(currentPos);
+        final ctrl = Get.find<SwapController>();
+        // Update last animated position so GPS-level trim doesn't jump ahead
+        ctrl.lastAnimatedCarPos = currentPos;
+        // Trim polyline to match animated car position every frame
+        ctrl.trimDriverPolyline(currentPos);
       }
     });
 
@@ -383,14 +387,10 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
         return;
       }
 
+      // Start from current animated position (not the raw GPS target)
       LatLng startPos = _positionAnimation.value;
 
-      double distSq = _calculateDistanceSquared(startPos, widget.driverLocation);
-      if (distSq > 0.0005) {
-        startPos = widget.driverLocation;
-        _positionAnimation = PolylineTween([widget.driverLocation]).animate(_controller);
-        return;
-      } else if (widget.routePoints.isNotEmpty) {
+      if (widget.routePoints.isNotEmpty) {
         startPos = _snapToPolyline(startPos, widget.routePoints);
       }
 
@@ -408,6 +408,7 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker> with SingleTicker
         curve: Curves.linear,
       ));
 
+      // Always start the animation — this triggers the addListener which calls trimDriverPolyline
       _controller.forward(from: 0.0);
     }
   }
@@ -630,5 +631,3 @@ double _calculateDistanceSquared(LatLng p1, LatLng p2) {
   final dLng = p1.longitude - p2.longitude;
   return dLat * dLat + dLng * dLng;
 }
-
-

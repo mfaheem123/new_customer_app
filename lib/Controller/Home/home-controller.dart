@@ -116,9 +116,9 @@ class SwapController extends GetxController {
     update();
 
     var response = await ApiService.get(
-      "airports/get", //  base url ApiService me hoga
-      auth: true,
-       sendCompanyId: true
+        "airports/get", //  base url ApiService me hoga
+        auth: true,
+        sendCompanyId: true
     );
 
     if (response!.statusCode == 200) {
@@ -813,6 +813,10 @@ class SwapController extends GetxController {
   RxList<LatLng> driverToDropoffPolyline = <LatLng>[].obs;
   List<LatLng> fullTripRoutePoints = [];
 
+  /// 📍 Last position the animated car marker was at (updated every animation frame)
+  /// Used so GPS-level trimming never jumps ahead of the visual car
+  LatLng? lastAnimatedCarPos;
+
   /// Route deviation threshold — ~70-80 meters (0.0000005 in squared degrees)
   static const double _routeDeviationThreshold = 0.0000005;
 
@@ -942,7 +946,9 @@ class SwapController extends GetxController {
     // 🛡️ TC-02, TC-08: Update target coordinates so AnimatedCarMarker drives smoothly along polyline
     driverLat.value = newLat;
     driverLng.value = newLng;
-    trimDriverPolyline(newPoint);
+    // Trim at the LAST ANIMATED POSITION (not the new GPS target) to avoid polyline jumping ahead of car
+    final trimPos = lastAnimatedCarPos ?? newPoint;
+    trimDriverPolyline(trimPos);
   }
 
   /// 🔥 Real-time polyline trimmer:
@@ -1004,7 +1010,7 @@ class SwapController extends GetxController {
       // Ensure the pickup point is always the destination endpoint of the orange line
       if (remaining.isNotEmpty &&
           (remaining.last.latitude != pickupPoint.latitude ||
-           remaining.last.longitude != pickupPoint.longitude)) {
+              remaining.last.longitude != pickupPoint.longitude)) {
         remaining.add(pickupPoint);
       }
 
@@ -1051,7 +1057,7 @@ class SwapController extends GetxController {
             final dropPoint = LatLng(selectedDropLat, selectedDropLon);
             if (remaining.isNotEmpty &&
                 (remaining.last.latitude != dropPoint.latitude ||
-                 remaining.last.longitude != dropPoint.longitude)) {
+                    remaining.last.longitude != dropPoint.longitude)) {
               remaining.add(dropPoint);
             }
           }
@@ -1077,7 +1083,7 @@ class SwapController extends GetxController {
     String url = 'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=f57e40a3-f4c9-41da-8f4d-25d26e0b2e56'
         '&point=${driverLat.value},${driverLng.value}'
         '&point=$selectedPickUPLat,$selectedPickUPLon';
-        
+
     try {
       final response = await Dio().get(url);
       if (response.statusCode == 200) {
@@ -1328,69 +1334,69 @@ class SwapController extends GetxController {
 
 
 
-  // bool hasFittedMap = false;
-  // RxList<LatLng> routePointsTraking = <LatLng>[].obs;
-  //
-  // Future<void> fetchRouteTracking() async {
-  //   if (selectedPickUPLat == 0.0 ||
-  //       selectedPickUPLon == 0.0 ||
-  //       selectedDropLat == 0.0 ||
-  //       selectedDropLon == 0.0) return;
-  //
-  //   final requestId = ++_routeRequestId;
-  //
-  //   String url =
-  //       'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=YOUR_KEY'
-  //       '&point=$selectedPickUPLat,$selectedPickUPLon';
-  //
-  //   if (via1Lat != 0.0 && via1Lon != 0.0) {
-  //     url += '&point=$via1Lat,$via1Lon';
-  //   }
-  //
-  //   if (via2Lat != 0.0 && via2Lon != 0.0) {
-  //     url += '&point=$via2Lat,$via2Lon';
-  //   }
-  //
-  //   url += '&point=$selectedDropLat,$selectedDropLon';
-  //
-  //   try {
-  //     final response = await Dio().get(url);
-  //
-  //     if (requestId != _routeRequestId) return;
-  //
-  //     if (response.statusCode == 200 &&
-  //         response.data != null &&
-  //         response.data['paths'] != null &&
-  //         (response.data['paths'] as List).isNotEmpty) {
-  //
-  //       final route = response.data['paths'][0];
-  //
-  //       final List coords = route['points']?['coordinates'] ?? [];
-  //
-  //       if (coords.isEmpty) {
-  //         routePointsTraking.clear();
-  //         routePointsTraking.refresh();
-  //         return;
-  //       }
-  //
-  //       final newRoute = coords.map<LatLng>((p) {
-  //         return LatLng(
-  //           (p[1] as num).toDouble(),
-  //           (p[0] as num).toDouble(),
-  //         );
-  //       }).toList();
-  //
-  //       routePointsTraking
-  //         ..clear()
-  //         ..addAll(newRoute);
-  //
-  //       routePointsTraking.refresh();
-  //       update();
-  //     }
-  //   } catch (e) {
-  //     print("Route error: $e");
-  //   }
-  // }
+// bool hasFittedMap = false;
+// RxList<LatLng> routePointsTraking = <LatLng>[].obs;
+//
+// Future<void> fetchRouteTracking() async {
+//   if (selectedPickUPLat == 0.0 ||
+//       selectedPickUPLon == 0.0 ||
+//       selectedDropLat == 0.0 ||
+//       selectedDropLon == 0.0) return;
+//
+//   final requestId = ++_routeRequestId;
+//
+//   String url =
+//       'https://graphhopper.com/api/1/route?vehicle=car&points_encoded=false&key=YOUR_KEY'
+//       '&point=$selectedPickUPLat,$selectedPickUPLon';
+//
+//   if (via1Lat != 0.0 && via1Lon != 0.0) {
+//     url += '&point=$via1Lat,$via1Lon';
+//   }
+//
+//   if (via2Lat != 0.0 && via2Lon != 0.0) {
+//     url += '&point=$via2Lat,$via2Lon';
+//   }
+//
+//   url += '&point=$selectedDropLat,$selectedDropLon';
+//
+//   try {
+//     final response = await Dio().get(url);
+//
+//     if (requestId != _routeRequestId) return;
+//
+//     if (response.statusCode == 200 &&
+//         response.data != null &&
+//         response.data['paths'] != null &&
+//         (response.data['paths'] as List).isNotEmpty) {
+//
+//       final route = response.data['paths'][0];
+//
+//       final List coords = route['points']?['coordinates'] ?? [];
+//
+//       if (coords.isEmpty) {
+//         routePointsTraking.clear();
+//         routePointsTraking.refresh();
+//         return;
+//       }
+//
+//       final newRoute = coords.map<LatLng>((p) {
+//         return LatLng(
+//           (p[1] as num).toDouble(),
+//           (p[0] as num).toDouble(),
+//         );
+//       }).toList();
+//
+//       routePointsTraking
+//         ..clear()
+//         ..addAll(newRoute);
+//
+//       routePointsTraking.refresh();
+//       update();
+//     }
+//   } catch (e) {
+//     print("Route error: $e");
+//   }
+// }
 /// ====================================================== set booking
 //   void setBookingRoute(booking) {
 //     /// 🔵 PICKUP
