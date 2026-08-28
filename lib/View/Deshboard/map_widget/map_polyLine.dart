@@ -71,6 +71,7 @@ class _MapScreenState extends State<MapScreen> {
               (pickupLatLng.longitude + dropLatLng.longitude) / 2,
             ),
             initialZoom: 8,
+            maxZoom: 16.7,
             onMapReady: () {
               c.isMapReady = true;
 
@@ -104,7 +105,7 @@ class _MapScreenState extends State<MapScreen> {
               maxZoom: 19,
             ),
 
-            // Polyline
+            /// Polyline
             // Obx(() {
             //   List<LatLng> pointsToShow;
             //   if (c.driverToDropoffPolyline.isNotEmpty) {
@@ -125,30 +126,51 @@ class _MapScreenState extends State<MapScreen> {
             //     ],
             //   );
             // }),
-
+///
+            // Obx(() {
+            //   List<LatLng> pointsToShow;
+            //   if (c.driverToDropoffPolyline.isNotEmpty) {
+            //     pointsToShow = c.driverToDropoffPolyline.toList();
+            //   } else {
+            //     pointsToShow = c.routePoints;
+            //   }
+            //
+            //   if (pointsToShow.length < 2) {
+            //     return const SizedBox();
+            //   }
+            //
+            //   return PolylineLayer(
+            //     polylines: [
+            //       Polyline(
+            //         points: pointsToShow,
+            //         strokeWidth: 4,
+            //         color: Colors.deepPurpleAccent,
+            //       ),
+            //     ],
+            //   );
+            // }),
+/// Purple polyline: Phase 1 + Phase 2 dono mein show ho
             Obx(() {
-              List<LatLng> pointsToShow;
-              if (c.driverToDropoffPolyline.isNotEmpty) {
-                pointsToShow = c.driverToDropoffPolyline.toList();
-              } else {
-                pointsToShow = c.routePoints;
-              }
+              // Phase 2 mein driverToDropoffPolyline use karo
+              // Phase 1 mein routePoints use karo (pickup→drop static route)
+              final List<LatLng> points = c.hasReachedPickup.value
+                  ? c.driverToDropoffPolyline.toList()
+                  : (c.routePoints.length >= 2 ? c.routePoints.toList() : []);
 
-              if (pointsToShow.length < 2) {
+              if (points.length < 2) {
                 return const SizedBox();
               }
 
               return PolylineLayer(
                 polylines: [
                   Polyline(
-                    points: pointsToShow,
-                    strokeWidth: 4,
+                    points: points,
+                    strokeWidth: 5,
                     color: Colors.deepPurpleAccent,
                   ),
                 ],
               );
             }),
-
             MarkerLayer(
               markers: [
                 ///=======================================================   Pick up Marker
@@ -205,51 +227,147 @@ class _MapScreenState extends State<MapScreen> {
 
             /// 🔥 DRIVER → PICKUP POLYLINE (Orange, progressive removal)
             Obx(() {
-              if (c.hasReachedPickup.value || c.driverToPickupPolyline.length < 2) return const SizedBox();
+              if (c.hasReachedPickup.value) {
+                return const SizedBox();
+              }
+
+              final List<LatLng> points =
+              c.driverToPickupPolyline.toList();
+
+              if (points.length < 2) {
+                return const SizedBox();
+              }
 
               return PolylineLayer(
                 polylines: [
                   Polyline(
-                    points: List<LatLng>.from(c.driverToPickupPolyline),
+                    points: points,
                     strokeWidth: 5,
                     color: Colors.orange,
                   ),
                 ],
               );
             }),
+            // Obx(() {
+            //   if (c.hasReachedPickup.value || c.driverToPickupPolyline.length < 2) return const SizedBox();
+            //
+            //   return PolylineLayer(
+            //     polylines: [
+            //       Polyline(
+            //         points: List<LatLng>.from(c.driverToPickupPolyline),
+            //         strokeWidth: 5,
+            //         color: Colors.orange,
+            //       ),
+            //     ],
+            //   );
+            // }),
+///                          car wala obs
+            // Obx(() {
+            //   if (c.driverLat.value == 0.0 || c.driverLng.value == 0.0) return const SizedBox();
+            //
+            //   LatLng rawTarget = LatLng(c.driverLat.value, c.driverLng.value);
+            //
+            //   // 🔥 Phase 1 (Going to Pickup): use Orange route ONLY
+            //   // 🔥 Phase 2 (Trip to Drop-off): use Purple route ONLY
+            //   List<LatLng> activeRoute = [];
+            //   if (!c.hasReachedPickup.value) {
+            //     if (c.driverRoutePoints.isNotEmpty) {
+            //       activeRoute = c.driverRoutePoints;
+            //     } else if (c.driverToPickupPolyline.isNotEmpty) {
+            //       activeRoute = c.driverToPickupPolyline.toList();
+            //     }
+            //   } else if (c.fullTripRoutePoints.isNotEmpty) {
+            //     activeRoute = c.fullTripRoutePoints;
+            //   } else if (c.routePoints.isNotEmpty) {
+            //     activeRoute = c.routePoints;
+            //   }
+            //
+            //   LatLng targetLatLng = rawTarget;
+            //   if (activeRoute.isNotEmpty) {
+            //     targetLatLng = _snapToPolyline(targetLatLng, activeRoute);
+            //   }
+            //
+            //   return AnimatedCarMarker(
+            //     driverLocation: targetLatLng,
+            //     routePoints: activeRoute,
+            //     mapController: mapController,
+            //   );
+            // }),
 
             Obx(() {
-              if (c.driverLat.value == 0.0 || c.driverLng.value == 0.0) return const SizedBox();
+              // ==========================================================
+              // DRIVER GPS VALIDATION
+              // ==========================================================
 
-              LatLng rawTarget = LatLng(c.driverLat.value, c.driverLng.value);
+              if (c.driverLat.value == 0.0 ||
+                  c.driverLng.value == 0.0) {
+                return const SizedBox();
+              }
 
-              // 🔥 Phase 1 (Going to Pickup): use Orange route ONLY
-              // 🔥 Phase 2 (Trip to Drop-off): use Purple route ONLY
+              final LatLng rawDriverPosition = LatLng(
+                c.driverLat.value,
+                c.driverLng.value,
+              );
+
+              // ==========================================================
+              // ACTIVE ROUTE
+              // ==========================================================
+
               List<LatLng> activeRoute = [];
+
+              // ----------------------------------------------------------
+              // PHASE 1: DRIVER -> PICKUP
+              // ----------------------------------------------------------
+
               if (!c.hasReachedPickup.value) {
-                if (c.driverRoutePoints.isNotEmpty) {
-                  activeRoute = c.driverRoutePoints;
-                } else if (c.driverToPickupPolyline.isNotEmpty) {
-                  activeRoute = c.driverToPickupPolyline.toList();
+                if (c.driverRoutePoints.length >= 2) {
+                  activeRoute =
+                      c.driverRoutePoints.toList();
+                } else if (c.driverToPickupPolyline.length >= 2) {
+                  activeRoute =
+                      c.driverToPickupPolyline.toList();
                 }
-              } else if (c.fullTripRoutePoints.isNotEmpty) {
-                activeRoute = c.fullTripRoutePoints;
-              } else if (c.routePoints.isNotEmpty) {
-                activeRoute = c.routePoints;
               }
 
-              LatLng targetLatLng = rawTarget;
-              if (activeRoute.isNotEmpty) {
-                targetLatLng = _snapToPolyline(targetLatLng, activeRoute);
+              // ----------------------------------------------------------
+              // PHASE 2: PICKUP -> DROP
+              // ----------------------------------------------------------
+
+              else {
+                if (c.fullTripRoutePoints.length >= 2) {
+                  activeRoute =
+                      c.fullTripRoutePoints.toList();
+                } else if (c.routePoints.length >= 2) {
+                  activeRoute =
+                      c.routePoints.toList();
+                }
               }
+
+              // ==========================================================
+              // SNAP DRIVER GPS TO ROAD
+              // ==========================================================
+
+              LatLng targetPosition =
+                  rawDriverPosition;
+
+              if (activeRoute.length >= 2) {
+                targetPosition =
+                    _snapToPolyline(
+                      rawDriverPosition,
+                      activeRoute,
+                    );
+              }
+
+              // ==========================================================
+              // ANIMATED CAR
+              // ==========================================================
 
               return AnimatedCarMarker(
-                driverLocation: targetLatLng,
+                driverLocation: targetPosition,
                 routePoints: activeRoute,
                 mapController: mapController,
               );
-            }),
-
+            }), 
             ///                                                       DISTANCE LABEL ON TOP RIGHT
             if (c.routeCenterPoint != null)
               Positioned(
@@ -310,7 +428,7 @@ class _MapScreenState extends State<MapScreen> {
                           carPos = _snapToPolyline(rawTarget, activeRoute);
                         }
 
-                        mapController.move(carPos, 17);
+                        mapController.move(carPos, 16);
                       },
                       child: const Icon(
                         Icons.navigation_rounded,
@@ -391,7 +509,7 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
   // map par car isi visual speed ke around move karegi.
   // ============================================================
 
-  static const double visualSpeedMetersPerSecond = 10.0;
+  static const double visualSpeedMetersPerSecond = 18.0;
 
   // ============================================================
   // GPS update interval
