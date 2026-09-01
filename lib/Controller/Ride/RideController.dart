@@ -753,7 +753,7 @@ class RideController extends GetxController {
     // 🚀 Pehli bar foran hit karo taake driver location aur route bina delay ke load ho
     _hitDriverApi(driverId);
 
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _hitDriverApi(driverId);
     });
   }
