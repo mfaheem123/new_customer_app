@@ -1137,14 +1137,10 @@ List<LatLng> _getPolylinePath(
     snappedStart,
   ];
 
+  // 🛡️ Only traverse forward along polyline.
+  // NEVER loop backwards through indices, which causes the car to spin around and drive in reverse!
   if (startIndex < endIndex) {
     for (int i = startIndex + 1; i <= endIndex; i++) {
-      path.add(
-        polyline[i],
-      );
-    }
-  } else if (startIndex > endIndex) {
-    for (int i = startIndex; i > endIndex; i--) {
       path.add(
         polyline[i],
       );
@@ -1203,8 +1199,9 @@ int _getSegmentIndex(
 
 LatLng _snapToPolyline(
     LatLng point,
-    List<LatLng> polyline,
-    )
+    List<LatLng> polyline, {
+    double maxDistanceSquared = 0.00000008, // ~28 meters squared
+})
 {
   if (polyline.isEmpty) {
     return point;
@@ -1214,32 +1211,20 @@ LatLng _snapToPolyline(
     return polyline.first;
   }
 
-  double minDistance =
-      double.infinity;
+  double minDistance = double.infinity;
+  LatLng closestPoint = polyline.first;
 
-  LatLng closestPoint =
-      polyline.first;
+  for (int i = 0; i < polyline.length - 1; i++) {
+    final LatLng start = polyline[i];
+    final LatLng end = polyline[i + 1];
 
-  for (
-  int i = 0;
-  i < polyline.length - 1;
-  i++
-  ) {
-    final LatLng start =
-    polyline[i];
-
-    final LatLng end =
-    polyline[i + 1];
-
-    final LatLng projected =
-    _projectPointOnSegment(
+    final LatLng projected = _projectPointOnSegment(
       point,
       start,
       end,
     );
 
-    final double distance =
-    _calculateDistanceSquared(
+    final double distance = _calculateDistanceSquared(
       point,
       projected,
     );
@@ -1248,6 +1233,12 @@ LatLng _snapToPolyline(
       minDistance = distance;
       closestPoint = projected;
     }
+  }
+
+  // 🛡️ If driver moved off route (> ~28m, e.g. missed cut or driving past destination),
+  // DO NOT clamp car to the old route or to the drop-off pin!
+  if (minDistance > maxDistanceSquared) {
+    return point;
   }
 
   return closestPoint;

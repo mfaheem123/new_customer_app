@@ -942,27 +942,25 @@ class SwapController extends GetxController {
         if (dist < minDist) minDist = dist;
       }
 
-      // 🔴 If driver deviated from drop-off route (> ~75m), re-fetch new purple route to drop-off
-      if (minDist > _routeDeviationThreshold) {
+      // Distance to drop-off
+      final double distToDrop = (selectedDropLat != 0.0 && selectedDropLon != 0.0)
+          ? _distanceInMeters(newPoint, LatLng(selectedDropLat, selectedDropLon))
+          : double.infinity;
+
+      // 🎯 Near drop-off (< 250m), use a tighter threshold (~25m) so when
+      // driver misses a cut or turn, route re-calculation triggers immediately with forward U-turn
+      final double effectiveThreshold = (distToDrop < 250.0)
+          ? 0.00000006 // ~25 meters
+          : _routeDeviationThreshold; // ~78 meters
+
+      // 🔴 If driver deviated from drop-off route, re-fetch new purple route to drop-off
+      if (minDist > effectiveThreshold) {
         if (_lastDropoffRouteFetchTime == null ||
             DateTime.now().difference(_lastDropoffRouteFetchTime!).inSeconds >= 3) {
-          debugPrint("🔴 Driver route changed after pickup! Re-fetching purple route to drop-off...");
+          debugPrint("🔴 Driver missed cut / deviated near drop-off! Re-fetching route from driver to drop-off...");
           driverLat.value = newLat;
           driverLng.value = newLng;
-
-          // 🔥 FIX: Immediately set polyline from driver → drop-off so it shows correct direction
-          // while async re-fetch happens in background
-          if (selectedDropLat != 0.0 && selectedDropLon != 0.0) {
-            final dropPoint = LatLng(selectedDropLat, selectedDropLon);
-            final tempRoute = [newPoint, dropPoint];
-            fullTripRoutePoints = tempRoute;
-            routePoints = List<LatLng>.from(tempRoute);
-            driverToDropoffPolyline.assignAll(tempRoute);
-            debugPrint("🔄 Temporary polyline set: driver → drop-off (correct direction)");
-          }
-
           fetchDropoffRouteFromDriver();
-          return;
         }
       }
     }
@@ -1189,7 +1187,7 @@ class SwapController extends GetxController {
         routePoints = newPoints;
         fullTripRoutePoints = List<LatLng>.from(newPoints);
         tripRouteSegmentIndex = 0;
-        driverToDropoffPolyline.value = List<LatLng>.from(newPoints);
+        driverToDropoffPolyline.assignAll(newPoints);
 
         // Update distance & estimated time
         double distanceMeters = (route['distance'] as num).toDouble();
