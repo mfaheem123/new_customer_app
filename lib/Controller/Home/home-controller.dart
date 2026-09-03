@@ -888,12 +888,12 @@ class SwapController extends GetxController {
 
     final newPoint = LatLng(newLat, newLng);
 
-    // 🛡️ Check if driver reached pickup point or is near/heading towards dropoff (< 40 meters)
+    // 🛡️ Check if driver reached pickup point (< 15 meters)
     if (!hasReachedPickup.value && selectedPickUPLat != 0.0 && selectedPickUPLon != 0.0) {
       final pickupPoint = LatLng(selectedPickUPLat, selectedPickUPLon);
       double distToPickup = _distanceInMeters(newPoint, pickupPoint);
 
-      if (distToPickup <= 40.0 || (routePoints.isNotEmpty && _distanceInMeters(newPoint, routePoints.first) <= 40.0)) {
+      if (distToPickup <= 15.0) {
         hasReachedPickup.value = true;
         driverToPickupPolyline.clear();
         driverRoutePoints.clear();
@@ -989,7 +989,7 @@ class SwapController extends GetxController {
       );
 
       // Driver reached pickup
-      if (distanceToPickup <= 40.0) {
+      if (distanceToPickup <= 15.0) {
         debugPrint("🟢 DRIVER REACHED PICKUP");
         hasReachedPickup.value = true;
         driverToPickupPolyline.clear();
@@ -1137,8 +1137,9 @@ class SwapController extends GetxController {
 
         driverRoutePoints = newPoints;
         driverRouteSegmentIndex = 0;
-        driverToPickupPolyline.value = List<LatLng>.from(newPoints);
+        driverToPickupPolyline.assignAll(newPoints);
         hasFetchedDriverRoute = true;
+        update(["map"]);
       }
     } catch (e) {
       print("Driver Route error: $e");

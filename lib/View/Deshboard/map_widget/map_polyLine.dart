@@ -351,6 +351,7 @@ class _MapScreenState extends State<MapScreen> {
               // ==========================================================
 
               return AnimatedCarMarker(
+                key: ValueKey("driver_${c.selectedPickUPLat}_${c.selectedPickUPLon}"),
                 driverLocation: targetPosition,
                 routePoints: activeRoute,
                 mapController: mapController,
@@ -491,7 +492,7 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
   // Itna difference movement nahi maana jayega.
   // ============================================================
 
-  static const double gpsMovementToleranceMeters = 2.0;
+  static const double gpsMovementToleranceMeters = 0.8;
 
   // ============================================================
   // State
@@ -503,9 +504,11 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
 
   DateTime? _lastGpsTimestamp;
 
-  int _smoothedGpsIntervalMs = 3000;
+  int _smoothedGpsIntervalMs = 1000;
 
   double _smoothedBearing = 0.0;
+
+  bool _isInitialPlacement = true;
 
   @override
   void initState() {
@@ -530,6 +533,11 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
       [widget.driverLocation],
     ).animate(_controller);
 
+    // 🎯 Set car face in the road direction
+    if (widget.routePoints.length >= 2) {
+      _smoothedBearing = _getRoadBearingAt(widget.driverLocation, widget.routePoints);
+    }
+
     // ==========================================================
     // Every animation frame
     // ==========================================================
@@ -549,11 +557,239 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
     });
   }
 
+  /// 🎯 Helper: Get road bearing at current position so car face always aligns with the road
+  double _getRoadBearingAt(LatLng pos, List<LatLng> route) {
+    if (route.length < 2) return 0.0;
+    int seg = _getSegmentIndex(pos, route);
+    if (seg >= route.length - 1) seg = route.length - 2;
+    return _calculateBearing(route[seg], route[seg + 1]);
+  }
+
   // ============================================================
   // DID UPDATE WIDGET
   //
   // Jab API se new driver LatLng aati hai,
   // parent widget update hota hai aur ye method call hota hai.
+  // ============================================================
+///
+  // @override
+  // void didUpdateWidget(AnimatedCarMarker oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //
+  //   final LatLng newGpsLocation = widget.driverLocation;
+  //
+  //   // 🛡️ Jab new job aati hai, car apni starting jagah still (ruki hui) dikhe
+  //   // aur uska face road ki taraf ho
+  //   if (_isInitialPlacement) {
+  //     _isInitialPlacement = false;
+  //     _lastGpsPosition = newGpsLocation;
+  //     _lastGpsTimestamp = DateTime.now();
+  //
+  //     LatLng snapped = newGpsLocation;
+  //     if (widget.routePoints.length >= 2) {
+  //       snapped = _snapToPolyline(newGpsLocation, widget.routePoints);
+  //       _smoothedBearing = _getRoadBearingAt(snapped, widget.routePoints);
+  //     }
+  //     _positionAnimation = PolylineTween([snapped]).animate(_controller);
+  //     return;
+  //   }
+  //
+  //   // ==========================================================
+  //   // Check if the route has changed (e.g. driver re-routed / deviated)
+  //   // ==========================================================
+  //   final bool routeChanged = widget.routePoints.length != oldWidget.routePoints.length ||
+  //       (widget.routePoints.isNotEmpty && oldWidget.routePoints.isNotEmpty &&
+  //           (widget.routePoints.first != oldWidget.routePoints.first ||
+  //            widget.routePoints.last != oldWidget.routePoints.last));
+  //
+  //   // 🎯 Jab route change ho, to gari foran naye polyline par apne LatLng par switch kare
+  //   // ghoom ya loop kar ke na aaye, direct naye polyline par baithe aur aage move kare
+  //   if (routeChanged) {
+  //     _lastGpsPosition = newGpsLocation;
+  //     _lastGpsTimestamp = DateTime.now();
+  //
+  //     LatLng snapped = newGpsLocation;
+  //     if (widget.routePoints.length >= 2) {
+  //       snapped = _snapToPolyline(newGpsLocation, widget.routePoints);
+  //       _smoothedBearing = _getRoadBearingAt(snapped, widget.routePoints);
+  //     }
+  //     _previousAnimatedPosition = snapped;
+  //     _positionAnimation = PolylineTween([snapped]).animate(_controller);
+  //     return;
+  //   }
+  //
+  //   final LatLng? previousGps = _lastGpsPosition;
+  //
+  //   if (previousGps != null) {
+  //     final double gpsDistance = _distanceInMeters(
+  //       previousGps,
+  //       newGpsLocation,
+  //     );
+  //
+  //     debugPrint(
+  //       "🚗 GPS UPDATE\n"
+  //           "Previous: ${previousGps.latitude}, ${previousGps.longitude}\n"
+  //           "New: ${newGpsLocation.latitude}, ${newGpsLocation.longitude}\n"
+  //           "Distance: ${gpsDistance.toStringAsFixed(2)} meters",
+  //     );
+  //
+  //     // ========================================================
+  //     // Driver same location par hai
+  //     // ========================================================
+  //     if (gpsDistance < gpsMovementToleranceMeters) {
+  //       if (!_controller.isAnimating) {
+  //         _controller.stop();
+  //       }
+  //       _lastGpsPosition = newGpsLocation;
+  //       return;
+  //     }
+  //   }
+  //
+  //   // ==========================================================
+  //   // Last GPS position update
+  //   // ==========================================================
+  //
+  //   _lastGpsPosition = newGpsLocation;
+  //
+  //   // ==========================================================
+  //   // IMPORTANT:
+  //   //
+  //   // Animation ke beech mein agar new GPS aa gayi hai,
+  //   // to RAW previous GPS se start nahi karna.
+  //   //
+  //   // Current animated car position se continue karna hai.
+  //   // ==========================================================
+  //
+  //   LatLng startPosition;
+  //
+  //   if (_controller.isAnimating) {
+  //     startPosition = _positionAnimation.value;
+  //   } else {
+  //     startPosition = _positionAnimation.value;
+  //
+  //     // Agar animation stopped thi aur valid previous position hai
+  //     if (startPosition.latitude == 0.0 &&
+  //         startPosition.longitude == 0.0) {
+  //       startPosition = oldWidget.driverLocation;
+  //     }
+  //   }
+  //
+  //   // ==========================================================
+  //   // Route par current position snap karo
+  //   // ==========================================================
+  //
+  //   if (widget.routePoints.length >= 2) {
+  //     startPosition = _snapToPolyline(
+  //       startPosition,
+  //       widget.routePoints,
+  //     );
+  //   }
+  //
+  //   // ==========================================================
+  //   // New GPS target bhi route par snap hoga
+  //   // ==========================================================
+  //
+  //   LatLng targetPosition = newGpsLocation;
+  //
+  //   if (widget.routePoints.length >= 2) {
+  //     targetPosition = _snapToPolyline(
+  //       newGpsLocation,
+  //       widget.routePoints,
+  //     );
+  //   }
+  //
+  //   // ==========================================================
+  //   // Current animated position → new GPS position
+  //   // ==========================================================
+  //
+  //   final List<LatLng> path = _getPolylinePath(
+  //     startPosition,
+  //     targetPosition,
+  //     widget.routePoints,
+  //   );
+  //
+  //   if (path.length < 2) {
+  //     debugPrint(
+  //       "⚠️ Animation path invalid",
+  //     );
+  //     return;
+  //   }
+  //
+  //   final PolylineTween tween = PolylineTween(path);
+  //
+  //   // ==========================================================
+  //   // Calculate actual distance in meters
+  //   // ==========================================================
+  //
+  //   final double distanceMeters =
+  //   _calculatePathDistanceMeters(path);
+  //
+  //   if (distanceMeters <= 0.5) {
+  //     return;
+  //   }
+  //
+  //   // ==========================================================
+  //   // Dynamic Speed & Duration:
+  //   // Track exact time elapsed between consecutive GPS updates.
+  //   // Animation duration dynamically matches how long the driver took
+  //   // to drive this distance in real life:
+  //   // - Fast driving => Fast car animation
+  //   // - Slow driving in traffic => Slow car animation
+  //   // ==========================================================
+  //
+  //   final DateTime now = DateTime.now();
+  //   if (_lastGpsTimestamp != null) {
+  //     final int elapsedMs = now.difference(_lastGpsTimestamp!).inMilliseconds;
+  //     if (elapsedMs >= 200 && elapsedMs <= 4000) {
+  //       _smoothedGpsIntervalMs = (_smoothedGpsIntervalMs * 0.2 + elapsedMs * 0.8).round();
+  //     }
+  //   }
+  //   _lastGpsTimestamp = now;
+  //
+  //   // 🎯 Matched to actual 1-second GPS stream from driver:
+  //   // Car moves continuously without any freeze, lag, or stutter!
+  //   ///====================================================================     dURATION
+  //
+  //   // int durationMs = _smoothedGpsIntervalMs.clamp(800, 2000);
+  //   int durationMs = (_smoothedGpsIntervalMs * 1.5).round().clamp(800, 2500);
+  //
+  //   // const int durationMs = 2000;
+  //
+  //   _controller.duration = Duration(milliseconds: durationMs,);
+  //
+  //   final double speedKmph = (distanceMeters / (durationMs / 1000.0)) * 3.6;
+  //
+  //   debugPrint(
+  //     "🎬 CAR ANIMATION\n"
+  //     "Distance: ${distanceMeters.toStringAsFixed(2)} m\n"
+  //     "Calculated Speed: ${speedKmph.toStringAsFixed(1)} km/h\n"
+  //     "Duration: ${durationMs} ms",
+  //   );
+  //
+  //   // ==========================================================
+  //   // New animation
+  //   //
+  //   // Current animated position se start hogi.
+  //   // ==========================================================
+  //
+  //   _positionAnimation = tween.animate(
+  //     CurvedAnimation(
+  //       parent: _controller,
+  //       curve: Curves.linear,
+  //     ),
+  //   );
+  //
+  //   // ==========================================================
+  //   // Continue animation
+  //   // ==========================================================
+  //
+  //   _controller.forward(from: 0.0);
+  // }
+
+
+
+  // ============================================================
+  // TOTAL PATH DISTANCE IN METERS
   // ============================================================
 
   @override
@@ -562,10 +798,40 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
 
     final LatLng newGpsLocation = widget.driverLocation;
 
-    // ==========================================================
-    // First check:
-    // Kya new GPS actually different hai?
-    // ==========================================================
+    // ============================================================
+    // INITIAL POSITION
+    // ============================================================
+
+    if (_isInitialPlacement) {
+      _isInitialPlacement = false;
+
+      LatLng initialPosition = newGpsLocation;
+
+      if (widget.routePoints.length >= 2) {
+        initialPosition = _snapToPolyline(
+          newGpsLocation,
+          widget.routePoints,
+        );
+
+        _smoothedBearing = _getRoadBearingAt(
+          initialPosition,
+          widget.routePoints,
+        );
+      }
+
+      _lastGpsPosition = newGpsLocation;
+      _lastGpsTimestamp = DateTime.now();
+
+      _positionAnimation = PolylineTween([
+        initialPosition,
+      ]).animate(_controller);
+
+      return;
+    }
+
+    // ============================================================
+    // GPS DISTANCE
+    // ============================================================
 
     final LatLng? previousGps = _lastGpsPosition;
 
@@ -577,71 +843,42 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
 
       debugPrint(
         "🚗 GPS UPDATE\n"
-            "Previous: ${previousGps.latitude}, ${previousGps.longitude}\n"
-            "New: ${newGpsLocation.latitude}, ${newGpsLocation.longitude}\n"
             "Distance: ${gpsDistance.toStringAsFixed(2)} meters",
       );
 
-      // ========================================================
-      // Driver same location par hai
-      // ========================================================
-
       if (gpsDistance < gpsMovementToleranceMeters) {
-        debugPrint(
-          "🛑 DRIVER STOPPED / NO SIGNIFICANT MOVEMENT",
-        );
-
-        // Animation ko current position par stop karo
-        _controller.stop();
-
-        // Last GPS update save karo
         _lastGpsPosition = newGpsLocation;
-
         return;
       }
-
-      // ========================================================
-      // Driver moved
-      // ========================================================
-
-      debugPrint(
-        "🚗 DRIVER MOVING → "
-            "${gpsDistance.toStringAsFixed(2)} meters",
-      );
     }
 
-    // ==========================================================
-    // Last GPS position update
-    // ==========================================================
+    // ============================================================
+    // GPS INTERVAL
+    // ============================================================
 
-    _lastGpsPosition = newGpsLocation;
+    final DateTime now = DateTime.now();
 
-    // ==========================================================
-    // IMPORTANT:
-    //
-    // Animation ke beech mein agar new GPS aa gayi hai,
-    // to RAW previous GPS se start nahi karna.
-    //
-    // Current animated car position se continue karna hai.
-    // ==========================================================
+    int gpsInterval = _smoothedGpsIntervalMs;
 
-    LatLng startPosition;
+    if (_lastGpsTimestamp != null) {
+      final int elapsedMs =
+          now.difference(_lastGpsTimestamp!).inMilliseconds;
 
-    if (_controller.isAnimating) {
-      startPosition = _positionAnimation.value;
-    } else {
-      startPosition = _positionAnimation.value;
-
-      // Agar animation stopped thi aur valid previous position hai
-      if (startPosition.latitude == 0.0 &&
-          startPosition.longitude == 0.0) {
-        startPosition = oldWidget.driverLocation;
+      if (elapsedMs >= 200 && elapsedMs <= 4000) {
+        gpsInterval = elapsedMs;
       }
     }
 
-    // ==========================================================
-    // Route par current position snap karo
-    // ==========================================================
+    _lastGpsTimestamp = now;
+    _lastGpsPosition = newGpsLocation;
+
+    // ============================================================
+    // CURRENT CAR POSITION
+    //
+    // Animation ke beech mein ho to EXACT current position lo.
+    // ============================================================
+
+    LatLng startPosition = _positionAnimation.value;
 
     if (widget.routePoints.length >= 2) {
       startPosition = _snapToPolyline(
@@ -650,9 +887,9 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
       );
     }
 
-    // ==========================================================
-    // New GPS target bhi route par snap hoga
-    // ==========================================================
+    // ============================================================
+    // NEW TARGET
+    // ============================================================
 
     LatLng targetPosition = newGpsLocation;
 
@@ -663,9 +900,22 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
       );
     }
 
-    // ==========================================================
-    // Current animated position → new GPS position
-    // ==========================================================
+    // ============================================================
+    // DISTANCE
+    // ============================================================
+
+    final double distanceMeters = _distanceInMeters(
+      startPosition,
+      targetPosition,
+    );
+
+    if (distanceMeters <= 0.5) {
+      return;
+    }
+
+    // ============================================================
+    // BUILD ROUTE PATH
+    // ============================================================
 
     final List<LatLng> path = _getPolylinePath(
       startPosition,
@@ -674,63 +924,26 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
     );
 
     if (path.length < 2) {
-      debugPrint(
-        "⚠️ Animation path invalid",
-      );
       return;
     }
+
+    // ============================================================
+    // CREATE NEW TWEEN
+    // ============================================================
 
     final PolylineTween tween = PolylineTween(path);
 
-    // ==========================================================
-    // Calculate actual distance in meters
-    // ==========================================================
+    // ============================================================
+    // IMPORTANT
+    //
+    // Animation duration GPS interval ke barabar.
+    // ============================================================
 
-    final double distanceMeters =
-    _calculatePathDistanceMeters(path);
-
-    if (distanceMeters <= 0.5) {
-      return;
-    }
-
-    // ==========================================================
-    // Dynamic Speed & Duration:
-    // Track exact time elapsed between consecutive GPS updates.
-    // Animation duration dynamically matches how long the driver took
-    // to drive this distance in real life:
-    // - Fast driving => Fast car animation
-    // - Slow driving in traffic => Slow car animation
-    // ==========================================================
-
-    final DateTime now = DateTime.now();
-    if (_lastGpsTimestamp != null) {
-      final int elapsedMs = now.difference(_lastGpsTimestamp!).inMilliseconds;
-      if (elapsedMs >= 500 && elapsedMs <= 10000) {
-        _smoothedGpsIntervalMs = (_smoothedGpsIntervalMs * 0.3 + elapsedMs * 0.7).round();
-      }
-    }
-    _lastGpsTimestamp = now;
-
-    int durationMs = _smoothedGpsIntervalMs.clamp(1200, 5000);
+    final int durationMs = gpsInterval.clamp(900, 1200);
 
     _controller.duration = Duration(
       milliseconds: durationMs,
     );
-
-    final double speedKmph = (distanceMeters / (durationMs / 1000.0)) * 3.6;
-
-    debugPrint(
-      "🎬 CAR ANIMATION\n"
-      "Distance: ${distanceMeters.toStringAsFixed(2)} m\n"
-      "Calculated Speed: ${speedKmph.toStringAsFixed(1)} km/h\n"
-      "Duration: ${durationMs} ms",
-    );
-
-    // ==========================================================
-    // New animation
-    //
-    // Current animated position se start hogi.
-    // ==========================================================
 
     _positionAnimation = tween.animate(
       CurvedAnimation(
@@ -739,62 +952,17 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
       ),
     );
 
-    // ==========================================================
-    // Continue animation
-    // ==========================================================
+    // ============================================================
+    // CONTINUOUS ANIMATION
+    //
+    // IMPORTANT:
+    // Controller ko restart nahi karna.
+    // ============================================================
 
-    _controller.forward(from: 0.0);
+    if (!_controller.isAnimating) {
+      _controller.forward(from: 0.0);
+    }
   }
-
-  // ============================================================
-  // DISTANCE IN METERS
-  // Haversine formula
-  // ============================================================
-
-  double _distanceInMeters(
-      LatLng a,
-      LatLng b,
-      ) {
-    const double earthRadius = 6371000.0;
-
-    final double lat1 =
-        a.latitude * math.pi / 180.0;
-
-    final double lat2 =
-        b.latitude * math.pi / 180.0;
-
-    final double deltaLat =
-        (b.latitude - a.latitude) *
-            math.pi /
-            180.0;
-
-    final double deltaLng =
-        (b.longitude - a.longitude) *
-            math.pi /
-            180.0;
-
-    final double h =
-        math.sin(deltaLat / 2) *
-            math.sin(deltaLat / 2) +
-            math.cos(lat1) *
-                math.cos(lat2) *
-                math.sin(deltaLng / 2) *
-                math.sin(deltaLng / 2);
-
-    final double c =
-        2 *
-            math.atan2(
-              math.sqrt(h),
-              math.sqrt(1 - h),
-            );
-
-    return earthRadius * c;
-  }
-
-  // ============================================================
-  // TOTAL PATH DISTANCE IN METERS
-  // ============================================================
-
   double _calculatePathDistanceMeters(
       List<LatLng> path,
       ) {
@@ -913,14 +1081,17 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
             }
 
             // =================================================
-            // Smooth turning
+            // Smooth turning (tracks road curves promptly)
             // =================================================
 
             _smoothedBearing =
                 (_smoothedBearing +
-                    delta * 0.15) %
+                    delta * 0.35) %
                     360.0;
           }
+        } else if (widget.routePoints.length >= 2) {
+          // If still / not moving, keep car face aligned with the road segment
+          _smoothedBearing = _getRoadBearingAt(currentPosition, widget.routePoints);
         }
 
         _previousAnimatedPosition =
@@ -1137,9 +1308,8 @@ List<LatLng> _getPolylinePath(
     snappedStart,
   ];
 
-  // 🛡️ Only traverse forward along polyline.
-  // NEVER loop backwards through indices, which causes the car to spin around and drive in reverse!
   if (startIndex < endIndex) {
+    // Normal forward motion along polyline: follows every curve and corner
     for (int i = startIndex + 1; i <= endIndex; i++) {
       path.add(
         polyline[i],
@@ -1199,9 +1369,8 @@ int _getSegmentIndex(
 
 LatLng _snapToPolyline(
     LatLng point,
-    List<LatLng> polyline, {
-    double maxDistanceSquared = 0.00000008, // ~28 meters squared
-})
+    List<LatLng> polyline,
+)
 {
   if (polyline.isEmpty) {
     return point;
@@ -1233,12 +1402,6 @@ LatLng _snapToPolyline(
       minDistance = distance;
       closestPoint = projected;
     }
-  }
-
-  // 🛡️ If driver moved off route (> ~28m, e.g. missed cut or driving past destination),
-  // DO NOT clamp car to the old route or to the drop-off pin!
-  if (minDistance > maxDistanceSquared) {
-    return point;
   }
 
   return closestPoint;
@@ -1315,4 +1478,28 @@ double _calculateDistanceSquared(
 
   return dLat * dLat +
       dLng * dLng;
+}
+
+
+// ============================================================================
+// DISTANCE IN METERS (Haversine formula)
+// ============================================================================
+
+double _distanceInMeters(
+    LatLng a,
+    LatLng b,
+) {
+  const double earthRadius = 6371000.0;
+
+  final double lat1 = a.latitude * math.pi / 180.0;
+  final double lat2 = b.latitude * math.pi / 180.0;
+  final double deltaLat = (b.latitude - a.latitude) * math.pi / 180.0;
+  final double deltaLng = (b.longitude - a.longitude) * math.pi / 180.0;
+
+  final double h = math.sin(deltaLat / 2) * math.sin(deltaLat / 2) +
+      math.cos(lat1) * math.cos(lat2) * math.sin(deltaLng / 2) * math.sin(deltaLng / 2);
+
+  final double c = 2 * math.atan2(math.sqrt(h), math.sqrt(1 - h));
+
+  return earthRadius * c;
 }

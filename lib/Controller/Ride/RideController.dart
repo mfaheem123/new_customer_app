@@ -801,8 +801,6 @@ class RideController extends GetxController {
 
         String statusStr = bookingStatus.value.trim().toLowerCase();
         if (statusStr == "arrived" ||
-            statusStr == "on route" ||
-            statusStr == "onroute" ||
             statusStr == "picked up" ||
             statusStr == "pickedup" ||
             statusStr == "started" ||
