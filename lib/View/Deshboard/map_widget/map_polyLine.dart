@@ -80,15 +80,9 @@ class _MapScreenState extends State<MapScreen> {
               (pickupLatLng.latitude + dropLatLng.latitude) / 2,
               (pickupLatLng.longitude + dropLatLng.longitude) / 2,
             ),
-<<<<<<< HEAD
             initialZoom: 12,
             minZoom: 3,
             maxZoom: 18,
-=======
-            initialZoom: 13,
-            minZoom: 11.5,
-            maxZoom: 16.7,
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
             onMapReady: () {
               c.isMapReady = true;
               Future.delayed(const Duration(milliseconds: 300), () {
@@ -126,7 +120,7 @@ class _MapScreenState extends State<MapScreen> {
             //     ],
             //   );
             // }),
-///
+            ///
             // Obx(() {
             //   List<LatLng> pointsToShow;
             //   if (c.driverToDropoffPolyline.isNotEmpty) {
@@ -259,7 +253,7 @@ class _MapScreenState extends State<MapScreen> {
             //     ],
             //   );
             // }),
-///                          car wala obs
+            ///                          car wala obs
             // Obx(() {
             //   if (c.driverLat.value == 0.0 || c.driverLng.value == 0.0) return const SizedBox();
             //
@@ -340,9 +334,9 @@ class _MapScreenState extends State<MapScreen> {
 
               if (activeRoute.length >= 2) {
                 targetPosition = _snapToPolyline(
-                      rawDriverPosition,
-                      activeRoute,
-                    );
+                  rawDriverPosition,
+                  activeRoute,
+                );
               }
 
               // ==========================================================
@@ -355,7 +349,7 @@ class _MapScreenState extends State<MapScreen> {
                 routePoints: activeRoute,
                 mapController: mapController,
               );
-            }), 
+            }),
             ///                                                       DISTANCE LABEL ON TOP RIGHT
             if (c.routeCenterPoint != null)
               Positioned(
@@ -479,11 +473,7 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
   // Itna difference movement nahi maana jayega.
   // ============================================================
 
-<<<<<<< HEAD
   static const double gpsMovementToleranceMeters = 0.4;
-=======
-  static const double gpsMovementToleranceMeters = 0.8;
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
 
   // ============================================================
   // State
@@ -495,10 +485,7 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
 
   DateTime? _lastGpsTimestamp;
 
-<<<<<<< HEAD
   // ignore: prefer_final_fields
-=======
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
   int _smoothedGpsIntervalMs = 1000;
 
   double _smoothedBearing = 0.0;
@@ -566,7 +553,7 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
   // Jab API se new driver LatLng aati hai,
   // parent widget update hota hai aur ye method call hota hai.
   // ============================================================
-///
+  ///
   // @override
   // void didUpdateWidget(AnimatedCarMarker oldWidget) {
   //   super.didUpdateWidget(oldWidget);
@@ -802,10 +789,7 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
 
       LatLng initialPosition = newGpsLocation;
 
-<<<<<<< HEAD
       // Snap to the active route (routePoints passed from parent Obx)
-=======
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
       if (widget.routePoints.length >= 2) {
         initialPosition = _snapToPolyline(
           newGpsLocation,
@@ -825,7 +809,6 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
         initialPosition,
       ]).animate(_controller);
 
-<<<<<<< HEAD
       setState(() {});
       return;
     }
@@ -840,10 +823,10 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
 
     final bool routeChanged =
         widget.routePoints.length != oldWidget.routePoints.length ||
-        (widget.routePoints.isNotEmpty &&
-            oldWidget.routePoints.isNotEmpty &&
-            (widget.routePoints.first != oldWidget.routePoints.first ||
-             widget.routePoints.last  != oldWidget.routePoints.last));
+            (widget.routePoints.isNotEmpty &&
+                oldWidget.routePoints.isNotEmpty &&
+                (widget.routePoints.first != oldWidget.routePoints.first ||
+                    widget.routePoints.last  != oldWidget.routePoints.last));
 
     if (routeChanged) {
       // Puri animation band karo — ghoomna band
@@ -868,8 +851,6 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
           PolylineTween([snappedPos]).animate(_controller);
 
       setState(() {});
-=======
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
       return;
     }
 
@@ -915,17 +896,6 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
 
     _lastGpsTimestamp = now;
     _lastGpsPosition = newGpsLocation;
-<<<<<<< HEAD
-=======
-
-    // ============================================================
-    // CURRENT CAR POSITION
-    //
-    // Animation ke beech mein ho to EXACT current position lo.
-    // ============================================================
-
-    LatLng startPosition = _positionAnimation.value;
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
 
     // ============================================================
     // CURRENT CAR POSITION
@@ -977,20 +947,12 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
       targetPosition,
     );
 
-<<<<<<< HEAD
     if (distanceMeters <= 0.2) {
-=======
-    if (distanceMeters <= 0.5) {
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
       return;
     }
 
     // ============================================================
-<<<<<<< HEAD
     // BUILD ROUTE PATH (along the ACTIVE polyline, not straight line)
-=======
-    // BUILD ROUTE PATH
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
     // ============================================================
 
     final List<LatLng> path = _getPolylinePath(
@@ -1032,41 +994,14 @@ class _AnimatedCarMarkerState extends State<AnimatedCarMarker>
     // CONTINUOUS ANIMATION
     //
     // IMPORTANT:
-<<<<<<< HEAD
     // Har GPS update par animation restart karo from 0.
     // startPosition already current animated position hai,
     // isliye car smooth A→B→C→D chalti rahe gi bina ruke.
-=======
-    // Controller ko restart nahi karna.
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
     // ============================================================
 
-    if (!_controller.isAnimating) {
-      _controller.forward(from: 0.0);
-    }
+    _controller.forward(from: 0.0);
   }
-<<<<<<< HEAD
 
-=======
-  double _calculatePathDistanceMeters(
-      List<LatLng> path,
-      ) {
-    if (path.length < 2) {
-      return 0.0;
-    }
-
-    double totalDistance = 0.0;
-
-    for (int i = 0; i < path.length - 1; i++) {
-      totalDistance += _distanceInMeters(
-        path[i],
-        path[i + 1],
-      );
-    }
-
-    return totalDistance;
-  }
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
 
   // ============================================================
   // BEARING
@@ -1363,7 +1298,6 @@ List<LatLng> _getPolylinePath(
     return [start, polyline.first, end];
   }
 
-<<<<<<< HEAD
   final int startIndex = _getSegmentIndex(start, polyline);
   final int endIndex   = _getSegmentIndex(end, polyline);
 
@@ -1390,44 +1324,6 @@ List<LatLng> _getPolylinePath(
   }
 
   path.add(snappedEnd);
-=======
-  final int startIndex = _getSegmentIndex(
-    start,
-    polyline,
-  );
-
-  final int endIndex = _getSegmentIndex(
-    end,
-    polyline,
-  );
-
-  final LatLng snappedStart = _snapToPolyline(
-    start,
-    polyline,
-  );
-
-  final LatLng snappedEnd = _snapToPolyline(
-    end,
-    polyline,
-  );
-
-  final List<LatLng> path = [
-    snappedStart,
-  ];
-
-  if (startIndex < endIndex) {
-    // Normal forward motion along polyline: follows every curve and corner
-    for (int i = startIndex + 1; i <= endIndex; i++) {
-      path.add(
-        polyline[i],
-      );
-    }
-  }
-
-  path.add(
-    snappedEnd,
-  );
->>>>>>> 47c9b03e7c16e688e43e4d07536a434a85f7293a
 
   return path;
 }
@@ -1478,7 +1374,7 @@ int _getSegmentIndex(
 LatLng _snapToPolyline(
     LatLng point,
     List<LatLng> polyline,
-)
+    )
 {
   if (polyline.isEmpty) {
     return point;
@@ -1596,7 +1492,7 @@ double _calculateDistanceSquared(
 double _distanceInMeters(
     LatLng a,
     LatLng b,
-) {
+    ) {
   const double earthRadius = 6371000.0;
 
   final double lat1 = a.latitude * math.pi / 180.0;
