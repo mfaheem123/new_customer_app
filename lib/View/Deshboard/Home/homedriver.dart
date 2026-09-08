@@ -8,16 +8,22 @@ import 'package:get/get.dart';
 import '../../Widgets/elevat_button.dart';
 import '../../profile/controller/profile_controller.dart';
 
-class HomeDriver extends StatelessWidget {
+class HomeDriver extends StatefulWidget {
   HomeDriver({super.key});
 
+  @override
+  State<HomeDriver> createState() => _HomeDriverState();
+}
+
+class _HomeDriverState extends State<HomeDriver> {
   final homeC = Get.isRegistered<SwapController>()
       ? Get.find<SwapController>()
       : Get.put(SwapController());
+
+
   final profileController = Get.isRegistered<profileModelController>()
       ? Get.find<profileModelController>()
       : Get.put(profileModelController());
-
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +108,15 @@ class HomeDriver extends StatelessWidget {
                                       onChanged: (v) {
                                         homeC.isPickupEmpty.value = v.isEmpty;
                                         homeC.pickupLocation(v);
+
+                                        // ✈️ Agar pickup text mein airport/A H ho to fields show karo
+                                        final lower = v.toLowerCase();
+                                        if (lower.contains('airport') || lower.contains('a h')) {
+                                          homeC.isAirportPickup.value = true;
+                                        } else if (homeC.isAirportPickup.value) {
+                                          // Sirf tab reset karo jab manually typed tha (list se select nahi)
+                                          homeC.isAirportPickup.value = false;
+                                        }
                                       },
                                       onTap: () {
 
@@ -112,7 +127,71 @@ class HomeDriver extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 12),
 
+                                  /// ✈️ AIRPORT FIELDS — arrival time & flight number
+                                  Obx(() {
+                                    if (!homeC.isAirportPickup.value) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return Column(
+                                      children: [
+
+
+
+                                        /// FLIGHT NUMBER
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 25.0),
+                                          child: CustomTextField(
+                                            controller: homeC.flightNumberController,
+                                            hintText: "Flight Number (e.g. BA123)",
+                                            borderRadius: 20,
+                                            textCapitalization: TextCapitalization.characters,
+                                            prefixIcon: Icon(
+                                              Icons.flight_rounded,
+                                              size: 18,
+                                              color: CustomColor.textField_Icon_Color,
+                                            ),
+                                            suffixIcon: InkWell(
+                                              onTap: () => homeC.flightNumberController.clear(),
+                                              child: Icon(
+                                                Icons.close,
+                                                size: 18,
+                                                color: CustomColor.textField_Icon_Color,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+
+                                        /// ARRIVAL TIME
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 25.0),
+                                          child: CustomTextField(
+                                            controller: homeC.arrivalTimeController,
+                                            hintText: "Arrival From (e.g. 14:30)",
+                                            borderRadius: 20,
+                                            prefixIcon: Icon(
+                                              Icons.access_time_rounded,
+                                              size: 18,
+                                              color: CustomColor.textField_Icon_Color,
+                                            ),
+                                            suffixIcon: InkWell(
+                                              onTap: () => homeC.arrivalTimeController.clear(),
+                                              child: Icon(
+                                                Icons.close,
+                                                size: 18,
+                                                color: CustomColor.textField_Icon_Color,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 12),
+                                      ],
+                                    );
+                                  }),
+
                                   /// VIA FIELDS
+
                                   Obx(
                                     () => Column(
                                       children: [

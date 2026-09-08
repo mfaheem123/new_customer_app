@@ -12,6 +12,8 @@ import '../Widgets/text_button.dart';
 import '../profile/controller/profile_controller.dart';
 import 'booking_confirmation_screen.dart';
 import 'ridesearchscreen.dart';
+import '../Deshboard/Home/drivernotes_alert.dart';
+import '../Deshboard/Home/child_seat_dialog.dart';
 
 class RideInfoScreen extends StatefulWidget {
   const RideInfoScreen({super.key});
@@ -26,6 +28,10 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
   final rideController = Get.isRegistered<RideController>()
       ? Get.find<RideController>()
       : Get.put(RideController());
+
+  final homeC = Get.isRegistered<SwapController>()
+      ? Get.find<SwapController>()
+      : Get.put(SwapController());
 
   @override
   void initState() {
@@ -283,7 +289,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                                         style:
                                                             AppTextStyles.regular(
                                                               weight: FontWeight.bold,
-                                                              size: 16,
+                                                              size: 14,
                                                             ),
                                                       ),
                                                       Text(
@@ -338,7 +344,7 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                               topRight: Radius.circular(30),
                             ),
                           ),
-                          height: 350,
+                          height: 470,
                           width: double.infinity,
                           child: SingleChildScrollView(
                             child: Column(
@@ -639,7 +645,69 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
                                   ),
                                 ),
 
-                                const SizedBox(height: 35),
+                                const SizedBox(height: 20),
+
+                                // ========= Child Seat / Driver Notes / Cash Row ==========
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: IntrinsicHeight(
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+
+                                        // ------ Child Seat ------
+                                        Expanded(
+                                          child: _ScheduleOptionButton(
+                                            icon: Icons.child_friendly_rounded,
+                                            label: 'Child Seat',
+                                            subLabel: 'Add Child Seat',
+                                            onTap: () {
+                                              showChildSeatDialog(context);
+                                            },
+                                          ),
+                                        ),
+
+                                        const SizedBox(width: 10),
+
+                                        // ------ Driver Notes ------
+                                        Expanded(
+                                          child: _ScheduleOptionButton(
+                                            icon: Icons.description_outlined,
+                                            label: 'Driver Notes',
+                                            subLabel: 'Add Note',
+                                            onTap: () {
+                                              showDriverNotesDialog(context);
+                                            },
+                                          ),
+                                        ),
+
+                                        const SizedBox(width: 10),
+
+                                        // ------ Cash / Payment ------
+                                        Expanded(
+                                          child: _ScheduleOptionButton(
+                                            icon: Icons.account_balance_wallet_outlined,
+                                            label: 'Cash',
+                                            subLabel: 'Payment',
+                                            onTap: () {
+                                              // Get.bottomSheet(
+                                              //   const _PaymentBottomSheet(),
+                                              //   isScrollControlled: true,
+                                              //   ignoreSafeArea: false,
+                                              //   backgroundColor: Colors.transparent,
+                                              //   enterBottomSheetDuration: const Duration(milliseconds: 250),
+                                              //   exitBottomSheetDuration: const Duration(milliseconds: 200),
+                                              // );
+                                            },
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 18),
 
                                 // ========================================================== Book Ride Button
                                 SizedBox(
@@ -877,6 +945,437 @@ class _RideInfoScreenState extends State<RideInfoScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ScheduleBottomSheet ma use hone wala option button widget
+/// image ma Child Seat, Driver Notes, Cash jaisa
+class _ScheduleOptionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String subLabel;
+  final VoidCallback onTap;
+
+  const _ScheduleOptionButton({
+    required this.icon,
+    required this.label,
+    required this.subLabel,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.35),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.12),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon with green "+" badge
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white70,
+                    size: 22,
+                  ),
+                ),
+                // Green "+" badge — top right
+                Positioned(
+                  top: -4,
+                  right: -4,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF34A853), // green
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 11,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Main label
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.small(
+                size: 12,
+                weight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 2),
+            // Sub label
+            Text(
+              subLabel,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.small(
+                size: 10,
+                color: const Color(0xFF34A853),
+                weight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// ─────────────────────────────────────────────────────────────────
+/// Payment BottomSheet — image jaisi card payment form
+/// Driver Notes jaisi dark purple gradient theme
+/// ─────────────────────────────────────────────────────────────────
+class _PaymentBottomSheet extends StatefulWidget {
+  const _PaymentBottomSheet();
+
+  @override
+  State<_PaymentBottomSheet> createState() => _PaymentBottomSheetState();
+}
+
+class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
+  final _cardNumberCtrl = TextEditingController();
+  final _mmyyCtrl = TextEditingController();
+  final _cvcCtrl = TextEditingController();
+  final _countryCtrl = TextEditingController(text: 'United Kingdom');
+  final _postalCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _cardNumberCtrl.dispose();
+    _mmyyCtrl.dispose();
+    _cvcCtrl.dispose();
+    _countryCtrl.dispose();
+    _postalCtrl.dispose();
+    super.dispose();
+  }
+
+  // Card number format: XXXX XXXX XXXX XXXX
+  String _formatCardNumber(String input) {
+    final digits = input.replaceAll(' ', '');
+    final buffer = StringBuffer();
+    for (int i = 0; i < digits.length; i++) {
+      if (i > 0 && i % 4 == 0) buffer.write(' ');
+      buffer.write(digits[i]);
+    }
+    return buffer.toString();
+  }
+
+  // MM/YY format
+  String _formatMMYY(String input) {
+    final digits = input.replaceAll('/', '');
+    if (digits.length >= 3) {
+      return '${digits.substring(0, 2)}/${digits.substring(2)}';
+    }
+    return input;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    return Container(
+      decoration: const BoxDecoration(
+        color: CustomColor.Container_Colors,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      // Shrink to content + keyboard height only
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.92,
+      ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(20, 16, 20, bottomInset > 0 ? bottomInset + 12 : 28),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            // ── Drag handle ──
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // ── Header row ──
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Add card',
+                    style: AppTextStyles.heading(
+                      size: 22,
+                      weight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Get.back(),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.close, color: Colors.white70, size: 18),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // ── Card Information ──
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Card information',
+                  style: AppTextStyles.small(
+                    // color: const Color.fromARGB(255, 180, 120, 220),
+                    color: const Color(0xFF34A853),
+                    weight: FontWeight.w600,
+                    size: 11,
+                  ),
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.camera_alt_outlined,
+                      //  color: Color.fromARGB(255, 180, 120, 220),
+                        color: const Color(0xFF34A853),
+                        size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Scan card',
+                      style: AppTextStyles.small(
+                        // color: const Color.fromARGB(255, 180, 120, 220),
+                        color: const Color(0xFF34A853),
+                        size: 11,
+                        weight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // Card number field
+            _paymentField(
+              controller: _cardNumberCtrl,
+              hintText: 'Card number',
+              keyboardType: TextInputType.number,
+              maxLength: 19,
+              suffixIcon: const Icon(Icons.credit_card, color: Colors.white38, size: 20),
+              onChanged: (val) {
+                final formatted = _formatCardNumber(val.replaceAll(' ', ''));
+                if (formatted != val) {
+                  _cardNumberCtrl.value = TextEditingValue(
+                    text: formatted,
+                    selection: TextSelection.collapsed(offset: formatted.length),
+                  );
+                }
+              },
+              topRadius: true,
+              bottomRadius: false,
+            ),
+
+            const SizedBox(height: 1),
+
+            // MM/YY + CVC row
+            Row(
+              children: [
+                Expanded(
+                  child: _paymentField(
+                    controller: _mmyyCtrl,
+                    hintText: 'MM / YY',
+                    keyboardType: TextInputType.number,
+                    maxLength: 5,
+                    onChanged: (val) {
+                      final formatted = _formatMMYY(val.replaceAll('/', ''));
+                      if (formatted != val) {
+                        _mmyyCtrl.value = TextEditingValue(
+                          text: formatted,
+                          selection: TextSelection.collapsed(offset: formatted.length),
+                        );
+                      }
+                    },
+                    topRadius: false,
+                    bottomRadius: false,
+                    rightBorder: true,
+                  ),
+                ),
+                Expanded(
+                  child: _paymentField(
+                    controller: _cvcCtrl,
+                    hintText: 'CVC',
+                    keyboardType: TextInputType.number,
+                    maxLength: 3,
+                    suffixIcon: const Icon(Icons.help_outline, color: Colors.white38, size: 18),
+                    topRadius: false,
+                    bottomRadius: true,
+                    leftBorder: true,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // ── Billing Address ──
+            Text(
+              'Billing address',
+              style: AppTextStyles.small(
+                // color: const Color.fromARGB(255, 180, 120, 220),
+                color: const Color(0xFF34A853),
+                weight: FontWeight.w600,
+                size: 11,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // Country field
+            _paymentField(
+              controller: _countryCtrl,
+              hintText: 'Country or region',
+              suffixIcon: const Icon(Icons.keyboard_arrow_down, color: Colors.white54, size: 22),
+              topRadius: true,
+              bottomRadius: false,
+            ),
+            const SizedBox(height: 1),
+
+            // Postal code field
+            _paymentField(
+              controller: _postalCtrl,
+              hintText: 'Postal code',
+              keyboardType: TextInputType.text,
+              topRadius: false,
+              bottomRadius: true,
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── Pay Button ──
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Payment action here
+                  Get.back();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: CustomColor.Button_background_Color,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  elevation: 3,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Pay',
+                      style: AppTextStyles.medium(
+                        size: 17,
+                        weight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.lock_outline, color: Colors.white70, size: 18),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      );
+  }
+
+  /// Reusable payment text field with project theme
+  Widget _paymentField({
+    required TextEditingController controller,
+    required String hintText,
+    TextInputType keyboardType = TextInputType.text,
+    int? maxLength,
+    Widget? suffixIcon,
+    ValueChanged<String>? onChanged,
+    bool topRadius = false,
+    bool bottomRadius = false,
+    bool rightBorder = false,
+    bool leftBorder = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.07),
+        borderRadius: BorderRadius.only(
+          topLeft: topRadius && !leftBorder ? const Radius.circular(12) : Radius.zero,
+          topRight: topRadius && !rightBorder ? const Radius.circular(12) : Radius.zero,
+          bottomLeft: bottomRadius && !leftBorder ? const Radius.circular(12) : Radius.zero,
+          bottomRight: bottomRadius && !rightBorder ? const Radius.circular(12) : Radius.zero,
+        ),
+        border: Border(
+          top: BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
+          bottom: BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
+          left: leftBorder
+              ? BorderSide(color: Colors.white.withOpacity(0.12), width: 1)
+              : BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
+          right: rightBorder
+              ? BorderSide(color: Colors.white.withOpacity(0.12), width: 1)
+              : BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
+        ),
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        maxLength: maxLength,
+        onChanged: onChanged,
+        style: AppTextStyles.regular(color: Colors.white, size: 15),
+        cursorColor: const Color.fromARGB(255, 180, 120, 220),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: AppTextStyles.regular(color: Colors.white38, size: 14),
+          suffixIcon: suffixIcon,
+          border: InputBorder.none,
+          counterText: '',
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         ),
       ),
     );

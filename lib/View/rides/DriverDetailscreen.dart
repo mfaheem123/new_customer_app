@@ -33,11 +33,14 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
   void initState() {
     super.initState();
 
-    // 🔥 driverId arguments se lo
-    final driverId = Get.arguments['id'];
+    final driverId = (Get.arguments is Map) ? Get.arguments['id'] : Get.arguments;
 
-    swapController.resetDriverTracking();
-    controller.startPolling(driverId.toString());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      swapController.resetDriverTracking();
+      if (driverId != null) {
+        controller.startPolling(driverId.toString());
+      }
+    });
   }
 
 
@@ -49,8 +52,7 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery
-        .of(context).size.height;
+    final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return SafeArea(
@@ -58,11 +60,11 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
         body: Container(
           width: screenWidth,
           height: screenHeight,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(255, 30, 1, 44),
-                Color.fromARGB(255, 227, 194, 242)
+                Color.fromARGB(255, 227, 194, 242),
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -72,255 +74,216 @@ class _DriverdetailscreenState extends State<Driverdetailscreen> {
             children: [
               // ================= Top section (Back + Title)
               Container(
-                height: screenHeight * 0.08,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 child: Row(
                   children: [
-                    // IconButton(
-                    //   onPressed: () => Get.back(),
-                    //   icon: Icon(
-                    //     Icons.arrow_back,
-                    //     size: screenWidth * 0.06,
-                    //     color: CustomColor.Icon_Color,
-                    //   ),
-                    // ),
-                    SizedBox(width: 20,),
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: CustomColor.Icon_Color,
+                        size: 24,
+                      ),
+                    ),
                     Expanded(
                       child: Center(
                         child: Text(
                           CustomText.Driver_Info,
-                          style: AppTextStyles.heading(
-                          ),
+                          style: AppTextStyles.heading(),
                         ),
                       ),
                     ),
-                    SizedBox(width: screenWidth * 0.06),
+                    const SizedBox(width: 48),
                   ],
                 ),
               ),
 
-              // ================= Map Section
-              // Expanded(
-              //   flex: 6,
-              //   child: Container(
-              //     margin: const EdgeInsets.symmetric(horizontal: 10),
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(18),
-              //     ),
-              //     child: const ClipRRect(
-              //       borderRadius: BorderRadius.all(Radius.circular(18)),
-              //       child: MapScreen(),
-              //     ),
-              //   ),
-              // ),
-              SizedBox(height: 20),
+              // ================= Map Section (Bigger & Sleek)
               Expanded(
-                flex: 6,
                 child: Container(
                   width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  margin: const EdgeInsets.fromLTRB(12, 0, 12, 14),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey, width: 2),
-                    image: const DecorationImage(
-                      image: AssetImage("assets/images/map_image.png"),
-                      fit: BoxFit.cover,
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
-                   // child: TrackingMap( c: Get.isRegistered<SwapController>()
-                   //     ? Get.find<SwapController>()
-                   //     : Get.put(SwapController())),
-                     child: MapScreen(),
+                    borderRadius: BorderRadius.circular(20),
+                    child: const MapScreen(),
                   ),
                 ),
               ),
 
-             // ================= Bottom Driver Info Section
-              ///
-              SizedBox(height: 50,),
-              Expanded(
-                flex: 4,
-                child: Obx(() {
-                  // 🔥 FULL LOADING STATE
-                  if (controller.isLoading.value) {
-                    return Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: CustomColor.Container_Colors,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(40),
-                          topLeft: Radius.circular(40),
-                        ),
-                      ),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-
-                  // 🔥 DATA UI (same as your UI)
+              // ================= Bottom Driver Info Section
+              Obx(() {
+                // 🔥 FULL LOADING STATE
+                if (controller.isLoading.value) {
                   return Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(30),
+                    decoration: const BoxDecoration(
                       color: CustomColor.Container_Colors,
                       borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(40),
-                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(30),
+                        topLeft: Radius.circular(30),
                       ),
                     ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      
-                          SizedBox(height: 15),
-                      
-                          // 🔹 Driver Name
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.grey, width: 1.5),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 25,
-                                    backgroundImage:
-                                    (controller.driverGetbyId?.driver.image == null ||
-                                        controller.driverGetbyId!.driver.image.isEmpty)
-                                        ? const AssetImage("assets/images/profileimage.png")
-                                        : NetworkImage(
-                                      Uri.encodeFull(controller.driverGetbyId!.driver.image),
-                                    ) as ImageProvider,
-                                  ),
-                                ),
-                                // Container(
-                                //   padding: const EdgeInsets.all(2),
-                                //   decoration: BoxDecoration(
-                                //     shape: BoxShape.circle,
-                                //     border: Border.all(color: Colors.grey, width: 1.5),
-                                //   ),
-                                //   child:
-                                //   CircleAvatar(
-                                //     radius: 25, // 👈 choti profile image
-                                //     backgroundImage: NetworkImage(
-                                //       Uri.encodeFull(controller.driverGetbyId!.driver.image),
-                                //     ),
-                                //   ),
-                                // ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    controller.driverName.value,
-                                    textAlign: TextAlign.start,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppTextStyles.heading(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                      
-                          // 🔹 Status
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  CustomText.Status + " : ",
-                                  style: AppTextStyles.medium(),
-                                ),
-                                SizedBox(width: 5),
-                                Container(
-                                  height: 30,
-                                  width: 130,
-                                  decoration: BoxDecoration(
-                                    color: controller.bookingStatus.value == "Available"
-                                        ? Colors.blueAccent
-                                        : Colors.green,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      controller.bookingStatus.value,
-                                      textAlign: TextAlign.center,
-                                      style: AppTextStyles.medium(weight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                      
-                          // 🔹 Vehicle info + image
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text("${CustomText.Vehicle_Color} : ",
-                                            style: AppTextStyles.medium()),
-                                        Text(
-                                          controller.vehicleColor.value,
-                                          style:  AppTextStyles.medium(weight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 15),
-                                    Row(
-                                      children: [
-                                        Text("${CustomText.Vehicle_number} : ",
-                                            style: AppTextStyles.medium()),
-                                        Text(
-                                          controller.vehicleNumber.value,
-                                          style: AppTextStyles.medium(weight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Spacer(),
-                                // Container(
-                                //   margin: EdgeInsets.only(right: 10),
-                                //   height: 60,
-                                //   width: 100,
-                                //   child: Image.asset(
-                                //     "assets/images/carimage.jpg",
-                                //     fit: BoxFit.contain,
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          // Center(
-                          //   child: ElevatedButton(
-                          //     onPressed: () {
-                          //       Get.to(RideCompleteScreen());
-                          //     },
-                          //     child: Text("Move to feedback screen"),
-                          //   ),
-                          // ),
-                        ],
-                      ),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
                   );
-                }),
-              ),
+                }
 
+                // 🔥 DATA UI
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+                  decoration: const BoxDecoration(
+                    color: CustomColor.Container_Colors,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(30),
+                      topLeft: Radius.circular(30),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, -3),
+                      ),
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Drag handle
+                        Center(
+                          child: Container(
+                            width: 38,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // 🔹 Driver Name & Photo
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white24, width: 1.5),
+                                ),
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundImage:
+                                      (controller.driverGetbyId?.driver.image == null ||
+                                              controller.driverGetbyId!.driver.image.isEmpty)
+                                          ? const AssetImage("assets/images/profileimage.png")
+                                          : NetworkImage(
+                                              Uri.encodeFull(controller.driverGetbyId!.driver.image),
+                                            ) as ImageProvider,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  controller.driverName.value,
+                                  textAlign: TextAlign.start,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTextStyles.heading(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // 🔹 Status
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "${CustomText.Status} : ",
+                                style: AppTextStyles.medium(),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                height: 30,
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                decoration: BoxDecoration(
+                                  color: controller.bookingStatus.value == "Available"
+                                      ? Colors.blueAccent
+                                      : Colors.green,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    controller.bookingStatus.value,
+                                    textAlign: TextAlign.center,
+                                    style: AppTextStyles.medium(weight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // 🔹 Vehicle info
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text("${CustomText.Vehicle_Color} : ",
+                                          style: AppTextStyles.medium()),
+                                      Text(
+                                        controller.vehicleColor.value,
+                                        style: AppTextStyles.medium(weight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Text("${CustomText.Vehicle_number} : ",
+                                          style: AppTextStyles.medium()),
+                                      Text(
+                                        controller.vehicleNumber.value,
+                                        style: AppTextStyles.medium(weight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
             ],
           ),
         ),

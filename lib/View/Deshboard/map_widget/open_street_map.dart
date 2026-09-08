@@ -49,6 +49,8 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
             options: MapOptions(
               initialCenter: latLng,
               initialZoom: 14,
+              minZoom: 10.0,
+              maxZoom: 18.0,
               onPositionChanged: (pos, hasGesture) {
                 if (!hasGesture) return;
                 c.updateLocation(pos.center);

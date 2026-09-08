@@ -20,6 +20,8 @@ import '../Widgets/textformfield.dart';
 import '../payments/paymentscreen.dart';
 import '../profile/controller/profile_controller.dart';
 import '../rides/ridesearchscreen.dart';
+import 'alert_wedgit/child_seat_dialog.dart';
+import 'alert_wedgit/drivernote_alert.dart';
 import 'extras.dart';
 
 class ReebookingScreen extends StatefulWidget {
@@ -30,7 +32,11 @@ class ReebookingScreen extends StatefulWidget {
 }
 
 class _ReebookingScreenState extends State<ReebookingScreen> {
-  final BookingController reebookingController = Get.put(BookingController());
+  // final BookingController reebookingController = Get.put(BookingController());
+
+  final reebookingController = Get.isRegistered<BookingController>()
+      ? Get.find<BookingController>()
+      : Get.put(BookingController());
 
   final rideController = Get.isRegistered<RideController>()
       ? Get.find<RideController>()
@@ -372,7 +378,7 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                         topRight: Radius.circular(30),
                                       ),
                                     ),
-                                    height: 350,
+                                    height: 470,
                                     width: double.infinity,
                                     child: Column(
                                       crossAxisAlignment:
@@ -664,7 +670,69 @@ class _ReebookingScreenState extends State<ReebookingScreen> {
                                           ),
                                         ),
 
-                                        const SizedBox(height: 35),
+                                        const SizedBox(height: 20),
+
+                                        // ========= Child Seat / Driver Notes / Cash Row ==========
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                                          child: IntrinsicHeight(
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                                              children: [
+
+                                                // ------ Child Seat ------
+                                                Expanded(
+                                                  child: _ScheduleOptionButton(
+                                                    icon: Icons.child_friendly_rounded,
+                                                    label: 'Child Seat',
+                                                    subLabel: 'Add Child Seat',
+                                                    onTap: () {
+                                                     showChildSeatDialog(context);
+                                                    },
+                                                  ),
+                                                ),
+
+                                                const SizedBox(width: 10),
+
+                                                // ------ Driver Notes ------
+                                                Expanded(
+                                                  child: _ScheduleOptionButton(
+                                                    icon: Icons.description_outlined,
+                                                    label: 'Driver Notes',
+                                                    subLabel: 'Add Note',
+                                                    onTap: () {
+                                                     showDriverNotesDialog(context);
+                                                    },
+                                                  ),
+                                                ),
+
+                                                const SizedBox(width: 10),
+
+                                                // ------ Cash / Payment ------
+                                                Expanded(
+                                                  child: _ScheduleOptionButton(
+                                                    icon: Icons.account_balance_wallet_outlined,
+                                                    label: 'Cash',
+                                                    subLabel: 'Payment',
+                                                    onTap: () {
+                                                      // Get.bottomSheet(
+                                                      //   const _PaymentBottomSheet(),
+                                                      //   isScrollControlled: true,
+                                                      //   ignoreSafeArea: false,
+                                                      //   backgroundColor: Colors.transparent,
+                                                      //   enterBottomSheetDuration: const Duration(milliseconds: 250),
+                                                      //   exitBottomSheetDuration: const Duration(milliseconds: 200),
+                                                      // );
+                                                    },
+                                                  ),
+                                                ),
+
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 18),
 
                                         // ========================================================== Book Ride Button
                                         SizedBox(
@@ -1096,6 +1164,103 @@ class BottomButton extends StatelessWidget {
         SizedBox(height: 3),
         Text(button_name, style: AppTextStyles.small()),
       ],
+    );
+  }
+}
+/// ScheduleBottomSheet ma use hone wala option button widget
+/// image ma Child Seat, Driver Notes, Cash jaisa
+class _ScheduleOptionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String subLabel;
+  final VoidCallback onTap;
+
+  const _ScheduleOptionButton({
+    required this.icon,
+    required this.label,
+    required this.subLabel,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.35),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.12),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon with green "+" badge
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white70,
+                    size: 22,
+                  ),
+                ),
+                // Green "+" badge — top right
+                Positioned(
+                  top: -4,
+                  right: -4,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF34A853), // green
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 11,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Main label
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.small(
+                size: 12,
+                weight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 2),
+            // Sub label
+            Text(
+              subLabel,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.small(
+                size: 10,
+                color: const Color(0xFF34A853),
+                weight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

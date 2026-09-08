@@ -39,6 +39,44 @@ class RideController extends GetxController {
       ? Get.find<profileModelController>()
       : Get.put(profileModelController());
 
+  // child seat
+  final RxInt childrenCount = 0.obs;
+  final TextEditingController ageController = TextEditingController();
+  var childSeat = "";
+
+  void saveChildSeat(BuildContext context) {
+    final age = ageController.text.trim();
+    final count = childrenCount.value;
+
+    if (count > 0) {
+      childSeat = jsonEncode([
+        {
+          "child": count.toString(),
+          "age": age,
+        }
+      ]);
+    } else {
+      childSeat = "";
+    }
+
+    Navigator.of(context).pop();
+    print("child_seat param payload: $childSeat");
+  }
+
+
+
+
+  // driver notes
+  TextEditingController noteController = TextEditingController();
+  var driverNote = "";
+
+  void drivernoteText(BuildContext context) {
+    driverNote = noteController.text.trim();
+    Navigator.of(context).pop(driverNote);
+    noteController.clear();
+    print("Driver Note: $driverNote");
+  }
+
   bool isFromHistory = false;
 
   GetVehicleModel? vehicleData;
@@ -555,7 +593,7 @@ class RideController extends GetxController {
       "pickup": swapController.pickUp.text,
       "pickup_latitude": swapController.selectedPickUPLat,
       "pickup_longitude": swapController.selectedPickUPLon,
-      "pickup_door_number": swapController.babyNote,
+      "pickup_door_number": driverNote,
       "dropoff_door_number": "",
       "dropoff": swapController.dropOff.text,
       "dropoff_latitude": swapController.selectedDropLat,
@@ -580,6 +618,18 @@ class RideController extends GetxController {
       "booking_source": "app",
       "fares": baseFare,
       "total_charges": totalFare,
+      "arriving_from" :swapController.arrivalTimeController.text,
+      "flight_number": swapController.flightNumberController.text,
+      "child_seat": childSeat.isNotEmpty
+          ? childSeat
+          : (childrenCount.value > 0
+              ? jsonEncode([
+                  {
+                    "child": childrenCount.value.toString(),
+                    "age": ageController.text.trim(),
+                  }
+                ])
+              : []),
 
       // Customer ko stringify kar dein agar indexing masla kar rahi hai
       "customer": jsonEncode([
@@ -753,7 +803,7 @@ class RideController extends GetxController {
     // 🚀 Pehli bar foran hit karo taake driver location aur route bina delay ke load ho
     _hitDriverApi(driverId);
 
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _hitDriverApi(driverId);
     });
   }
@@ -801,8 +851,6 @@ class RideController extends GetxController {
 
         String statusStr = bookingStatus.value.trim().toLowerCase();
         if (statusStr == "arrived" ||
-            statusStr == "on route" ||
-            statusStr == "onroute" ||
             statusStr == "picked up" ||
             statusStr == "pickedup" ||
             statusStr == "started" ||

@@ -1,14 +1,48 @@
-gradle-wrapper.jar
-/.gradle
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+.swiftpm
+
+# IntelliJ project files
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Android Studio / Gradle
+.gradle/
+build/
+android/app/build/
 /captures/
-/gradlew
-/gradlew.bat
 /local.properties
-GeneratedPluginRegistrant.java
 .cxx/
 
-# Remember to never publicly share your keystore.
-# See https://flutter.dev/to/reference-keystore
+# Gradle wrapper (Optional: keeping wrapper binaries out)
+gradle-wrapper.jar
+/gradlew
+/gradlew.bat
+
+# Flutter / Dart binaries & plugins
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+GeneratedPluginRegistrant.java
+
+# Keystore & secret files
 key.properties
 **/*.keystore
 **/*.jks
+
+# Output binaries
+*.apk
+*.aab
+*.ipa

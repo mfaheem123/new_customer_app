@@ -26,6 +26,49 @@ class BookingController extends GetxController {
       :  Get.put(profileModelController());
 
 
+
+  // child seat
+  final RxInt childrenCount = 0.obs;
+  final TextEditingController ageController = TextEditingController();
+  var childSeat = "";
+
+  void saveChildSeat(BuildContext context) {
+    final age = ageController.text.trim();
+    final count = childrenCount.value;
+
+    if (count > 0) {
+      childSeat = jsonEncode([
+        {
+          "child": count.toString(),
+          "age": age,
+        }
+      ]);
+    } else {
+      childSeat = "";
+    }
+
+    Navigator.of(context).pop();
+    print("child_seat param payload: $childSeat");
+  }
+
+
+
+
+  // driver notes
+  TextEditingController noteController = TextEditingController();
+  var driverNote = "";
+
+  void drivernoteText(BuildContext context) {
+    driverNote = noteController.text.trim();
+    Navigator.of(context).pop(driverNote);
+    noteController.clear();
+    print("Driver Note: $driverNote");
+  }
+
+
+
+
+
   RxInt selectedVehicleIndex = (0).obs;
   RxInt selectedVehicleId = 0.obs;
   RxInt selectedPassengers = 0.obs;
@@ -621,15 +664,14 @@ Future<void> pickDate(BuildContext context) async {
       "dropoff": trip.dropoff,
       "dropoff_latitude": trip.dropoffLatitude,
       "dropoff_longitude": trip.dropoffLongitude,
-
-
-
+      "pickup_door_number": driverNote,
       "name": "${profileController.profileData!.customer!.name}",
       "email": profileController.profileData!.customer!.email,
       "mobile": profileController.profileData!.customer!.mobile,
       "telephone": profileController.profileData!.customer!.mobile,
       "pickup_date": getDate,
       "pickup_time": getTime,
+
       "journey_type_id": 1,
       "sms": true,
       "passengers": selectedPassengers,
@@ -644,6 +686,16 @@ Future<void> pickDate(BuildContext context) async {
       "booking_source": "app",
       "fares": baseFare,
       "total_charges": totalFare,
+      "child_seat": childSeat.isNotEmpty
+          ? childSeat
+          : (childrenCount.value > 0
+          ? jsonEncode([
+        {
+          "child": childrenCount.value.toString(),
+          "age": ageController.text.trim(),
+        }
+      ])
+          : []),
 
       // Customer ko stringify kar dein agar indexing masla kar rahi hai
       "customer": jsonEncode([

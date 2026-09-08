@@ -41,14 +41,14 @@ class SwapController extends GetxController {
   final TextEditingController viaController2 = TextEditingController();
   final TextEditingController babyNoteController = TextEditingController();
 
-  var babyNote = "";
-
-  void babynoteText(context) {
-    babyNote = babyNoteController.text;
-    Navigator.of(context).pop();
-    babyNoteController.clear();
-    print(babyNote);
-  }
+  // var babyNote = "";
+  //
+  // void babynoteText(context) {
+  //   babyNote = babyNoteController.text;
+  //   Navigator.of(context).pop();
+  //   babyNoteController.clear();
+  //   print(babyNote);
+  // }
 
   //===============================================   pick UP location
 
@@ -182,6 +182,15 @@ class SwapController extends GetxController {
     if (pickupFocus.hasFocus) {
       pickUp.text = address;
       setPickup(lat, lng);
+
+      // 🛫 Agar pickup airport hai to arrival time & flight number fields dikhao
+      if (selectedIndex.value == 1) {
+        isAirportPickup.value = true;
+        arrivalTimeController.clear();
+        flightNumberController.clear();
+      } else {
+        isAirportPickup.value = false;
+      }
     } else if (via1Focus.hasFocus) {
       viaController1.text = address;
       setVia1(lat, lng);
@@ -200,6 +209,7 @@ class SwapController extends GetxController {
     await Future.delayed(const Duration(milliseconds: 100));
     await SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
+
   ///
   // void selectLocationFromList(int index) {
   //   String address = "";
@@ -600,16 +610,30 @@ class SwapController extends GetxController {
   }
 
   RxBool isPickupEmpty = true.obs;
+
+  // ============================================================
+  // AIRPORT PICKUP FIELDS
+  // Jab pickup airport ho to yeh 2 fields show hongi
+  // ============================================================
+  RxBool isAirportPickup = false.obs;
+  final TextEditingController arrivalTimeController = TextEditingController();
+  final TextEditingController flightNumberController = TextEditingController();
+
   void removePickUpField() {
     pickUp.clear();
     selectedPickUPLat = 0.0;
     selectedPickUPLon = 0.0;
 
+    // Airport fields bhi reset karo
+    isAirportPickup.value = false;
+    arrivalTimeController.clear();
+    flightNumberController.clear();
+
     isPickupEmpty.value = true;
 
     fetchRoute();
-    // update();
   }
+
 
   void removeDropOff() {
     dropOff.clear();
@@ -831,6 +855,10 @@ class SwapController extends GetxController {
   List<LatLng> driverRoutePoints = [];
   bool hasFetchedDriverRoute = false;
 
+  /// 📍 Segment index tracking to prevent parallel route jumping
+  int driverRouteSegmentIndex = 0;
+  int tripRouteSegmentIndex = 0;
+
   /// 🔥 Driver pickup tak pohanch chuka hai ya nahi
   RxBool hasReachedPickup = false.obs;
 
@@ -840,14 +868,22 @@ class SwapController extends GetxController {
     driverLng.value = 0.0;
     driverToPickupPolyline.clear();
     driverRoutePoints.clear();
-    driverToDropoffPolyline.clear();
-    fullTripRoutePoints.clear();
+    if (routePoints.isNotEmpty) {
+      fullTripRoutePoints = List<LatLng>.from(routePoints);
+      driverToDropoffPolyline.assignAll(routePoints);
+    } else {
+      fullTripRoutePoints.clear();
+      driverToDropoffPolyline.clear();
+    }
     hasFetchedDriverRoute = false;
     hasReachedPickup.value = false;
     _isFetchingDriverRoute = false;
     _isFetchingDropoffRoute = false;
     _lastDriverRouteFetchTime = null;
     _lastDropoffRouteFetchTime = null;
+    lastAnimatedCarPos = null;
+    driverRouteSegmentIndex = 0;
+    tripRouteSegmentIndex = 0;
   }
 
   /// Call this when new driver GPS arrives from API (handles validation & jitter)
@@ -876,12 +912,12 @@ class SwapController extends GetxController {
 
     final newPoint = LatLng(newLat, newLng);
 
-    // 🛡️ Check if driver reached pickup point or is near/heading towards dropoff (< 40 meters)
+    // 🛡️ Check if driver reached pickup point (< 15 meters)
     if (!hasReachedPickup.value && selectedPickUPLat != 0.0 && selectedPickUPLon != 0.0) {
       final pickupPoint = LatLng(selectedPickUPLat, selectedPickUPLon);
       double distToPickup = _distanceInMeters(newPoint, pickupPoint);
 
-      if (distToPickup <= 40.0 || (routePoints.isNotEmpty && _distanceInMeters(newPoint, routePoints.first) <= 40.0)) {
+      if (distToPickup <= 15.0) {
         hasReachedPickup.value = true;
         driverToPickupPolyline.clear();
         driverRoutePoints.clear();
@@ -930,27 +966,25 @@ class SwapController extends GetxController {
         if (dist < minDist) minDist = dist;
       }
 
-      // 🔴 If driver deviated from drop-off route (> ~75m), re-fetch new purple route to drop-off
-      if (minDist > _routeDeviationThreshold) {
+      // Distance to drop-off
+      final double distToDrop = (selectedDropLat != 0.0 && selectedDropLon != 0.0)
+          ? _distanceInMeters(newPoint, LatLng(selectedDropLat, selectedDropLon))
+          : double.infinity;
+
+      // 🎯 Near drop-off (< 250m), use a tighter threshold (~25m) so when
+      // driver misses a cut or turn, route re-calculation triggers immediately with forward U-turn
+      final double effectiveThreshold = (distToDrop < 250.0)
+          ? 0.00000006 // ~25 meters
+          : _routeDeviationThreshold; // ~78 meters
+
+      // 🔴 If driver deviated from drop-off route, re-fetch new purple route to drop-off
+      if (minDist > effectiveThreshold) {
         if (_lastDropoffRouteFetchTime == null ||
             DateTime.now().difference(_lastDropoffRouteFetchTime!).inSeconds >= 3) {
-          debugPrint("🔴 Driver route changed after pickup! Re-fetching purple route to drop-off...");
+          debugPrint("🔴 Driver missed cut / deviated near drop-off! Re-fetching route from driver to drop-off...");
           driverLat.value = newLat;
           driverLng.value = newLng;
-
-          // 🔥 FIX: Immediately set polyline from driver → drop-off so it shows correct direction
-          // while async re-fetch happens in background
-          if (selectedDropLat != 0.0 && selectedDropLon != 0.0) {
-            final dropPoint = LatLng(selectedDropLat, selectedDropLon);
-            final tempRoute = [newPoint, dropPoint];
-            fullTripRoutePoints = tempRoute;
-            routePoints = List<LatLng>.from(tempRoute);
-            driverToDropoffPolyline.assignAll(tempRoute);
-            debugPrint("🔄 Temporary polyline set: driver → drop-off (correct direction)");
-          }
-
           fetchDropoffRouteFromDriver();
-          return;
         }
       }
     }
@@ -958,375 +992,150 @@ class SwapController extends GetxController {
     // 🛡️ TC-02, TC-08: Update target coordinates so AnimatedCarMarker drives smoothly along polyline
     driverLat.value = newLat;
     driverLng.value = newLng;
-    // Trim at the LAST ANIMATED POSITION (not the new GPS target) to avoid polyline jumping ahead of car
     final trimPos = lastAnimatedCarPos ?? newPoint;
     trimDriverPolyline(trimPos);
   }
 
   /// 🔥 Real-time polyline trimmer:
-  /// - Phase 1 (Driver -> Pickup): Trims orange line behind driver (ends cleanly when pickup is reached)
+  /// - Phase 1 (Driver -> Pickup): Trims orange line behind driver
   /// - Phase 2 (Pickup -> Dropoff): Trims purple line behind vehicle as it moves forward
-  // void trimDriverPolyline(LatLng carCurrentPos) {
-  //   if (selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) return;
-  //   final pickupPoint = LatLng(selectedPickUPLat, selectedPickUPLon);
-  //
-  //   // 🎯 1. Pickup Arrival Check:
-  //   if (!hasReachedPickup.value) {
-  //     double distToPickup = _distanceInMeters(carCurrentPos, pickupPoint);
-  //     if (distToPickup <= 40.0 || (routePoints.isNotEmpty && _distanceInMeters(carCurrentPos, routePoints.first) <= 40.0)) {
-  //       hasReachedPickup.value = true;
-  //       driverToPickupPolyline.clear();
-  //       driverRoutePoints.clear();
-  //       hasFetchedDriverRoute = true;
-  //       update(["map"]);
-  //     }
-  //   }
-  //
-  //   // 🔥 Phase 1: Trim Driver -> Pickup (Orange Line) - Stays active until driver reaches exact pickup!
-  //   if (!hasReachedPickup.value && driverRoutePoints.isNotEmpty) {
-  //     int closestSegmentIndex = 0;
-  //     double minDist = double.infinity;
-  //     LatLng closestProjection = carCurrentPos;
-  //
-  //     for (int i = 0; i < driverRoutePoints.length - 1; i++) {
-  //       final projected = _projectOnSegment(
-  //         carCurrentPos, driverRoutePoints[i], driverRoutePoints[i + 1],
-  //       );
-  //       final dist = _distSquared(carCurrentPos, projected);
-  //       if (dist < minDist) {
-  //         minDist = dist;
-  //         closestSegmentIndex = i;
-  //         closestProjection = projected;
-  //       }
-  //     }
-  //
-  //     // Check if car reached the last segments of the orange route
-  //     if (closestSegmentIndex >= driverRoutePoints.length - 2) {
-  //       double distToEnd = _distanceInMeters(carCurrentPos, driverRoutePoints.last);
-  //       double distToPickup = _distanceInMeters(carCurrentPos, pickupPoint);
-  //       if (distToEnd <= 35.0 || distToPickup <= 50.0) {
-  //         hasReachedPickup.value = true;
-  //         driverToPickupPolyline.clear();
-  //         driverRoutePoints.clear();
-  //         hasFetchedDriverRoute = true;
-  //         update(["map"]);
-  //         return;
-  //       }
-  //     }
-  //
-  //     List<LatLng> remaining = [closestProjection];
-  //     for (int i = closestSegmentIndex + 1; i < driverRoutePoints.length; i++) {
-  //       remaining.add(driverRoutePoints[i]);
-  //     }
-  //
-  //     // Ensure the pickup point is always the destination endpoint of the orange line
-  //     if (remaining.isNotEmpty &&
-  //         (remaining.last.latitude != pickupPoint.latitude ||
-  //             remaining.last.longitude != pickupPoint.longitude)) {
-  //       remaining.add(pickupPoint);
-  //     }
-  //
-  //     if (remaining.length >= 2) {
-  //       driverToPickupPolyline.value = remaining;
-  //     } else {
-  //       hasReachedPickup.value = true;
-  //       driverToPickupPolyline.clear();
-  //       driverRoutePoints.clear();
-  //       hasFetchedDriverRoute = true;
-  //       update(["map"]);
-  //     }
-  //   }
-  //   // 🟣 Phase 2: Trim Pickup -> Drop-off (Purple Line)
-  //   else {
-  //     final tripRef = fullTripRoutePoints.isNotEmpty
-  //         ? fullTripRoutePoints
-  //         : (routePoints.isNotEmpty ? (fullTripRoutePoints = List<LatLng>.from(routePoints)) : <LatLng>[]);
-  //     if (tripRef.isNotEmpty) {
-  //       int closestSegmentIndex = 0;
-  //       double minDist = double.infinity;
-  //       LatLng closestProjection = carCurrentPos;
-  //
-  //       for (int i = 0; i < tripRef.length - 1; i++) {
-  //         final projected = _projectOnSegment(
-  //           carCurrentPos, tripRef[i], tripRef[i + 1],
-  //         );
-  //         final dist = _distSquared(carCurrentPos, projected);
-  //         if (dist < minDist) {
-  //           minDist = dist;
-  //           closestSegmentIndex = i;
-  //           closestProjection = projected;
-  //         }
-  //       }
-  //
-  //       // If car is within reasonable distance to the trip route or pickup has been reached
-  //       if (minDist < 0.005 || hasReachedPickup.value) {
-  //         List<LatLng> remaining = [closestProjection];
-  //         for (int i = closestSegmentIndex + 1; i < tripRef.length; i++) {
-  //           remaining.add(tripRef[i]);
-  //         }
-  //
-  //         if (selectedDropLat != 0.0 && selectedDropLon != 0.0) {
-  //           final dropPoint = LatLng(selectedDropLat, selectedDropLon);
-  //           if (remaining.isNotEmpty &&
-  //               (remaining.last.latitude != dropPoint.latitude ||
-  //                   remaining.last.longitude != dropPoint.longitude)) {
-  //             remaining.add(dropPoint);
-  //           }
-  //         }
-  //
-  //         if (remaining.length >= 2) {
-  //           driverToDropoffPolyline.value = remaining;
-  //         } else {
-  //           driverToDropoffPolyline.clear();
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
-  void trimDriverPolyline(
-      LatLng carCurrentPos,
-      )
-  {
-    // ============================================================
-    // PICKUP VALIDATION
-    // ============================================================
-
-    if (selectedPickUPLat == 0.0 ||
-        selectedPickUPLon == 0.0) {
-      return;
-    }
-
-    final LatLng pickupPoint = LatLng(
-      selectedPickUPLat,
-      selectedPickUPLon,
-    );
+  void trimDriverPolyline(LatLng carCurrentPos) {
+    if (selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) return;
+    final LatLng pickupPoint = LatLng(selectedPickUPLat, selectedPickUPLon);
 
     // ============================================================
-    // PHASE 1
-    // DRIVER -> PICKUP
+    // PHASE 1: DRIVER -> PICKUP
     // ============================================================
-
     if (!hasReachedPickup.value) {
-      final double distanceToPickup =
-      _distanceInMeters(
+      final double distanceToPickup = _distanceInMeters(
         carCurrentPos,
         pickupPoint,
       );
 
-      // ==========================================================
-      // DRIVER REACHED PICKUP
-      // ==========================================================
-
-      if (distanceToPickup <= 40.0) {
-        debugPrint(
-          "🟢 DRIVER REACHED PICKUP",
-        );
-
+      // Driver reached pickup
+      if (distanceToPickup <= 15.0) {
+        debugPrint("🟢 DRIVER REACHED PICKUP");
         hasReachedPickup.value = true;
-
         driverToPickupPolyline.clear();
-
         driverRoutePoints.clear();
-
         hasFetchedDriverRoute = true;
-
         update(["map"]);
-
         return;
       }
 
-      // ==========================================================
-      // ORANGE DRIVER -> PICKUP ROUTE
-      // ==========================================================
-
       if (driverRoutePoints.length >= 2) {
-        final _TrimResult? result =
-        _findClosestRoutePosition(
+        final _TrimResult? result = _findClosestRoutePosition(
           carCurrentPos,
           driverRoutePoints,
         );
 
         if (result != null) {
+          // Polyline starts EXACTLY at the car's current position
           final List<LatLng> remaining = [
-            result.projection,
-            ...driverRoutePoints.skip(
-              result.segmentIndex + 1,
-            ),
+            carCurrentPos,
+            ...driverRoutePoints.skip(result.segmentIndex + 1),
           ];
 
-          // ======================================================
-          // PICKUP ALWAYS ENDPOINT
-          // ======================================================
-
+          // Pickup is always the destination endpoint
           if (remaining.isNotEmpty) {
-            final double distanceToPickupFromEnd =
-            _distanceInMeters(
+            final double distanceToPickupFromEnd = _distanceInMeters(
               remaining.last,
               pickupPoint,
             );
-
             if (distanceToPickupFromEnd > 1.0) {
-              remaining.add(
-                pickupPoint,
-              );
+              remaining.add(pickupPoint);
             }
           }
 
-          // ======================================================
-          // UPDATE ORANGE POLYLINE
-          // ======================================================
-
           if (remaining.length >= 2) {
-            driverToPickupPolyline.assignAll(
-              remaining,
-            );
+            driverToPickupPolyline.assignAll(remaining);
           }
         }
       }
-
       return;
     }
 
     // ============================================================
-    // PHASE 2
-    // PICKUP -> DROP
+    // PHASE 2: PICKUP -> DROP (Purple Route Trimming)
     // ============================================================
-
     List<LatLng> tripRoute = [];
 
     if (fullTripRoutePoints.isNotEmpty) {
-      tripRoute = List<LatLng>.from(
-        fullTripRoutePoints,
-      );
+      tripRoute = List<LatLng>.from(fullTripRoutePoints);
     } else if (routePoints.isNotEmpty) {
-      tripRoute = List<LatLng>.from(
-        routePoints,
-      );
-
-      fullTripRoutePoints =
-      List<LatLng>.from(
-        routePoints,
-      );
+      tripRoute = List<LatLng>.from(routePoints);
+      fullTripRoutePoints = List<LatLng>.from(routePoints);
     }
 
-    if (tripRoute.length < 2) {
-      return;
-    }
+    if (tripRoute.length < 2) return;
 
-    // ============================================================
-    // FIND CURRENT CAR POSITION ON PURPLE ROUTE
-    // ============================================================
-
-    final _TrimResult? result =
-    _findClosestRoutePosition(
+    final _TrimResult? result = _findClosestRoutePosition(
       carCurrentPos,
       tripRoute,
     );
 
-    if (result == null) {
-      return;
-    }
+    if (result == null) return;
 
-    // ============================================================
-    // REMOVE ROUTE BEHIND CAR
-    // ============================================================
-
+    // Polyline starts EXACTLY at the car's current position (zero gap)
     final List<LatLng> remaining = [
-      result.projection,
-      ...tripRoute.skip(
-        result.segmentIndex + 1,
-      ),
+      carCurrentPos,
+      ...tripRoute.skip(result.segmentIndex + 1),
     ];
 
-    // ============================================================
-    // DROP POINT
-    // ============================================================
-
-    if (selectedDropLat != 0.0 &&
-        selectedDropLon != 0.0) {
+    if (selectedDropLat != 0.0 && selectedDropLon != 0.0) {
       final LatLng dropPoint = LatLng(
         selectedDropLat,
         selectedDropLon,
       );
 
       if (remaining.isEmpty ||
-          _distanceInMeters(
-            remaining.last,
-            dropPoint,
-          ) >
-              1.0) {
-        remaining.add(
-          dropPoint,
-        );
+          _distanceInMeters(remaining.last, dropPoint) > 1.0) {
+        remaining.add(dropPoint);
       }
     }
 
-    // ============================================================
-    // UPDATE PURPLE POLYLINE
-    // ============================================================
-
     if (remaining.length >= 2) {
-      driverToDropoffPolyline.assignAll(
-        remaining,
-      );
+      driverToDropoffPolyline.assignAll(remaining);
     } else {
       driverToDropoffPolyline.clear();
     }
   }
 
   _TrimResult? _findClosestRoutePosition(
-      LatLng currentPosition,
-      List<LatLng> route,
-      )
-  {
-    if (route.length < 2) {
-      return null;
-    }
+    LatLng currentPosition,
+    List<LatLng> route,
+  ) {
+    if (route.length < 2) return null;
 
-    double minDistance =
-        double.infinity;
-
+    double minDistance = double.infinity;
     int closestSegmentIndex = 0;
+    LatLng closestProjection = route.first;
 
-    LatLng closestProjection =
-        route.first;
-
-    for (
-    int i = 0;
-    i < route.length - 1;
-    i++
-    ) {
-      final LatLng projected =
-      _projectOnSegment(
+    for (int i = 0; i < route.length - 1; i++) {
+      final LatLng projected = _projectOnSegment(
         currentPosition,
         route[i],
         route[i + 1],
       );
 
-      final double distance =
-      _distSquared(
+      final double distance = _distSquared(
         currentPosition,
         projected,
       );
 
       if (distance < minDistance) {
         minDistance = distance;
-
         closestSegmentIndex = i;
-
-        closestProjection =
-            projected;
+        closestProjection = projected;
       }
     }
 
     return _TrimResult(
-      segmentIndex:
-      closestSegmentIndex,
-      projection:
-      closestProjection,
+      segmentIndex: closestSegmentIndex,
+      projection: closestProjection,
     );
   }
+
   Future<void> fetchDriverRoute() async {
     if (hasReachedPickup.value) return;
     if (driverLat.value == 0.0 || driverLng.value == 0.0 || selectedPickUPLat == 0.0 || selectedPickUPLon == 0.0) return;
@@ -1351,8 +1160,10 @@ class SwapController extends GetxController {
         }).toList();
 
         driverRoutePoints = newPoints;
-        driverToPickupPolyline.value = List<LatLng>.from(newPoints);
+        driverRouteSegmentIndex = 0;
+        driverToPickupPolyline.assignAll(newPoints);
         hasFetchedDriverRoute = true;
+        update(["map"]);
       }
     } catch (e) {
       print("Driver Route error: $e");
@@ -1400,7 +1211,8 @@ class SwapController extends GetxController {
 
         routePoints = newPoints;
         fullTripRoutePoints = List<LatLng>.from(newPoints);
-        driverToDropoffPolyline.value = List<LatLng>.from(newPoints);
+        tripRouteSegmentIndex = 0;
+        driverToDropoffPolyline.assignAll(newPoints);
 
         // Update distance & estimated time
         double distanceMeters = (route['distance'] as num).toDouble();
