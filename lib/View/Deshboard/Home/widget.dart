@@ -262,7 +262,7 @@ class _containerWidgetState extends State<containerWidget> {
                                               .isNotEmpty) {
                                         homeC.activeField.value = "drop";
 
-                                        homeC.dropOff.text = customer.address1!;
+                                        homeC.dropOff.text = customer.address1!.toUpperCase();
                                         homeC.setDrop(
                                           (customer.address1Latitude ?? 0)
                                               .toDouble(),
@@ -322,7 +322,7 @@ class _containerWidgetState extends State<containerWidget> {
                                               .isNotEmpty) {
                                         homeC.activeField.value = "drop";
 
-                                        homeC.dropOff.text = customer.address2!;
+                                        homeC.dropOff.text = customer.address2!.toUpperCase();
                                         homeC.setDrop(
                                           (customer.address2Latitude ?? 0)
                                               .toDouble(),

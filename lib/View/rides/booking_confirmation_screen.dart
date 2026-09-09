@@ -185,8 +185,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                                     children: [
                                       Icon(Icons.phone, color: Colors.amber,size: 22,),
                                       SizedBox(width: 5,),
-                                      Text(
-                                        booking.mobile ?? "",
+                                      Text("+4401424202020",
+                                        // booking.mobile ?? "",
                                         style: AppTextStyles.small(),
 
                                       ),

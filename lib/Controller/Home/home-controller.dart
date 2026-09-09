@@ -64,7 +64,7 @@ class SwapController extends GetxController {
 
     if (updatedLoc == null) return;
 
-    pickUp.text = mapC.address.value;
+    pickUp.text = mapC.address.value.toUpperCase();
 
     await setPickup(updatedLoc.latitude, updatedLoc.longitude);
   }
@@ -180,7 +180,7 @@ class SwapController extends GetxController {
     }
 
     if (pickupFocus.hasFocus) {
-      pickUp.text = address;
+      pickUp.text = address.toUpperCase();
       setPickup(lat, lng);
 
       // 🛫 Agar pickup airport hai to arrival time & flight number fields dikhao
@@ -192,13 +192,13 @@ class SwapController extends GetxController {
         isAirportPickup.value = false;
       }
     } else if (via1Focus.hasFocus) {
-      viaController1.text = address;
+      viaController1.text = address.toUpperCase();
       setVia1(lat, lng);
     } else if (via2Focus.hasFocus) {
-      viaController2.text = address;
+      viaController2.text = address.toUpperCase();
       setVia2(lat, lng);
     } else if (dropFocus.hasFocus) {
-      dropOff.text = address;
+      dropOff.text = address.toUpperCase();
       setDrop(lat, lng);
     }
 
@@ -315,8 +315,8 @@ class SwapController extends GetxController {
   void swapField() {
     // Swap the text
     String tempText = pickUp.text;
-    pickUp.text = dropOff.text;
-    dropOff.text = tempText;
+    pickUp.text = dropOff.text.toUpperCase();
+    dropOff.text = tempText.toUpperCase();
 
     // Swap the coordinates
     double tempLat = selectedPickUPLat;
@@ -353,6 +353,13 @@ class SwapController extends GetxController {
   }
 
   void validateLocations() {
+    pickUp.text = pickUp.text.toUpperCase();
+    dropOff.text = dropOff.text.toUpperCase();
+    viaController1.text = viaController1.text.toUpperCase();
+    viaController2.text = viaController2.text.toUpperCase();
+    flightNumberController.text = flightNumberController.text.toUpperCase();
+    arrivalTimeController.text = arrivalTimeController.text.toUpperCase();
+
     if (pickUp.text.isEmpty && dropOff.text.isEmpty) {
       showAppSnackBar("Please select pickup and drop-off locations");
       return;

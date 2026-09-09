@@ -255,13 +255,14 @@ class PushNotificationService {
       debugPrint("Calling Booking API: $bookingId");
 
       var response = await ApiService.get(
-        "bookings/getbyid/$bookingId", // correct endpoint
+        "bookings/get-driver-customer-by-id/$bookingId", // correct endpoint
+        // "bookings/getbyid/$bookingId", // correct endpoint
         auth: true,
       );
 
       if ( response!.statusCode == 200) {
         var data = response.data;
-
+        debugPrint("Calling Booking API: $bookingId");
         debugPrint("Booking Data: $data");
 
         //  Controller me store karo

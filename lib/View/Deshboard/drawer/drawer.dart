@@ -1,4 +1,3 @@
-import 'package:customer/Routing/routes_name.dart';
 import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:customer/api_servies/session.dart';
 import 'package:flutter/material.dart';
@@ -23,19 +22,17 @@ class appDrawer extends StatelessWidget {
         final user = controller.profileData?.customer;
         return SizedBox(
           width: MediaQuery.of(context).size.width * 0.6,
-          child: ClipRRect(
-            child: Container(
-              decoration: BoxDecoration(
-                color: CustomColor.Container_Colors,
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(70),
-                  bottomRight: Radius.circular(70),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: ListView(
-                  children: [
+          child: Material(
+            color: CustomColor.Container_Colors,
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(70),
+              bottomRight: Radius.circular(70),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: ListView(
+                children: [
                     const SizedBox(height: 50),
 
                     // User Profile Info
@@ -179,7 +176,6 @@ class appDrawer extends StatelessWidget {
                 ),
               ),
             ),
-          ),
         );
       },
     );

@@ -86,6 +86,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                   Expanded(
                     child: CustomTextField(
                       controller: mydeshcontroller.HomeController,
+                      isUpperCase: true,
                       textCapitalization: TextCapitalization.characters,
                       hintText: "Search Home Address",
                       borderRadius: 15,
@@ -132,7 +133,8 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                     context: context,
                     list: mydeshcontroller.homeSearchList,
                     onTap: (item) {
-                      mydeshcontroller.HomeController.text = "${item.name} ${item.postcode}";
+                      mydeshcontroller.HomeController.text =
+                          "${item.name ?? ''} ${item.postcode ?? ''}".trim().toUpperCase();
                       mydeshcontroller.selectHomeLocation(item);
 
                     },
@@ -170,7 +172,7 @@ class _AddHomeScreenState extends State<AddHomeScreen> {
                       ),
                       child: ListTile(
                         leading: const Icon(Icons.home),
-                        title: Text(address, style: AppTextStyles.small()),
+                        title: Text(address.toUpperCase(), style: AppTextStyles.small()),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

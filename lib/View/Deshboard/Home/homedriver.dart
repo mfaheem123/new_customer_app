@@ -87,6 +87,7 @@ class _HomeDriverState extends State<HomeDriver> {
                                     child: CustomTextField(
                                       focusNode: homeC.pickupFocus,
                                       controller: homeC.pickUp,
+                                      isUpperCase: true,
                                       textCapitalization: TextCapitalization.characters,
                                       hintText: "Pick Up",
                                       borderRadius: 20,
@@ -142,6 +143,7 @@ class _HomeDriverState extends State<HomeDriver> {
                                           padding: const EdgeInsets.only(right: 25.0),
                                           child: CustomTextField(
                                             controller: homeC.flightNumberController,
+                                            isUpperCase: true,
                                             hintText: "Flight Number (e.g. BA123)",
                                             borderRadius: 20,
                                             textCapitalization: TextCapitalization.characters,
@@ -167,6 +169,8 @@ class _HomeDriverState extends State<HomeDriver> {
                                           padding: const EdgeInsets.only(right: 25.0),
                                           child: CustomTextField(
                                             controller: homeC.arrivalTimeController,
+                                            isUpperCase: true,
+                                            textCapitalization: TextCapitalization.characters,
                                             hintText: "Arrival From (e.g. 14:30)",
                                             borderRadius: 20,
                                             prefixIcon: Icon(
@@ -201,6 +205,7 @@ class _HomeDriverState extends State<HomeDriver> {
                                               Expanded(
                                                 child: CustomTextField(
                                                   focusNode: homeC.via1Focus,
+                                                  isUpperCase: true,
                                                   textCapitalization: TextCapitalization.characters,
                                                   controller:
                                                       homeC.viaController1,
@@ -254,6 +259,7 @@ class _HomeDriverState extends State<HomeDriver> {
                                               Expanded(
                                                 child: CustomTextField(
                                                   focusNode: homeC.via2Focus,
+                                                  isUpperCase: true,
                                                   textCapitalization: TextCapitalization.characters,
                                                   controller:
                                                       homeC.viaController2,
@@ -308,6 +314,7 @@ class _HomeDriverState extends State<HomeDriver> {
                                     child: CustomTextField(
                                       focusNode: homeC.dropFocus,
                                       controller: homeC.dropOff,
+                                      isUpperCase: true,
                                       textCapitalization: TextCapitalization.characters,
                                       hintText: "Destination",
                                       borderRadius: 20,

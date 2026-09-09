@@ -665,13 +665,13 @@ Future<void> pickDate(BuildContext context) async {
       "dropoff_latitude": trip.dropoffLatitude,
       "dropoff_longitude": trip.dropoffLongitude,
       "pickup_door_number": driverNote,
+      "dropoff_door_number": "",
       "name": "${profileController.profileData!.customer!.name}",
       "email": profileController.profileData!.customer!.email,
       "mobile": profileController.profileData!.customer!.mobile,
       "telephone": profileController.profileData!.customer!.mobile,
       "pickup_date": getDate,
       "pickup_time": getTime,
-
       "journey_type_id": 1,
       "sms": true,
       "passengers": selectedPassengers,
@@ -685,6 +685,8 @@ Future<void> pickDate(BuildContext context) async {
       "booking_type_id": 1,
       "booking_source": "app",
       "fares": baseFare,
+      "arriving_from" :trip.arrivingFrom,
+      "flight_number": trip.flightNumber,
       "total_charges": totalFare,
       "child_seat": childSeat.isNotEmpty
           ? childSeat
@@ -784,7 +786,7 @@ Future<void> pickDate(BuildContext context) async {
       print("Booking Id = $bookingId");
 
       Response? response = await ApiService.get(
-        "bookings/getbyid/$bookingId",
+        "bookings/get-driver-customer-by-id/$bookingId",
         auth: true,
       );
 

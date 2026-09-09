@@ -87,8 +87,9 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                     Expanded(
                       child: CustomTextField(
                         controller: mydeshcontroller.WorkAdressController,
+                        isUpperCase: true,
                         textCapitalization: TextCapitalization.characters,
-                        hintText: "Search Home Address",
+                        hintText: "Search Work Address",
                         borderRadius: 15,
                         onChanged:  mydeshcontroller.addworkLocation,
                         suffixIcon: IconButton(
@@ -133,8 +134,7 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                       list: mydeshcontroller.workSearchList,
                       onTap: (item) {
                         mydeshcontroller.WorkAdressController.text =
-                        "${item.name} ${item.postcode}";
-
+                            "${item.name ?? ''} ${item.postcode ?? ''}".trim().toUpperCase();
 
                         mydeshcontroller.selectWorkLocation(item);
                       },
@@ -172,7 +172,7 @@ class _AddWork_ScreenState extends State<AddWork_Screen> {
                         ),
                         child: ListTile(
                           leading: const Icon(Icons.home),
-                          title: Text(address, style: AppTextStyles.small()),
+                          title: Text(address.toUpperCase(), style: AppTextStyles.small()),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

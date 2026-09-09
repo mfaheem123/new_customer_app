@@ -114,6 +114,19 @@ import 'package:customer/View/textstyle/apptextstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
+  }
+}
+
 class CustomTextField extends StatelessWidget {
 
   final String hintText;
@@ -139,6 +152,7 @@ class CustomTextField extends StatelessWidget {
 
   /// ⭐ NEW
   final TextCapitalization textCapitalization;
+  final bool isUpperCase;
 
   const CustomTextField({
     super.key,
@@ -166,6 +180,7 @@ class CustomTextField extends StatelessWidget {
     this.onTap,
     this.readOnly = false,
     this.textCapitalization = TextCapitalization.none,
+    this.isUpperCase = false,
   });
 
   @override
@@ -187,8 +202,11 @@ class CustomTextField extends StatelessWidget {
       maxLines: obscureText ? 1 : maxLines,
 
       // ✅ FIXED
-      inputFormatters: inputFormatters ?? [],
-      textCapitalization: textCapitalization,
+      inputFormatters: [
+        if (isUpperCase) UpperCaseTextFormatter(),
+        ...?inputFormatters,
+      ],
+      textCapitalization: isUpperCase ? TextCapitalization.characters : textCapitalization,
 
       style: AppTextStyles.regular(color: Colors.black),
       onTap: onTap,

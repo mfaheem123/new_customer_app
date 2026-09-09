@@ -62,12 +62,11 @@ class changePasswordController extends GetxController {
 
     if (response.statusCode == 200) {
       BotToast.showText(text: "Password Updated Successfully");
-      Get.back();
+      // Get.back();
     } else {
       print(response.data);
 
-      BotToast.showText(
-        text: response.data["message"]?.toString() ?? "Something went wrong",
+      BotToast.showText(text: response.data["message"]?.toString() ?? "Something went wrong",
       );
     }
   }

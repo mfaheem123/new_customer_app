@@ -79,7 +79,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
   void editItem() {
    // //HomeController.text =gethomeaddress ?? homeAddress.value;
-  HomeController.text =profileController.profileData!.customer!.address1!;
+  HomeController.text = (profileController.profileData!.customer!.address1 ?? '').toUpperCase();
     editingIndex.value = 0;
 
   selectedLat.value =
@@ -104,7 +104,7 @@ class DeshBoardAddHome_Controller extends GetxController {
     }
 
     var data = {
-      "address1": HomeController.text,
+      "address1": HomeController.text.toUpperCase(),
        "address1_latitude": selectedLat.value,
        "address1_longitude":selectedLng.value
     };
@@ -117,7 +117,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     if (response!.statusCode == 200) {
 
-      profileController.profileData!.customer!.address1 = HomeController.text;
+      profileController.profileData!.customer!.address1 = HomeController.text.toUpperCase();
 
       profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
@@ -171,7 +171,7 @@ class DeshBoardAddHome_Controller extends GetxController {
   void selectHomeLocation(Result data) {
     selectedLat.value = data.lat ?? 0.0;
     selectedLng.value = data.lon ?? 0.0;
-    selectedLocationName.value = data.name ?? '';
+    selectedLocationName.value = (data.name ?? '').toUpperCase();
     print("${selectedLat}  ${selectedLng}");
 
     homeSearchList.clear(); // optional: search hide after select
@@ -213,7 +213,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
   void editWorkAddress() {
     WorkAdressController.text =
-    profileController.profileData!.customer!.address2!;
+    (profileController.profileData!.customer!.address2 ?? '').toUpperCase();
 
     selectedLat2.value =
         profileController.profileData!.customer!.address2Latitude ?? 0.0;
@@ -240,7 +240,7 @@ class DeshBoardAddHome_Controller extends GetxController {
     }
 
     var data = {
-      "address2": WorkAdressController.text,
+      "address2": WorkAdressController.text.toUpperCase(),
       "address2_latitude": selectedLat2.value,
       "address2_longitude":selectedLng2.value
     };
@@ -253,7 +253,7 @@ class DeshBoardAddHome_Controller extends GetxController {
 
     if (response!.statusCode == 200) {
 
-     profileController.profileData!.customer!.address2 = WorkAdressController.text;
+     profileController.profileData!.customer!.address2 = WorkAdressController.text.toUpperCase();
 
       profileController.update();   // 🔥 THIS refreshes GetBuilder UI
 
@@ -304,7 +304,7 @@ class DeshBoardAddHome_Controller extends GetxController {
   void selectWorkLocation(Result data) {
     selectedLat2.value = data.lat ?? 0.0;
     selectedLng2.value = data.lon ?? 0.0;
-    selectedWorkLocationName.value = data.name ?? '';
+    selectedWorkLocationName.value = (data.name ?? '').toUpperCase();
     print(" work address   ${selectedLat2}  ${selectedLng2}");
 
     workSearchList.clear(); // optional: search hide after select

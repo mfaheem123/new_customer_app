@@ -47,12 +47,6 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
   Widget build(BuildContext context) {
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    @override
-    void initState() {
-      super.initState();
-
-      Get.put(LocationPermissionController());
-    }
     return GetBuilder<profileModelController>(
       builder: (profileController) {
         return SafeArea(
@@ -204,7 +198,7 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                                 customer!.address1!.trim().isNotEmpty) {
                               homeC.activeField.value = "drop";
 
-                              homeC.dropOff.text = customer.address1!;
+                              homeC.dropOff.text = customer.address1!.toUpperCase();
                               homeC.setDrop((customer.address1Latitude ?? 0).toDouble(),
                                 (customer.address1Longitude ?? 0).toDouble(),
                               );
@@ -256,7 +250,7 @@ class _DeshBoard_ScreenState extends State<DeshBoard_Screen> {
                                 customer!.address2!.trim().isNotEmpty) {
                               homeC.activeField.value = "drop";
 
-                              homeC.dropOff.text = customer.address2!;
+                              homeC.dropOff.text = customer.address2!.toUpperCase();
                               homeC.setDrop(
                                 (customer.address2Latitude ?? 0).toDouble(),
                                 (customer.address2Longitude ?? 0).toDouble(),

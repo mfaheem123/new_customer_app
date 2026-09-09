@@ -114,10 +114,10 @@ class RideController extends GetxController {
     update();
 
     var response = await ApiService.get(
-      "vehicle-type/get",
-      auth: true,
-      isProgressShow: false,
-      sendCompanyId: true
+        "vehicle-type/get",
+        auth: true,
+        isProgressShow: false,
+        sendCompanyId: true
     );
 
     if (response != null && response.statusCode == 200) {
@@ -155,11 +155,11 @@ class RideController extends GetxController {
     FormData formData = FormData.fromMap(dataMap);
 
     Response<dynamic>? response = await ApiService.post(
-      formData,
-      "fares/calculate-fare-all-vehicles",
-      multiPart: true,
-      auth: true,
-      isProgressShow: true,
+        formData,
+        "fares/calculate-fare-all-vehicles",
+        multiPart: true,
+        auth: true,
+        isProgressShow: true,
         sendCompanyId: true
     );
 
@@ -623,13 +623,13 @@ class RideController extends GetxController {
       "child_seat": childSeat.isNotEmpty
           ? childSeat
           : (childrenCount.value > 0
-              ? jsonEncode([
-                  {
-                    "child": childrenCount.value.toString(),
-                    "age": ageController.text.trim(),
-                  }
-                ])
-              : []),
+          ? jsonEncode([
+        {
+          "child": childrenCount.value.toString(),
+          "age": ageController.text.trim(),
+        }
+      ])
+          : []),
 
       // Customer ko stringify kar dein agar indexing masla kar rahi hai
       "customer": jsonEncode([
@@ -651,10 +651,10 @@ class RideController extends GetxController {
     // API Call
     // Response<dynamic>? response = await ApiService.post(
     var response = await ApiService.post(
-      formData,
-      "bookings/add",
-       multiPart: true,
-       auth: true,
+        formData,
+        "bookings/add",
+        multiPart: true,
+        auth: true,
         sendCompanyId: true
     );
 
@@ -705,11 +705,11 @@ class RideController extends GetxController {
     FormData formData = FormData.fromMap(dataMap);
 
     Response<dynamic>? response = await ApiService.post(
-      formData,
-      "fares/calculate-fare",
-      multiPart: true,
-      auth: true,
-      sendCompanyId: true
+        formData,
+        "fares/calculate-fare",
+        multiPart: true,
+        auth: true,
+        sendCompanyId: true
     );
 
     if (response!.statusCode == 200) {
@@ -844,7 +844,7 @@ class RideController extends GetxController {
         double lng = double.tryParse(driver.longitude.toString()) ?? 0.0;
 
         swapController.animateDriverTo(lat, lng);
-///        =====================================================  driver to pickup
+        ///        =====================================================  driver to pickup
         if (!swapController.hasFetchedDriverRoute && !swapController.hasReachedPickup.value) {
           swapController.fetchDriverRoute();
         }
@@ -1002,7 +1002,7 @@ class RideController extends GetxController {
 
 
 
-///===========================================================  pdf booking working
+  ///===========================================================  pdf booking working
   bool isBookingLoading = false;
   Future<void> getBookingById() async {
     try {
@@ -1012,13 +1012,13 @@ class RideController extends GetxController {
       debugPrint("Calling Booking API: $bookingId");
 
       Response? response = await ApiService.get(
-        "bookings/getbyid/$bookingId",
+        "bookings/get-driver-customer-by-id/$bookingId",
         auth: true,
       );
 
       if (response != null && response.statusCode == 200) {
         bookingData = BookingGetById.fromJson(response.data);
-       // Get.offAll(BookingConfirmationScreen());
+        // Get.offAll(BookingConfirmationScreen());
         debugPrint("Booking Data => ${bookingData?.booking?.referenceNumber}");
 
 
@@ -1032,7 +1032,7 @@ class RideController extends GetxController {
       update();
     }
   }
-/// ////////////////////////////////
+  /// ////////////////////////////////
   // Future<void> generatePdf() async {
   //   try {
   //     if (bookingData == null || bookingData!.booking == null) {
@@ -1158,7 +1158,7 @@ class RideController extends GetxController {
   //     );
   //   }
   // }
-/// Generate PDF & Share
+  /// Generate PDF & Share
   Future<void> generatePdf() async {
     try {
       if (bookingData == null || bookingData!.booking == null) {
@@ -1265,31 +1265,31 @@ class RideController extends GetxController {
 
 
 
-/// PDF Row Widget
-pw.Widget _pdfRow(String title, dynamic value) {
-  return pw.Padding(
-    padding: const pw.EdgeInsets.symmetric(vertical: 5),
-    child: pw.Row(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.SizedBox(
-          width: 130,
-          child: pw.Text(
-            "$title :",
-            style: pw.TextStyle(
-              fontWeight: pw.FontWeight.bold,
+  /// PDF Row Widget
+  pw.Widget _pdfRow(String title, dynamic value) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 5),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.SizedBox(
+            width: 130,
+            child: pw.Text(
+              "$title :",
+              style: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        pw.Expanded(
-          child: pw.Text(
-            value?.toString() ?? "",
+          pw.Expanded(
+            child: pw.Text(
+              value?.toString() ?? "",
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }
 
 ///
